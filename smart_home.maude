@@ -47,15 +47,15 @@ mod SMARTHOME is protecting STRING .
     crl [heaterOffToFairlyhot] : 
         < h :Heater | Status: off > < t :Thermometer | Status: low > < wh :Waterheater | Status: on > < c :Clock | Status: cs > 
         => 
-        < h :Heater | Status: fairlyhot > 
-        if  cs =/= evening < t :Thermometer | Status: low > < wh :Waterheater | Status: on > < c :Clock | Status: cs > .
+        < h :Heater | Status: fairlyhot > < t :Thermometer | Status: low > < wh :Waterheater | Status: on > < c :Clock | Status: cs > 
+        if  cs =/= evening .
 
     *** If the temperature is low and the waterheater is off or it is evening (i.e. electricity is not expensive), then turn the heater to very hot.
     crl [heaterOffToVeryhot] :
         < h :Heater | Status: hs > < t :Thermometer | Status: low > < wh :Waterheater | Status: ws > < c :Clock | Status: ts >
         => 
         < h :Heater | Status: veryhot > < t :Thermometer | Status: low > < wh :Waterheater | Status: ws > < c :Clock | Status: ts >
-        if ws == of \/ ts == evening .
+        if ws == off \/ ts == evening .
 
     *** If the air quality is bad, then turn the heater off and open the window.
     rl [heaterOffWindowOpen] :
