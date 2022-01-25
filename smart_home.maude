@@ -20,12 +20,12 @@ mod SMARTHOME is protecting STRING .
     ops earlymorning morningAfternoon evening : -> ClockStatus .
 
     *** Specification of the components
-    op < _ :Heater | Status: _ > : Oid HeaterStatus -> Heater .
-    op < _ :Waterheater | Status: _ > : Oid WaterheaterStatus -> Waterheater .
-    op < _ :Window | Status: _ > : Oid WindowStatus -> Window .
-    op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer .
-    op < _ :Airquality | Status: _ > : Oid AirqualityStatus -> Airquality .
-    op < _ :Clock | Status: _ > : Oid ClockStatus -> Clock .
+    op < _ :Heater | Status: _ > : Oid HeaterStatus -> Heater [format (ntr r r r r r r o)] .
+    op < _ :Waterheater | Status: _ > : Oid WaterheaterStatus -> Waterheater [format (ntb b b b b b b o)] .
+    op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntc c c c c c c o)] .
+    op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer [format (nty y y y y y y o)] .
+    op < _ :Airquality | Status: _ > : Oid AirqualityStatus -> Airquality [format (ntg g g g g g g o)] .
+    op < _ :Clock | Status: _ > : Oid ClockStatus -> Clock [format (ntm m m m m m m o)] .
 
 
     vars H WH W T AQ C : Oid .
@@ -36,33 +36,33 @@ mod SMARTHOME is protecting STRING .
     var TS : ThermometerStatus .
     var AQS : AirqualityStatus .
     var CS : ClockStatus .
-    
+
     op init : -> Configuration .
-    eq  init = < "homeHeater" :Heater | Status: off > 
-            < "homeWaterHeater" :Waterheater | Status: off > 
-            < "homeWindow" :Window | Status: closed > 
+    eq  init = < "homeHeater" :Heater | Status: off >
+            < "homeWaterHeater" :Waterheater | Status: off >
+            < "homeWindow" :Window | Status: closed >
             < "homeThermometer" :Thermometer | Status: low >
             < "homeAirQuality" :Airquality | Status: bad >
             < "homeClock" :Clock | Status: earlymorning > .
 
 
     *** If the temperature is low, the waterheater is on and it is not evening (i.e. electricity is expensive), then only turn the heater to fairly hot.
-    crl [heaterOffToFairlyhot] : 
-        < H :Heater | Status: off > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS > 
-        => 
-        < H :Heater | Status: fairlyhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS > 
+    crl [heaterOffToFairlyhot] :
+        < H :Heater | Status: off > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
+        =>
+        < H :Heater | Status: fairlyhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
         if  CS =/= evening .
 
     *** If the temperature is low and the waterheater is off, then turn the heater to very hot.
     rl [heaterOffToVeryhot] :
         < H :Heater | Status: HS > < T :Thermometer | Status: low > < WH :Waterheater | Status: off >
-        => 
+        =>
         < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: off > .
 
     *** If the temperature is low and it is evening (i.e. electricity is not expensive), then turn the heater to very hot.
     rl [heaterOffToVeryhot] :
         < H :Heater | Status: HS > < T :Thermometer | Status: low > < C :Clock | Status: evening >
-        => 
+        =>
         < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < C :Clock | Status: evening > .
 
     *** If the air quality is bad, then turn the heater off and open the window.
@@ -74,13 +74,13 @@ mod SMARTHOME is protecting STRING .
     *** If the temperature is high, then put the heater from very hot to fairly hot.
     rl [heaterVeryhotToFairlyhot1] :
         < H :Heater | Status: veryhot > < T :Thermometer | Status: high >
-        => 
+        =>
         < H :Heater | Status: fairlyhot > < T :Thermometer | Status: high > .
 
     *** If the waterheater is on and it is not evening, then put the heater from very hot to fairly hot.
     crl [heaterVeryhotToFairlyhot2] :
         < H :Heater | Status: veryhot > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
-        => 
+        =>
         < H :Heater | Status: fairlyhot > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
         if CS =/= evening .
 
@@ -97,4 +97,3 @@ mod SMARTHOME is protecting STRING .
         < C :Clock | Status: earlymorning > < WH :Waterheater | Status: on > .
 endm
 eof
-    
