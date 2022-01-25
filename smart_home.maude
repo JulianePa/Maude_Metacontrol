@@ -1,91 +1,100 @@
 mod SMARTHOME is protecting STRING .
 
     *** The components of the system
-    sorts Heater Waterheater Window Thermometer Airquality Clock Configuration .
+    sorts Oid Heater Waterheater Window Thermometer Airquality Clock Configuration .
     subsorts Heater Waterheater Window Thermometer Airquality Clock < Configuration .
+    subsort String < Oid .  *** Object identifier
 
     op none : -> Configuration [ctor] .
     op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
     *** The statuses of the components
-    sorts HeaterStatus WaterheaterStatus WindowStatus Temperature AirqualityStatus Time  .
+    sorts HeaterStatus WaterheaterStatus WindowStatus ThermometerStatus AirqualityStatus ClockStatus  .
 
     *** The values the statuses can take
     ops off fairlyhot veryhot : -> HeaterStatus .
     ops on off : -> WaterheaterStatus .
     ops open closed : -> WindowStatus .
-    ops low medium high : -> Temperature .
+    ops low medium high : -> ThermometerStatus .
     ops good bad : -> AirqualityStatus .
-    ops earlymorning morningAfternoon evening : -> Time .
+    ops earlymorning morningAfternoon evening : -> ClockStatus .
 
     *** Specification of the components
-    op < _ :Heater | Status: _ > : Configuration HeaterStatus -> Heater .
-    op < _ :Waterheater | Status: _ > : Configuration WaterheaterStatus -> Waterheater .
-    op < _ :Window | Status: _ > : Configuration WindowStatus -> Window .
-    op < _ :Thermometer | Status: _ > : Configuration Temperature -> Thermometer .
-    op < _ :Airquality | Status: _ > : Configuration AirqualityStatus -> Airquality .
-    op < _ :Clock | Status: _ > : Configuration Time -> Clock .
+    op < _ :Heater | Status: _ > : Oid HeaterStatus -> Heater .
+    op < _ :Waterheater | Status: _ > : Oid WaterheaterStatus -> Waterheater .
+    op < _ :Window | Status: _ > : Oid WindowStatus -> Window .
+    op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer .
+    op < _ :Airquality | Status: _ > : Oid AirqualityStatus -> Airquality .
+    op < _ :Clock | Status: _ > : Oid ClockStatus -> Clock .
 
 
-    var h : Heater .
-    var wh : Waterheater .
-    var w : Window .
-    var t : Thermometer .
-    var aq : Airquality .
-    var c : Clock .
+    vars H WH W T AQ C : Oid .
 
-    var hs : HeaterStatus .
-    var whs : WaterheaterStatus .
-    var ws : WindowStatus .
-    var ts : Temperature .
-    var aqs : AirqualityStatus .
-    var cs : Time .
+    var HS : HeaterStatus .
+    var WHS : WaterheaterStatus .
+    var WS : WindowStatus .
+    var TS : ThermometerStatus .
+    var AQS : AirqualityStatus .
+    var CS : ClockStatus .
+    
+    op init : -> Configuration .
+    eq  init = < "homeHeater" :Heater | Status: off > 
+            < "homeWaterHeater" :Waterheater | Status: off > 
+            < "homeWindow" :Window | Status: closed > 
+            < "homeThermometer" :Thermometer | Status: low >
+            < "homeAirQuality" :Airquality | Status: bad >
+            < "homeClock" :Clock | Status: earlymorning > .
 
-    eof
 
     *** If the temperature is low, the waterheater is on and it is not evening (i.e. electricity is expensive), then only turn the heater to fairly hot.
     crl [heaterOffToFairlyhot] : 
-        < h :Heater | Status: off > < t :Thermometer | Status: low > < wh :Waterheater | Status: on > < c :Clock | Status: cs > 
+        < H :Heater | Status: off > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS > 
         => 
-        < h :Heater | Status: fairlyhot > < t :Thermometer | Status: low > < wh :Waterheater | Status: on > < c :Clock | Status: cs > 
-        if  cs =/= evening .
+        < H :Heater | Status: fairlyhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS > 
+        if  CS =/= evening .
 
-    *** If the temperature is low and the waterheater is off or it is evening (i.e. electricity is not expensive), then turn the heater to very hot.
-    crl [heaterOffToVeryhot] :
-        < h :Heater | Status: hs > < t :Thermometer | Status: low > < wh :Waterheater | Status: ws > < c :Clock | Status: ts >
+    *** If the temperature is low and the waterheater is off, then turn the heater to very hot.
+    rl [heaterOffToVeryhot] :
+        < H :Heater | Status: HS > < T :Thermometer | Status: low > < WH :Waterheater | Status: off >
         => 
-        < h :Heater | Status: veryhot > < t :Thermometer | Status: low > < wh :Waterheater | Status: ws > < c :Clock | Status: ts >
-        if ws == off \/ ts == evening .
+        < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: off > .
+
+    *** If the temperature is low and it is evening (i.e. electricity is not expensive), then turn the heater to very hot.
+    rl [heaterOffToVeryhot] :
+        < H :Heater | Status: HS > < T :Thermometer | Status: low > < C :Clock | Status: evening >
+        => 
+        < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < C :Clock | Status: evening > .
 
     *** If the air quality is bad, then turn the heater off and open the window.
     rl [heaterOffWindowOpen] :
-        < h :Heater | Status: hs > < w :Window | Status: ws > < aq :Airquality | Status: bad >
+        < H :Heater | Status: HS > < W :Window | Status: WS > < AQ :Airquality | Status: bad >
         =>
-        < h :Heater | Status: off > < w :Window | Status: open > < aq :Airquality | Status: bad > .
+        < H :Heater | Status: off > < W :Window | Status: open > < AQ :Airquality | Status: bad > .
 
     *** If the temperature is high, then put the heater from very hot to fairly hot.
-    crl [heaterVeryhotToFairlyhot1] :
-        < h :Heater | Status: veryhot > < t :Thermometer | Status: high >
+    rl [heaterVeryhotToFairlyhot1] :
+        < H :Heater | Status: veryhot > < T :Thermometer | Status: high >
         => 
-        < h :Heater | Status: fairlyhot > < t :Thermometer | Status: high > .
+        < H :Heater | Status: fairlyhot > < T :Thermometer | Status: high > .
 
     *** If the waterheater is on and it is not evening, then put the heater from very hot to fairly hot.
     crl [heaterVeryhotToFairlyhot2] :
-        < h :Heater | Status: veryhot > < wh :Waterheater | Status: on > < c :Clock | Status: cs >
+        < H :Heater | Status: veryhot > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
         => 
-        < h :Heater | Status: fairlyhot > < wh :Waterheater | Status: on > < c :Clock | Status: cs >
-        if cs =/= evening .
+        < H :Heater | Status: fairlyhot > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
+        if CS =/= evening .
 
     *** If the air quality is good and the window is still open, then close the window,
     rl [closeWindowIfAirqualityGood] :
-        < aq :Airquality | Status: good > < w :Window | Status: open >
+        < AQ :Airquality | Status: good > < W :Window | Status: open >
         =>
-        < aq :Airquality | Status: good > < w :Window | Status: closed > .
+        < AQ :Airquality | Status: good > < W :Window | Status: closed > .
 
     *** Turn the waterheater on in the early morning
     rl [morningWaterHeating] :
-        < c :Clock | Status: earlymorning > < wh :Waterheater | Status: whs >
+        < C :Clock | Status: earlymorning > < WH :Waterheater | Status: WHS >
         =>
-        < c :Clock | Status: earlymorning > < wh :Waterheater | Status: on > .
-
+        < C :Clock | Status: earlymorning > < WH :Waterheater | Status: on > .
+endm
+eof
     
