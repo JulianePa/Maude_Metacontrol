@@ -19,6 +19,13 @@ mod SMARTHOME is protecting STRING .
     op < _ :ObserverMWH > : Oid -> ObserverMWH [format (nty y y y y)] .
     op < _ :ObserverES > : Oid -> ObserverES [format (nty y y y y)] .
 
+    *** The current PID controller that is used in the heater
+    sort PIDController .
+
+    *** The PID controllers to switch the heater from
+    *** off to very hot (pidovh), from off to fairly hot (pidofh), from fairly hot to very hot (pidfhvh), from very hot to fairly hot(pidvhfh), and from very hot or fairly hot to off (pidxo)
+    ops pidovh pidofh pidfhvh pidvhfh pidxo : -> PIDController .
+
     *** The statuses of the components
     sorts HeaterStatus WaterheaterStatus WindowStatus ThermometerStatus AirqualityStatus ClockStatus  .
     *** All these statuses can be sent as content in a message
@@ -36,7 +43,7 @@ mod SMARTHOME is protecting STRING .
     op msg_from_to_ : Content Oid Oid -> Msg [format(ntg g g g g g g)] .
 
     *** Specification of the components
-    op < _ :Heater | Status: _  > : Oid HeaterStatus -> Heater [format (ntb b b b b b b o)] .
+    op < _ :Heater | Status: _, CurrentPID: _ > : Oid HeaterStatus PIDController -> Heater [format (ntb b b b b b b b b b o)] .
     op < _ :Waterheater | Status: _ > : Oid WaterheaterStatus -> Waterheater [format (ntb b b b b b b o)] .
     op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntb b b b b b b o)] .
     op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer [format (ntb b b b b b b o)] .
@@ -47,7 +54,7 @@ mod SMARTHOME is protecting STRING .
     vars H WH W T AQ C : Oid .
     vars OMD OAQ OMWH OES : Oid .
 
-    var HS : HeaterStatus .
+    var HS1 HS2 : HeaterStatus .
     var WHS : WaterheaterStatus .
     var WS : WindowStatus .
     var TS : ThermometerStatus .
@@ -55,7 +62,7 @@ mod SMARTHOME is protecting STRING .
     var CS : ClockStatus .
 
     op init : -> Configuration .
-    eq  init = < "homeHeater" :Heater | Status: off >
+    eq  init = < "homeHeater" :Heater | Status: off, CurrentPID: pidxo >
             < "homeWaterHeater" :Waterheater | Status: off >
             < "homeWindow" :Window | Status: closed >
             < "homeThermometer" :Thermometer | Status: low >
@@ -65,14 +72,19 @@ mod SMARTHOME is protecting STRING .
     op init2 : -> Configuration .
     eq init2 = < "homeObserverMD" :ObserverMD >
               < "homeObserverES" :ObserverES >
-              < "homeHeater" :Heater | Status: off > .
+              < "homeHeater" :Heater | Status: fairlyhot, CurrentPID: pidofh >
+              < "homeWindow" :Window | Status: open >
+              (msg fairlyhot from "homeHeater" to "homeObserverMD")
+              (msg open from "homeWindow" to "homeObserverMD") .
+
+endm
+eof
 
 
 
 
 
-    endm
-    eof
+
 
 
 
