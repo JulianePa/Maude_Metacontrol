@@ -2,33 +2,50 @@ mod SMARTHOME is protecting STRING .
 
     *** The components of the system
     sorts Oid Heater Waterheater Window Thermometer Airquality Clock Configuration .
-    subsorts Heater Waterheater Window Thermometer Airquality Clock < Configuration .
+    sorts Content Msg .     *** Message passing
+    subsorts Heater Waterheater Window Thermometer Airquality Clock Content Msg < Configuration .
     subsort String < Oid .  *** Object identifier
 
     op none : -> Configuration [ctor] .
     op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
+    *** The observers for the quality attributes minimize dispersion (MD), air quality (AQ), morning water heating (MWH), and electricity saving (ES).
+    sorts ObserverMD ObserverAQ ObserverMWH ObserverES .
+    subsorts ObserverMD ObserverAQ ObserverMWH ObserverES < Configuration .
+
+    *** TODO should an observer know which components it observes?
+    op < _ :ObserverMD > : Oid -> ObserverMD [format (nty y y y y)] .
+    op < _ :ObserverAQ > : Oid -> ObserverAQ [format (nty y y y y)] .
+    op < _ :ObserverMWH > : Oid -> ObserverMWH [format (nty y y y y)] .
+    op < _ :ObserverES > : Oid -> ObserverES [format (nty y y y y)] .
+
     *** The statuses of the components
     sorts HeaterStatus WaterheaterStatus WindowStatus ThermometerStatus AirqualityStatus ClockStatus  .
+    *** All these statuses can be sent as content in a message
+    subsorts HeaterStatus WaterheaterStatus WindowStatus ThermometerStatus AirqualityStatus ClockStatus < Content .
 
     *** The values the statuses can take
-    ops off fairlyhot veryhot : -> HeaterStatus .
+    ops heaterOff fairlyhot veryhot : -> HeaterStatus .
     ops on off : -> WaterheaterStatus .
     ops open closed : -> WindowStatus .
     ops low medium high : -> ThermometerStatus .
     ops good bad : -> AirqualityStatus .
     ops earlymorning morningAfternoon evening : -> ClockStatus .
 
+    *** Send messages
+    op msg_from_to_ : Content Oid Oid -> Msg [format(ntg g g g g g g)] .
+
     *** Specification of the components
-    op < _ :Heater | Status: _ > : Oid HeaterStatus -> Heater [format (ntr r r r r r r o)] .
+    op < _ :Heater | Status: _  > : Oid HeaterStatus -> Heater [format (ntb b b b b b b o)] .
     op < _ :Waterheater | Status: _ > : Oid WaterheaterStatus -> Waterheater [format (ntb b b b b b b o)] .
-    op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntc c c c c c c o)] .
-    op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer [format (nty y y y y y y o)] .
-    op < _ :Airquality | Status: _ > : Oid AirqualityStatus -> Airquality [format (ntg g g g g g g o)] .
-    op < _ :Clock | Status: _ > : Oid ClockStatus -> Clock [format (ntm m m m m m m o)] .
+    op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntb b b b b b b o)] .
+    op < _ :Thermometer | Status: _ > : Oid ThermometerStatus -> Thermometer [format (ntb b b b b b b o)] .
+    op < _ :Airquality | Status: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
+    op < _ :Clock | Status: _ > : Oid ClockStatus -> Clock [format (ntb b b b b b b o)] .
 
 
     vars H WH W T AQ C : Oid .
+    vars OMD OAQ OMWH OES : Oid .
 
     var HS : HeaterStatus .
     var WHS : WaterheaterStatus .
@@ -45,8 +62,24 @@ mod SMARTHOME is protecting STRING .
             < "homeAirQuality" :Airquality | Status: bad >
             < "homeClock" :Clock | Status: earlymorning > .
 
+    op init2 : -> Configuration .
+    eq init2 = < "homeObserverMD" :ObserverMD >
+              < "homeObserverES" :ObserverES >
+              < "homeHeater" :Heater | Status: off > .
+
+
+
+
+
+    endm
+    eof
+
+
+
+
 
     *** If the temperature is low, the waterheater is on and it is not evening (i.e. electricity is expensive), then only turn the heater to fairly hot.
+    *** Includes QA-ES
     crl [heaterOffToFairlyhot] :
         < H :Heater | Status: off > < T :Thermometer | Status: low > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
         =>
@@ -54,18 +87,19 @@ mod SMARTHOME is protecting STRING .
         if  CS =/= evening .
 
     *** If the temperature is low and the waterheater is off, then turn the heater to very hot.
-    rl [heaterOffToVeryhot] :
+    rl [heaterOffToVeryhot1] :
         < H :Heater | Status: HS > < T :Thermometer | Status: low > < WH :Waterheater | Status: off >
         =>
         < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < WH :Waterheater | Status: off > .
 
     *** If the temperature is low and it is evening (i.e. electricity is not expensive), then turn the heater to very hot.
-    rl [heaterOffToVeryhot] :
+    rl [heaterOffToVeryhot2] :
         < H :Heater | Status: HS > < T :Thermometer | Status: low > < C :Clock | Status: evening >
         =>
         < H :Heater | Status: veryhot > < T :Thermometer | Status: low > < C :Clock | Status: evening > .
 
     *** If the air quality is bad, then turn the heater off and open the window.
+    *** Mix of QA-MD and QA-AQ
     rl [heaterOffWindowOpen] :
         < H :Heater | Status: HS > < W :Window | Status: WS > < AQ :Airquality | Status: bad >
         =>
@@ -78,6 +112,7 @@ mod SMARTHOME is protecting STRING .
         < H :Heater | Status: fairlyhot > < T :Thermometer | Status: high > .
 
     *** If the waterheater is on and it is not evening, then put the heater from very hot to fairly hot.
+    *** Includes QA-ES
     crl [heaterVeryhotToFairlyhot2] :
         < H :Heater | Status: veryhot > < WH :Waterheater | Status: on > < C :Clock | Status: CS >
         =>
@@ -91,9 +126,8 @@ mod SMARTHOME is protecting STRING .
         < AQ :Airquality | Status: good > < W :Window | Status: closed > .
 
     *** Turn the waterheater on in the early morning
+    *** QA-MWH
     rl [morningWaterHeating] :
         < C :Clock | Status: earlymorning > < WH :Waterheater | Status: WHS >
         =>
         < C :Clock | Status: earlymorning > < WH :Waterheater | Status: on > .
-endm
-eof
