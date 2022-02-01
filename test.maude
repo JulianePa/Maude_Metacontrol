@@ -1,0 +1,10 @@
+mod TEST is
+  protecting PHYSICS .
+
+  op init : -> Configuration .
+  eq init = < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+            < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeClock" :Clock | Time: 0 > .
+
+endm
