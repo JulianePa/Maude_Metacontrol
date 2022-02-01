@@ -1,7 +1,11 @@
-mod PHYSICS is protecting FLOAT . protecting STRING .
+mod PHYSICS is
+  protecting STRING .
+  protecting FLOAT .
+
   *** The components of the system
   sorts Oid Heater Window Thermometer Clock Flag Configuration .
-  subsorts Oid Heater Window Thermometer Clock Flag < Configuration .
+  subsorts Heater Window < Configuration .
+  *** subsorts Heater Window Thermometer Clock Flag < Configuration .
   subsort String < Oid .  *** Object identifier
   subsort Float < Thermometer .
   *** subsort Nat < Clock .
@@ -22,8 +26,6 @@ mod PHYSICS is protecting FLOAT . protecting STRING .
   *** Specification of the components
   op < _ :Heater | Status: _  > : Oid HeaterStatus -> Heater [format (ntb b b b b b b o)] .
   op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntb b b b b b b o)] .
-
-
 
 
 endm
