@@ -1,31 +1,85 @@
 mod PHYSICS is
   protecting STRING .
   protecting FLOAT .
+  protecting NAT .
 
   *** The components of the system
-  sorts Oid Heater Window Thermometer Clock Flag Configuration .
-  subsorts Heater Window < Configuration .
-  *** subsorts Heater Window Thermometer Clock Flag < Configuration .
+  sorts Oid Heater Window Thermometer Clock Configuration .
+  subsorts Heater Window Thermometer Clock < Configuration .
   subsort String < Oid .  *** Object identifier
-  subsort Float < Thermometer .
-  *** subsort Nat < Clock .
-  *** subsort Bool < Flag .
 
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
-  ops yes no : -> Flag .
-
   *** The statuses of the components
-  sorts HeaterStatus WindowStatus  .
+  sorts HeaterStatus WindowStatus Temperature Time Flag .
+  subsort Float < Temperature .
+  subsort Nat < Time .
 
   *** The values the statuses can take
-  ops heaterOff fairlyhot veryhot : -> HeaterStatus .
+  ops off fairlyhot veryhot : -> HeaterStatus .
   ops open halfopen closed : -> WindowStatus .
+  ops yes no : -> Flag .
 
   *** Specification of the components
-  op < _ :Heater | Status: _  > : Oid HeaterStatus -> Heater [format (ntb b b b b b b o)] .
-  op < _ :Window | Status: _ > : Oid WindowStatus -> Window [format (ntb b b b b b b o)] .
+  op < _ :Heater | Status: _, RuleApplied: _  > : Oid HeaterStatus Flag -> Heater [format (ntb b b b b b b b b b o)] .
+  op < _ :Window | Status: _, RuleApplied: _  > : Oid WindowStatus Flag -> Window [format (ntb b b b b b b b b b o)] .
+  op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
+  op < _ :Clock | Time: _ > : Oid Time -> Clock [format (ntb b b b b b b o)] .
+
+
+  op init : -> Configuration .
+  eq init = < "homeHeater" :Heater | Status: veryhot, RuleApplied: no >
+            < "homeWindow" :Window | Status: open, RuleApplied: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeClock" :Clock | Time: 0 > .
+
+  vars H W T C : Oid .
+  var DG : Temperature .
+  var HS : HeaterStatus .
+  var WS : WindowStatus .
+  var TI : Time .
+
+  *** Rules heater
+  *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
+  rl [heaterOff] :
+    < H :Heater | Status: off, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: off, RuleApplied: yes > < T :Thermometer | Degrees: DG > .
+
+  rl [heaterFairlyhot] :
+    < H :Heater | Status: fairlyhot, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: fairlyhot, RuleApplied: yes > < T :Thermometer | Degrees: DG + 0.2 > .
+
+  rl [heaterVeryhot] :
+    < H :Heater | Status: veryhot, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: veryhot, RuleApplied: yes > < T :Thermometer | Degrees: DG + 0.4 > .
+
+  *** Rules Window
+  *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
+  rl [windowClosed] :
+    < W :Window | Status: closed, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: closed, RuleApplied: yes > < T :Thermometer | Degrees: DG > .
+
+  rl [windowHalfopen] :
+    < W :Window | Status: halfopen, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: halfopen, RuleApplied: yes > < T :Thermometer | Degrees: DG - 0.2 > .
+
+  rl [windowOpen] :
+    < W :Window | Status: open, RuleApplied: no > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: open, RuleApplied: yes > < T :Thermometer | Degrees: DG - 0.4 > .
+
+  *** Rule time
+  *** If both the heater and the window affected the temperature in the current hour, then time goes to the next hour and the flags for the heater and window change (rules can be applied again)
+  rl [timeAdvances] :
+    < H :Heater | Status: HS, RuleApplied: yes > < W :Window | Status: WS, RuleApplied: yes > < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleApplied: no > < W :Window | Status: WS, RuleApplied: no > < C :Clock | Time: TI + 1 > .
 
 
 endm
