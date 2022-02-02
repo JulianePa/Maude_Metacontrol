@@ -1,0 +1,68 @@
+mod CONTROLLERS is
+  protecting PHYSICS .
+
+  sort Controller1 Controller2 .
+  subsort Controller1 Controller2 < Configuration .
+
+  *** Indicates whether the current controller is active or passive at the moment.
+  sort Selected .
+  ops yes no : -> Selected .
+
+  op < _ :Controller1 | Selected: _ > : Oid Selected -> Controller1 [format (nty y y y y y y o)] .    *** The heater prefering controller
+  op < _ :Controller2 | Selected: _ > : Oid Selected -> Controller2 [format (nty y y y y y y o)] .    *** The window prefering controller
+
+  vars H W T C C1 C2 : Oid .
+  var DG : Temperature .
+  var HS : HeaterStatus .
+  var WS : WindowStatus .
+  var TI : Time .
+  var ET ET1 ET2 : Effect .
+  var RA RA1 RA2 : RuleApplied .
+
+  *** Rules for Controller 1
+  *** Controller 1 switches the heater off if the temperature is above 22 degrees.
+  crl [C1SwitchHeaterOff] :
+    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+    =>
+    < H :Heater | Status: off, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+    if DG > 22.0
+    [print "Degrees: " DG ", rule: [C1SwitchHeaterOff]"] .
+
+  *** Controller 1 turns the heater to very hot if the temperature is below 18 degrees
+  crl [C1TurnHeaterVeryhot] :
+    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+    =>
+    < H :Heater | Status: veryhot, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+    if DG < 18.0
+    [print "Degrees: " DG ", rule: [C1TurnHeaterVeryhot]"] .
+
+  *** Rules for Controller 2
+  *** Controller 2 opens the window if the temperature is above 22 degrees.
+  crl [C2OpenWindow] :
+    < W :Window | Status: WS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    =>
+    < W :Window | Status: open, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    if DG > 22.0
+    [print "Degrees: " DG ", rule: [C2OpenWindow]"] .
+
+  *** Controller 2 closes the window if the temperature is below 18 degrees.
+  crl [C2CloseWindow] :
+    < W :Window | Status: WS, RuleApplied: RA1, EffectsTemp: ET1 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    =>
+    < W :Window | Status: closed, RuleApplied: RA1, EffectsTemp: ET1 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    if DG < 18.0
+    [print "Degrees: " DG ", rule: [C2CloseWindow]"] .
+
+
+
+endm
+eof
+
+
+  *** Controller 2 closes the window and turns the heater on if the temperature is below 18 degrees.
+  crl [C2CloseWindowHeaterOn] :
+    < W :Window | Status: WS, RuleApplied: RA1, EffectsTemp: ET1 > < H :Heater | Status: HS, RuleApplied: RA2, EffectsTemp: ET2 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    =>
+    < W :Window | Status: closed, RuleApplied: RA1, EffectsTemp: ET1 > < H :Heater | Status: fairlyhot, RuleApplied: RA2, EffectsTemp: ET2 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+    if DG < 18.0
+    [print "Degrees: " DG ", rule: [C2CloseWindow]"] .
