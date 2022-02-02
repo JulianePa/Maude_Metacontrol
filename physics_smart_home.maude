@@ -12,19 +12,21 @@ mod PHYSICS is
   op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
   *** The statuses of the components
-  sorts HeaterStatus WindowStatus Temperature Time Flag Effect .
+  sorts HeaterStatus WindowStatus Temperature Time .
   subsort Float < Temperature .
-  subsort Float < Effect .          *** The effect indicates how much the window and heater can decrease and increase the temperature in the room.
   subsort Nat < Time .
-
   *** The values the statuses can take
   ops off fairlyhot veryhot : -> HeaterStatus .
   ops open halfopen closed : -> WindowStatus .
-  ops yes no : -> Flag .
+
+  *** The additional attributes of the heater and window
+  sorts RuleApplied Effect .
+  subsort Float < Effect .          *** The effect indicates how much the window and heater can decrease and increase the temperature in the room.
+  ops yes no : -> RuleApplied .     *** Indicates if a rule was applied at the current time step.
 
   *** Specification of the components
-  op < _ :Heater | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid HeaterStatus Flag Effect -> Heater [format (ntb b b b b b b b b b b b b o)] .
-  op < _ :Window | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid WindowStatus Flag Effect -> Window [format (ntb b b b b b b b b b b b b o)] .
+  op < _ :Heater | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid HeaterStatus RuleApplied Effect -> Heater [format (ntb b b b b b b b b b b b b o)] .
+  op < _ :Window | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid WindowStatus RuleApplied Effect -> Window [format (ntb b b b b b b b b b b b b o)] .
   op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
   op < _ :Clock | Time: _ > : Oid Time -> Clock [format (ntb b b b b b b o)] .
 
@@ -33,48 +35,57 @@ mod PHYSICS is
   var HS : HeaterStatus .
   var WS : WindowStatus .
   var TI : Time .
-  var ET : Effect .
+  vars ET ET1 ET2 : Effect .
 
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
-  rl [heaterOff] :
+  rl [TempHeaterOff] :
     < H :Heater | Status: off, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: off, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG > .
+    < H :Heater | Status: off, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
 
-  rl [heaterFairlyhot] :
+  rl [TempHeaterFairlyhot] :
     < H :Heater | Status: fairlyhot, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: fairlyhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + ET > .
+    < H :Heater | Status: fairlyhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
 
-  rl [heaterVeryhot] :
+  rl [TempHeaterVeryhot] :
     < H :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: veryhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET > .
+    < H :Heater | Status: veryhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
 
   *** Rules Window
   *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
-  rl [windowClosed] :
+  rl [TempWindowClosed] :
     < W :Window | Status: closed, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: closed, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG > .
+    < W :Window | Status: closed, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
 
-  rl [windowHalfopen] :
+  rl [TempWindowHalfopen] :
     < W :Window | Status: halfopen, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: halfopen, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + ET > .
+    < W :Window | Status: halfopen, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG "rule [TempWindowHalfopen]"] .
 
-  rl [windowOpen] :
+  rl [TempWindowOpen] :
     < W :Window | Status: open, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: open, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET > .
+    < W :Window | Status: open, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
 
   *** Rule time
   *** If both the heater and the window affected the temperature in the current hour, then time goes to the next hour and the flags for the heater and window change (rules can be applied again)
   rl [timeAdvances] :
-    < H :Heater | Status: HS, RuleApplied: yes, EffectsTemp: ET > < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET > < C :Clock | Time: TI >
+    < H :Heater | Status: HS, RuleApplied: yes, EffectsTemp: ET1 > < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET2 > < C :Clock | Time: TI >
     =>
-    < H :Heater | Status: HS, RuleApplied: no, EffectsTemp: ET > < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET > < C :Clock | Time: TI + 1 > .
+    < H :Heater | Status: HS, RuleApplied: no, EffectsTemp: ET1 > < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET2 > < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvances]"] .
+
 
 
 endm
+eof
