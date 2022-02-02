@@ -1,10 +1,45 @@
 mod TEST is
-  protecting PHYSICS .
+  protecting CONTROLLERS .
 
   op init : -> Configuration .
   eq init = < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
             < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
-            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Time: 0 > .
 
+  op init2 : -> Configuration .
+  eq init2 = < "heterPreferingController" :Controller1 | Selected: yes >
+              < "windowPreferingController" :Controller2 | Selected: no >
+              < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+              < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
+              < "homeThermometer" :Thermometer | Degrees: 22.1 >
+              < "homeClock" :Clock | Time: 0 > .
+
 endm
+eof
+
+
+
+
+search < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+          < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+          < "homeThermometer" :Thermometer | Degrees: 20.0 >
+          < "homeClock" :Clock | Time: 0 >
+           =>*
+           < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+           < "homeThermometer" :Thermometer | Degrees: DG >
+           < "homeClock" :Clock | Time: 10 >
+           such that DG < 30 .
+
+*** This doesn't work and I don't know why.
+*** As soon as I include the thermometer or the clock, it doesn't find any solution (even if I put the same configuration on both sides and use =>*).
+search < "homeHeater" :Heater | Status: veryhot, RuleApplied: yes, EffectsTemp: 0.2 >
+          < "homeWindow" :Window | Status: open, RuleApplied: yes, EffectsTemp: - 0.2 >
+          < "homeThermometer" :Thermometer | Degrees: 20.0 >
+          < "homeClock" :Clock | Time: 0 >
+           =>1
+           < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+           < "homeThermometer" :Thermometer | Degrees: 20.0 >
+           < "homeClock" :Clock | Time: 1 > .
