@@ -7,7 +7,11 @@ mod TEST is
   vars T C : Oid .
   var DG : Temperature .
   var TI : Time .
+  vars RA1 RA2 : RuleApplied .
+  var HS : HeaterStatus .
+  var WS : WindowStatus .
   vars INIT CON : Configuration .
+  vars ET ET1 ET2 : Effect .
 
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
   eq getTime(< C :Clock | Time: TI > CON) = TI .
@@ -58,8 +62,8 @@ search [1] < "heterPreferingController" :Controller1 | Selected: yes >
            =>*
            < "heterPreferingController" :Controller1 | Selected: yes >
            < "windowPreferingController" :Controller2 | Selected: no >
-           < "homeHeater" :Heater | Status: HS, RuleApplied: RA, EffectsTemp: 0.2 >
-           < "homeWindow" :Window | Status: WS, RuleApplied: RA, EffectsTemp: - 0.2 >
+           < "homeHeater" :Heater | Status: HS, RuleApplied: RA1, EffectsTemp: ET1 >
+           < "homeWindow" :Window | Status: WS, RuleApplied: RA2, EffectsTemp: ET2 >
            < "homeThermometer" :Thermometer | Degrees: DG >
            < "homeClock" :Clock | Time: 10 > .
 
@@ -71,7 +75,9 @@ search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTem
           < "homeThermometer" :Thermometer | Degrees: 20.0 >
           < "homeClock" :Clock | Time: 0 >
            =>*
-           < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
-           < "homeThermometer" :Thermometer | Degrees: 20.0 >
-           < "homeClock" :Clock | Time: 0 > .
+           < "homeHeater" :Heater | Status: HS, RuleApplied: RA1, EffectsTemp: ET1 >
+           < "homeWindow" :Window | Status: WS, RuleApplied: RA2, EffectsTemp: ET2 >
+           < "homeThermometer" :Thermometer | Degrees: DG >
+           < "homeClock" :Clock | Time: TI >
+           such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2 
+           /\ HS == veryhot /\ WS == open /\ RA1 == no /\ RA2 == no .
