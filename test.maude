@@ -1,12 +1,16 @@
 mod TEST is
   protecting CONTROLLERS .
 
-  op meassureTemp : Configuration -> Temperature .
+  op getTemp : Configuration -> Temperature .
+  op getTime : Configuration -> Time .
 
-  var T : Oid .
+  vars T C : Oid .
   var DG : Temperature .
-  var CON : Configuration .
-  eq meassureTemp(< T :Thermometer | Degrees: DG > CON) = DG .
+  var TI : Time .
+  vars INIT CON : Configuration .
+
+  eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
+  eq getTime(< C :Clock | Time: TI > CON) = TI .
 
   op init : -> Configuration .
   eq init = < "homeHeater" :Heater | Status: off, RuleApplied: no, EffectsTemp: 0.2 >
@@ -29,9 +33,22 @@ endm
 eof
 
 *** This search doesn't work. I get a warning "bad token INIT"
-search [1] init =>* INIT:Configuration such that meassureTemp(INIT) <= 0.0 .
+search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
 
 *** This search doesn't terminate, which is strange because I only specify that the time should be at step 10.
+search [1] init =>* INIT:Configuration such that getTime(INIT) == 10 .
+
+search [1] < "heterPreferingController" :Controller1 | Selected: yes >
+            < "windowPreferingController" :Controller2 | Selected: no >
+            < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 22.1 >
+            < "homeClock" :Clock | Time: 0 >
+            =>*
+            INIT:Configuration such that
+            getTime(INIT) == 10 .
+
+
 search [1] < "heterPreferingController" :Controller1 | Selected: yes >
             < "windowPreferingController" :Controller2 | Selected: no >
             < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
@@ -47,6 +64,8 @@ search [1] < "heterPreferingController" :Controller1 | Selected: yes >
            < "homeClock" :Clock | Time: 10 > .
 
 *** This search doesn't terminate either, which is strange because I'm searching for one configuration which is exactly the start configuration.
+search [1] init =>* INIT:Configuration such that INIT == init .
+
 search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
           < "homeThermometer" :Thermometer | Degrees: 20.0 >
