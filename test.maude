@@ -45,7 +45,7 @@ search [1] init =>* INIT:Configuration such that getTime(INIT) == 10 .
 search [1] < "heterPreferingController" :Controller1 | Selected: yes >
             < "windowPreferingController" :Controller2 | Selected: no >
             < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
+            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: -0.2 >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Time: 0 >
             =>*
@@ -56,7 +56,7 @@ search [1] < "heterPreferingController" :Controller1 | Selected: yes >
 search [1] < "heterPreferingController" :Controller1 | Selected: yes >
             < "windowPreferingController" :Controller2 | Selected: no >
             < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
+            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: -0.2 >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Time: 0 >
            =>*
@@ -71,7 +71,7 @@ search [1] < "heterPreferingController" :Controller1 | Selected: yes >
 search [1] init =>* INIT:Configuration such that INIT == init .
 
 search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-          < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+          < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: -0.2 >
           < "homeThermometer" :Thermometer | Degrees: 20.0 >
           < "homeClock" :Clock | Time: 0 >
            =>*
@@ -79,5 +79,15 @@ search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTem
            < "homeWindow" :Window | Status: WS, RuleApplied: RA2, EffectsTemp: ET2 >
            < "homeThermometer" :Thermometer | Degrees: DG >
            < "homeClock" :Clock | Time: TI >
-           such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2 
+           such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2
            /\ HS == veryhot /\ WS == open /\ RA1 == no /\ RA2 == no .
+
+search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: -0.2 >
+           < "homeThermometer" :Thermometer | Degrees: 20.0 >
+           < "homeClock" :Clock | Time: 0 >
+            =>*
+            < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+            < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: -0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeClock" :Clock | Time: 0 > .
