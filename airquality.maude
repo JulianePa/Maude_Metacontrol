@@ -1,0 +1,24 @@
+mod AIRQUALITY is
+  protecting PHYSICS .
+
+  sort Airquality .
+  subsort Airquality < Configuration .
+
+  sort AirqualityStatus .
+  subsort Float < AirqualityStatus .        *** 0 Airquality is normal, airquality >0 is good, airquality < 0 is bad
+
+  op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
+
+  vars H WH W T C : Oid .
+  var DG : Temperature .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var TI : Time .
+  var RA : RuleApplied .
+  vars ET ET1 ET2 : Effect .
+  var AQS : AirqualityStatus .
+
+  
+
+endm
