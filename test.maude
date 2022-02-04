@@ -1,5 +1,6 @@
 mod TEST is
-  protecting CONTROLLERS .
+  ***protecting CONTROLLERS .
+  protecting PHYSICS .
 
   op getTemp : Configuration -> Temperature .
   op getTime : Configuration -> Time .
@@ -17,18 +18,20 @@ mod TEST is
   eq getTime(< C :Clock | Time: TI > CON) = TI .
 
   op init : -> Configuration .
-  eq init = < "homeHeater" :Heater | Status: off, RuleApplied: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
+  eq init = < "homeHeater" :Heater | Status: hOff, RuleApplied: no, EffectsTemp: 0.2, Active: yes >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Time: 0 > .
 
-  op init2 : -> Configuration .
-  eq init2 = < "heterPreferingController" :Controller1 | Selected: yes >
-              < "windowPreferingController" :Controller2 | Selected: no >
-              < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-              < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
-              < "homeThermometer" :Thermometer | Degrees: 22.1 >
-              < "homeClock" :Clock | Time: 0 > .
+  op init3 : -> Configuration .
+  eq init3 = < "homeHeater" :Heater | Status: hOff, RuleApplied: no, EffectsTemp: 0.2, Active: yes >
+            < "homeWaterheater" :Waterheater | Status: whVeryhot, RuleApplied: no, EffectsTemp: 0.1, Active: yes >
+            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: -0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 22.1 >
+            < "homeClock" :Clock | Time: 0 > .
+
+  op init4 : -> Configuration .
+  eq init4 = < "homeWaterheater" :Waterheater | Status: whFairlyhot, RuleApplied: no, EffectsTemp: 0.1, Active: no > .
+
 
 
 
@@ -36,29 +39,31 @@ mod TEST is
 endm
 eof
 
-*** This search doesn't work. I get a warning "bad token INIT"
+op init: -> Configuration .
+eq init = < "homeHeater" :Heater | Status: hOff, RuleApplied: no, EffectsTemp: 0.2, Active: yes >
+          < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: -0.2 >
+          < "homeThermometer" :Thermometer | Degrees: 22.1 >
+          < "homeClock" :Clock | Time: 0 > .
+
+op init2 : -> Configuration .
+eq init2 = < "heterPreferingController" :Controller1 | Selected: yes >
+            < "windowPreferingController" :Controller2 | Selected: no >
+            < "homeHeater" :Heater | Status: hVeryhot, RuleApplied: no, EffectsTemp: 0.2 >
+            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 22.1 >
+            < "homeClock" :Clock | Time: 0 > .
+
 search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
 
-*** This search doesn't terminate, which is strange because I only specify that the time should be at step 10.
+search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 .
+
+
 search [1] init =>* INIT:Configuration such that getTime(INIT) == 10 .
 
-search [1] < "heterPreferingController" :Controller1 | Selected: yes >
-            < "windowPreferingController" :Controller2 | Selected: no >
-            < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
-            < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Time: 0 >
-            =>*
-            INIT:Configuration such that
-            getTime(INIT) == 10 .
+search [1] init2 =>* INIT:Configuration such that getTime(INIT) == 10 .
 
 
-search [1] < "heterPreferingController" :Controller1 | Selected: yes >
-            < "windowPreferingController" :Controller2 | Selected: no >
-            < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: closed, RuleApplied: no, EffectsTemp: - 0.2 >
-            < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Time: 0 >
+search [1] init2
            =>*
            < "heterPreferingController" :Controller1 | Selected: yes >
            < "windowPreferingController" :Controller2 | Selected: no >
@@ -67,10 +72,10 @@ search [1] < "heterPreferingController" :Controller1 | Selected: yes >
            < "homeThermometer" :Thermometer | Degrees: DG >
            < "homeClock" :Clock | Time: 10 > .
 
-*** This search doesn't terminate either, which is strange because I'm searching for one configuration which is exactly the start configuration.
+
 search [1] init =>* INIT:Configuration such that INIT == init .
 
-search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: 0.2 >
+search [1] < "homeHeater" :Heater | Status: hVeryhot, RuleApplied: no, EffectsTemp: 0.2 >
           < "homeWindow" :Window | Status: open, RuleApplied: no, EffectsTemp: - 0.2 >
           < "homeThermometer" :Thermometer | Degrees: 20.0 >
           < "homeClock" :Clock | Time: 0 >
@@ -79,5 +84,5 @@ search [1] < "homeHeater" :Heater | Status: veryhot, RuleApplied: no, EffectsTem
            < "homeWindow" :Window | Status: WS, RuleApplied: RA2, EffectsTemp: ET2 >
            < "homeThermometer" :Thermometer | Degrees: DG >
            < "homeClock" :Clock | Time: TI >
-           such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2 
+           such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2
            /\ HS == veryhot /\ WS == open /\ RA1 == no /\ RA2 == no .
