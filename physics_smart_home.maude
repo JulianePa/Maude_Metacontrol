@@ -4,58 +4,83 @@ mod PHYSICS is
   protecting NAT .
 
   *** The components of the system
-  sorts Oid Heater Window Thermometer Clock Configuration .
-  subsorts Heater Window Thermometer Clock < Configuration .
+  sorts Oid Heater Waterheater Window Thermometer Clock Configuration .
+  subsorts Heater Window Waterheater Thermometer Clock < Configuration .
   subsort String < Oid .  *** Object identifier
 
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
   *** The statuses of the components
-  sorts HeaterStatus WindowStatus Temperature Time .
+  sorts HeaterStatus WaterheaterStatus WindowStatus Temperature Time .
   subsort Float < Temperature .
   subsort Nat < Time .
   *** The values the statuses can take
-  ops off fairlyhot veryhot : -> HeaterStatus .
+  ops hOff hFairlyhot hVeryhot : -> HeaterStatus .
+  ops whOff whFairlyhot whVeryhot : -> WaterheaterStatus .
   ops open halfopen closed : -> WindowStatus .
 
   *** The additional attributes of the heater and window
-  sorts RuleApplied Effect .
+  sorts RuleApplied Effect Active .
   subsort Float < Effect .          *** The effect indicates how much the window and heater can decrease and increase the temperature in the room.
   ops yes no : -> RuleApplied .     *** Indicates if a rule was applied at the current time step.
+  ops yes no : -> Active .        *** Indicates if the heater/water heater is currently active or not.
 
   *** Specification of the components
-  op < _ :Heater | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid HeaterStatus RuleApplied Effect -> Heater [format (ntb b b b b b b b b b b b b o)] .
+  op < _ :Heater | Status: _, RuleApplied: _, EffectsTemp: _, Active: _  > : Oid HeaterStatus RuleApplied Effect Active -> Heater [format (ntb b b b b b b b b b b b b b b b o)] .
+  op < _ :Waterheater | Status: _, RuleApplied: _, EffectsTemp: _, Active: _  > : Oid WaterheaterStatus RuleApplied Effect Active -> Waterheater [format (ntb b b b b b b b b b b b b b b b o)] .
   op < _ :Window | Status: _, RuleApplied: _, EffectsTemp: _  > : Oid WindowStatus RuleApplied Effect -> Window [format (ntb b b b b b b b b b b b b o)] .
   op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
   op < _ :Clock | Time: _ > : Oid Time -> Clock [format (ntb b b b b b b o)] .
 
-  vars H W T C : Oid .
+  vars H WH W T C : Oid .
   var DG : Temperature .
   var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var TI : Time .
+  var RA : RuleApplied .
   vars ET ET1 ET2 : Effect .
 
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
   rl [TempHeaterOff] :
-    < H :Heater | Status: off, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hOff, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: off, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hOff, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
     [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
 
   rl [TempHeaterFairlyhot] :
-    < H :Heater | Status: fairlyhot, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hFairlyhot, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: fairlyhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + ET >
+    < H :Heater | Status: hFairlyhot, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
 
   rl [TempHeaterVeryhot] :
-    < H :Heater | Status: veryhot, RuleApplied: no, EffectsTemp: ET > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hVeryhot, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: veryhot, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    < H :Heater | Status: hVeryhot, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
+
+  *** Rules water heater
+  *** If the water heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the water heater.
+  rl [TempWaterheaterOff] :
+    < WH :Waterheater | Status: whOff, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whOff, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
+
+  rl [TempWaterheaterFairlyhot] :
+    < WH :Waterheater | Status: whFairlyhot, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whFairlyhot, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG ", rule: [TempWaterheaterFairlyhot]"] .
+
+  rl [TempWaterheaterVeryhot] :
+    < WH :Waterheater | Status: whVeryhot, RuleApplied: no, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whVeryhot, RuleApplied: yes, EffectsTemp: ET, Active: yes > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempWaterheaterVeryhot] "] .
 
   *** Rules Window
   *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
@@ -77,13 +102,47 @@ mod PHYSICS is
     < W :Window | Status: open, RuleApplied: yes, EffectsTemp: ET > < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
 
-  *** Rule time
+  *** Rules time
+  *** Case 1: heater is active and waterheater is not active
   *** If both the heater and the window affected the temperature in the current hour, then time goes to the next hour and the flags for the heater and window change (rules can be applied again)
-  rl [timeAdvances] :
-    < H :Heater | Status: HS, RuleApplied: yes, EffectsTemp: ET1 > < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET2 > < C :Clock | Time: TI >
+  rl [timeAdvancesH] :
+    < H :Heater | Status: HS, RuleApplied: yes, EffectsTemp: ET, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleApplied: RA, EffectsTemp: ET1, Active: no >
+    < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET2 >
+    < C :Clock | Time: TI >
     =>
-    < H :Heater | Status: HS, RuleApplied: no, EffectsTemp: ET1 > < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET2 > < C :Clock | Time: TI + 1 >
-    [print "rule: [timeAdvances]"] .
+    < H :Heater | Status: HS, RuleApplied: no, EffectsTemp: ET, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleApplied: RA, EffectsTemp: ET, Active: no >
+    < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesH]"] .
+
+  *** Case 2: water heater is active and heater is not active
+  rl [timeAdvancesWH] :
+    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET, Active: no >
+    < WH :Waterheater | Status: WHS, RuleApplied: yes, EffectsTemp: ET1, Active: yes >
+    < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET2 >
+    < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET, Active: no >
+    < WH :Waterheater | Status: WHS, RuleApplied: no, EffectsTemp: ET, Active: yes >
+    < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesWH]"] .
+
+  *** Case 3: both the water heater and the heater are active
+  *** Case 2: water heater is active and heater is not active
+  rl [timeAdvancesHWH] :
+    < H :Heater | Status: HS, RuleApplied: yes, EffectsTemp: ET, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleApplied: yes, EffectsTemp: ET1, Active: yes >
+    < W :Window | Status: WS, RuleApplied: yes, EffectsTemp: ET2 >
+    < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleApplied: no, EffectsTemp: ET, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleApplied: no, EffectsTemp: ET, Active: yes >
+    < W :Window | Status: WS, RuleApplied: no, EffectsTemp: ET2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesHWH]"] .
 
 
 
