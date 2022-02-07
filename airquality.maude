@@ -1,5 +1,5 @@
 mod AIRQUALITY is
-  protecting PHYSICS .
+  protecting ACTUATORS .
 
   sort Airquality .
   subsort Airquality < Configuration .
