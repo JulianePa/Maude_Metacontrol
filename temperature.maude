@@ -1,0 +1,82 @@
+mod TEMPERATURE is
+  protecting ACTUATORS .
+  protecting FLOAT .
+
+  sorts Thermometer .
+  subsorts Thermometer < Configuration .
+
+  sorts Temperature .
+  subsort Float < Temperature .
+
+  op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
+
+  vars H WH W T C : Oid .
+  var DG : Temperature .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var RAAQ : RuleAppliedAQ .
+  vars ET : EffectTemp .
+  vars EAQ : EffectAQ .
+
+  *** Rules heater
+  *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
+  rl [TempHeaterOff] :
+    < H :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: hOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
+
+  rl [TempHeaterFairlyhot] :
+    < H :Heater | Status: hFairlyhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: hFairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
+
+  rl [TempHeaterVeryhot] :
+    < H :Heater | Status: hVeryhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: hVeryhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
+
+  *** Rules water heater
+  *** If the water heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the water heater.
+  rl [TempWaterheaterOff] :
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
+
+  rl [TempWaterheaterFairlyhot] :
+    < WH :Waterheater | Status: whFairlyhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whFairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG ", rule: [TempWaterheaterFairlyhot]"] .
+
+  rl [TempWaterheaterVeryhot] :
+    < WH :Waterheater | Status: whVeryhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG >
+    =>
+    < WH :Waterheater | Status: whVeryhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempWaterheaterVeryhot] "] .
+
+  *** Rules Window
+  *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
+  rl [TempWindowClosed] :
+    < W :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
+
+  rl [TempWindowHalfopen] :
+    < W :Window | Status: halfopen, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: halfopen, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG + ET >
+    [print "Degrees: " DG "rule: [TempWindowHalfopen]"] .
+
+  rl [TempWindowOpen] :
+    < W :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    =>
+    < W :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
+
+endm
