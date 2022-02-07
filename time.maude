@@ -1,0 +1,65 @@
+mod TIME is
+  protecting ACTUATORS .
+  protecting NAT .
+
+  sort Clock .
+  subsort Clock < Configuration .
+
+  sort Time .
+  subsort Nat < Time .
+
+  op < _ :Clock | Time: _ > : Oid Time -> Clock [format (ntb b b b b b b o)] .
+
+  vars H WH W T C : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var TI : Time .
+  var RAT : RuleAppliedTemp .
+  var RAAQ : RuleAppliedAQ .
+  vars ET ET1 ET2 : EffectTemp .
+  vars EAQ EAQ1 EAQ2 : EffectAQ .
+
+  *** Rules time
+  *** Case 1: heater is active and waterheater is not active
+  *** If both the heater and the window affected the temperature in the current hour, then time goes to the next hour and the flags for the heater and window change (rules can be applied again)
+  rl [timeAdvancesH] :
+    < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: no >
+    < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: no >
+    < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesH]"] .
+
+  *** Case 2: water heater is active and heater is not active
+  rl [timeAdvancesWH] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
+    < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
+    < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesWH]"] .
+
+  *** Case 3: both the water heater and the heater are active
+  *** Case 2: water heater is active and heater is not active
+  rl [timeAdvancesHWH] :
+    < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
+    < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI >
+    =>
+    < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
+    < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2 >
+    < C :Clock | Time: TI + 1 >
+    [print "rule: [timeAdvancesHWH]"] .
+
+endm
