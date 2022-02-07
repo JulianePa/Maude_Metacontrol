@@ -1,36 +1,39 @@
 mod TEST is
   ***protecting CONTROLLERS .
-  protecting PHYSICS .
+  protecting TIME .
+  protecting TEMPERATURE .
+  protecting AIRQUALITY .
 
   op getTemp : Configuration -> Temperature .
   op getTime : Configuration -> Time .
+  op getAirquality : Configuration -> AirqualityStatus .
 
-  vars T C : Oid .
+  vars T C AQ : Oid .
   var DG : Temperature .
   var TI : Time .
   vars RA1 RA2 : RuleAppliedTemp .
   var HS : HeaterStatus .
   var WS : WindowStatus .
+  var AQS : AirqualityStatus .
   vars INIT CON : Configuration .
   vars ET ET1 ET2 : EffectTemp .
 
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
   eq getTime(< C :Clock | Time: TI > CON) = TI .
+  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
 
   op init : -> Configuration .
   eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, EffectsAQ: 0.4, Active: yes >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Time: 0 > .
 
-  op init3 : -> Configuration .
-  eq init3 = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, EffectsAQ: 0.4, Active: yes >
-            < "homeWaterheater" :Waterheater | Status: whVeryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.1, EffectsAQ: 0.2, Active: yes >
-            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: -0.2, EffectsAQ: 0.4 >
-            < "homeThermometer" :Thermometer | Degrees: 22.1 >
+  op init2 : -> Configuration .
+  eq init2 = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.2, EffectsAQ: 0.2, Active: yes >
+            < "homeWaterheater" :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.1, EffectsAQ: 0.1, Active: yes >
+            < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: -0.2, EffectsAQ: -0.2 >
+            < "homeThermometer" :Thermometer | Degrees: 22.0 >
+            < "homeAirquality" :Airquality | Value: 0.0 >
             < "homeClock" :Clock | Time: 0 > .
-
-  op init4 : -> Configuration .
-  eq init4 = < "homeWaterheater" :Waterheater | Status: whFairlyhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.1, EffectsAQ: 0.2, Active: no > .
 
 
 
@@ -39,23 +42,13 @@ mod TEST is
 endm
 eof
 
-op init: -> Configuration .
-eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, Active: yes >
-          < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: -0.2 >
-          < "homeThermometer" :Thermometer | Degrees: 22.1 >
-          < "homeClock" :Clock | Time: 0 > .
-
-op init2 : -> Configuration .
-eq init2 = < "heterPreferingController" :Controller1 | Selected: yes >
-            < "windowPreferingController" :Controller2 | Selected: no >
-            < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2 >
-            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: -0.2 >
-            < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Time: 0 > .
 
 search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
 
-search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 .
+search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 /\ getTime(INIT) <= 30 /\ getAirquality(INIT) <= 2.0 .
+
+
+search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 /\ getTime(INIT) <= 50 .
 
 
 search [1] init =>* INIT:Configuration such that getTime(INIT) == 10 .
