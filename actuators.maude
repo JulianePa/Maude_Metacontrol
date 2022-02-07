@@ -1,0 +1,34 @@
+mod ACTUATORS is
+  protecting STRING .
+  protecting FLOAT .
+
+  *** The components of the system
+  sorts Oid Heater Waterheater Window Configuration .
+  subsorts Heater Window Waterheater < Configuration .
+  subsort String < Oid .  *** Object identifier
+
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
+
+  *** The statuses of the components
+  sorts HeaterStatus WaterheaterStatus WindowStatus .
+
+  *** The values the statuses can take
+  ops hOff hFairlyhot hVeryhot : -> HeaterStatus .
+  ops whOff whFairlyhot whVeryhot : -> WaterheaterStatus .
+  ops open halfopen closed : -> WindowStatus .
+
+  *** The additional attributes of the heater and window
+  sorts RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active .
+  subsort Float < EffectTemp .          *** The effect indicates how much the window and heater can decrease and increase the temperature in the room.
+  subsort Float < EffectAQ .
+  ops yes no : -> RuleAppliedTemp .         *** Indicates if a rule was applied at the current time step.
+  ops yes no : -> RuleAppliedAQ .
+  ops yes no : -> Active .              *** Indicates if the heater/water heater is currently active or not.
+
+  *** Specification of the components
+  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Active: _  > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Active: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ -> Window [format (ntb b b b b b b b b b b b b b b b b b b o)] .
+
+endm
