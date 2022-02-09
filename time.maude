@@ -7,12 +7,12 @@ mod TIME is
 
   sort Timesteps Time .
   subsort Nat < Timesteps .
-  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?              
+  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
+
+  op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
 
   op getTime : Timesteps -> Time .
   op morning? : Time -> Bool .            *** For the controllers it's important to know whether it's morning or not
-
-  op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
 
   vars TS : Timesteps .
   var N : Nat .
