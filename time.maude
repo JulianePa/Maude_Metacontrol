@@ -7,45 +7,23 @@ mod TIME is
 
   sort Timesteps Time .
   subsort Nat < Timesteps .
-  subsort Nat < Time .
+  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?              
 
-  op monus : Nat Nat -> Nat .               *** Minus down to 0
-  op getTime : Nat -> Nat .                 *** Compute time with given time steps as Timesteps mod 24
-
-  vars M N : Nat .
-
-  eq monus(0,N) = 0 .
-  eq monus(N,0) = N .
-  eq monus(s(N),s(M)) = monus(N,M) .
-
-  eq getTime(0) = 0 .
-  eq getTime(1) = 1 .
-  eq getTime(2) = 2 .
-  eq getTime(3) = 3 .
-  eq getTime(4) = 4 .
-  eq getTime(5) = 5 .
-  eq getTime(6) = 6 .
-  eq getTime(7) = 7 .
-  eq getTime(8) = 8 .
-  eq getTime(9) = 9 .
-  eq getTime(10) = 10 .
-  eq getTime(11) = 11 .
-  eq getTime(12) = 12 .
-  eq getTime(13) = 13 .
-  eq getTime(14) = 14 .
-  eq getTime(15) = 15 .
-  eq getTime(16) = 16 .
-  eq getTime(17) = 17 .
-  eq getTime(18) = 18 .
-  eq getTime(19) = 19 .
-  eq getTime(20) = 20 .
-  eq getTime(21) = 21 .
-  eq getTime(22) = 22 .
-  eq getTime(23) = 23 .
-  eq getTime(N) = getTime(monus(N,24)) .
-
+  op getTime : Timesteps -> Time .
+  op morning? : Time -> Bool .            *** For the controllers it's important to know whether it's morning or not
 
   op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
+
+  vars TS : Timesteps .
+  var N : Nat .
+
+  *** Compute time with given time steps as Timesteps mod 24
+  eq getTime(TS) = TS rem 24 .
+
+  *** Define morning to be between 6 and 12 o'clock.
+  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
+  ceq morning?(N) = false if N < 6 .
+  ceq morning?(N) = false if N > 12 .
 
 
 
@@ -54,7 +32,6 @@ mod TIME is
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var TI : Time .
-  var TS : Timesteps .
   var RAT : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
   vars ET ET1 ET2 : EffectTemp .
