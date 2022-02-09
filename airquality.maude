@@ -9,6 +9,13 @@ mod AIRQUALITY is
 
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
+  op aqok? : AirqualityStatus -> Bool .
+
+  var AQS : AirqualityStatus .
+
+  ceq aqok?(AQS) = true if AQS >= 0.0 .
+  ceq aqok?(AQS) = false if AQS < 0.0 .
+
   vars H WH W AQ : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -16,7 +23,6 @@ mod AIRQUALITY is
   var RAT : RuleAppliedTemp .
   var ET : EffectTemp .
   var EAQ : EffectAQ .
-  var AQS : AirqualityStatus .
 
   *** Rules heater
   *** If the heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the heater.
