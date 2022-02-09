@@ -1,6 +1,6 @@
 mod ACTUATORS is
   protecting STRING .
-  protecting FLOAT .
+  protecting FLOAT .  
 
   *** The components of the system
   sorts Oid Heater Waterheater Window Configuration .
@@ -19,16 +19,16 @@ mod ACTUATORS is
   ops open halfopen closed : -> WindowStatus .
 
   *** The additional attributes of the heater and window
-  sorts RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active .
+  sorts RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken .
   subsort Float < EffectTemp .          *** The effect indicates how much the window and heater can decrease and increase the temperature in the room.
   subsort Float < EffectAQ .
   ops yes no : -> RuleAppliedTemp .         *** Indicates if a rule was applied at the current time step.
   ops yes no : -> RuleAppliedAQ .
-  ops yes no : -> Active .              *** Indicates if the heater/water heater is currently active or not.
+  ops yes no : -> Broken .              *** Indicates if the heater/water heater is currently active or not.
 
   *** Specification of the components
-  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Active: _  > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Active: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Active -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
   op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ -> Window [format (ntb b b b b b b b b b b b b b b b b b b o)] .
 
 endm

@@ -5,7 +5,7 @@ mod TEST is
   protecting AIRQUALITY .
 
   op getTemp : Configuration -> Temperature .
-  op getTime : Configuration -> Time .
+  ***op getTime : Configuration -> Time .
   op getAirquality : Configuration -> AirqualityStatus .
 
   vars T C AQ : Oid .
@@ -19,21 +19,21 @@ mod TEST is
   vars ET ET1 ET2 : EffectTemp .
 
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
-  eq getTime(< C :Clock | Time: TI > CON) = TI .
+  *** eq getTime(< C :Clock | Time: TI > CON) = TI .
   eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
 
   op init : -> Configuration .
-  eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, EffectsAQ: 0.4, Active: yes >
+  eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, EffectsAQ: 0.4, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Time: 0 > .
+            < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
 
   op init2 : -> Configuration .
-  eq init2 = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.2, EffectsAQ: 0.2, Active: yes >
-            < "homeWaterheater" :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.1, EffectsAQ: 0.1, Active: yes >
+  eq init2 = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.2, EffectsAQ: 0.2, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.1, EffectsAQ: 0.1, Broken: no >
             < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: -0.2, EffectsAQ: -0.2 >
             < "homeThermometer" :Thermometer | Degrees: 22.0 >
             < "homeAirquality" :Airquality | Value: 0.0 >
-            < "homeClock" :Clock | Time: 0 > .
+            < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
 
 
 
