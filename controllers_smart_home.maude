@@ -1,68 +1,135 @@
 mod CONTROLLERS is
-  protecting PHYSICS .
+  protecting ACTUATORS .
+  protecting TEMPERATURE .
+  protecting AIRQUALITY .
+  protecting TIME .
 
-  sort Controller1 Controller2 .
-  subsort Controller1 Controller2 < Configuration .
+  sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController .
+  subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Configuration .
 
   *** Indicates whether the current controller is active or passive at the moment.
   sort Selected .
   ops yes no : -> Selected .
 
-  op < _ :Controller1 | Selected: _ > : Oid Selected -> Controller1 [format (nty y y y y y y o)] .    *** The heater prefering controller
-  op < _ :Controller2 | Selected: _ > : Oid Selected -> Controller2 [format (nty y y y y y y o)] .    *** The window prefering controller
+  op < _ :HeaterErrController | Selected: _ > : Oid Selected -> HeaterErrController [format (nty y y y y y y o)] .
+  op < _ :WaterheaterErrController | Selected: _ > : Oid Selected -> WaterheaterErrController [format (nty y y y y y y o)] .
+  op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
+  op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
+  op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
 
-  vars H W T C C1 C2 : Oid .
+  vars H W WH T C CC AQ : Oid .
   var DG : Temperature .
   var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
   var WS : WindowStatus .
+  var AQS : AirqualityStatus .
   var TI : Time .
-  var ET ET1 ET2 : Effect .
-  var RA RA1 RA2 : RuleApplied .
+  var TS : Timesteps .
+  vars ET ET1 ET2 : EffectTemp .
+  vars EAQ EAQ1 EAQ2 : EffectAQ .
+  vars RAT RAT1 RAT2 : RuleAppliedTemp .
+  vars RAAQ RAAQ1 RAAQ2 : RuleAppliedAQ .
 
-  *** Rules for Controller 1
-  *** Controller 1 switches the heater off if the temperature is above 22 degrees.
-  crl [C1SwitchHeaterOff] :
-    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+  *** Rules for the controller focussing on comfort (warm room)
+  *** Not in the morning
+  crl [CContrTempOkAqOk] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
-    if DG > 22.0
-    [print "Degrees: " DG ", rule: [C1SwitchHeaterOff]"] .
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
+    [print "rule: [CContrTempOkAqOk]"] .
 
-  *** Controller 1 turns the heater to very hot if the temperature is below 18 degrees
-  crl [C1TurnHeaterVeryhot] :
-    < H :Heater | Status: HS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
+  crl [CContrTempOkAqNotOk1] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
     =>
-    < H :Heater | Status: veryhot, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C1 :Controller1 | Selected: yes >
-    if DG < 18.0
-    [print "Degrees: " DG ", rule: [C1TurnHeaterVeryhot]"] .
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS =/= open
+    [print "rule: [CContrTempOkAqNotOk1]"] .
 
-  *** Rules for Controller 2
-  *** Controller 2 opens the window if the temperature is above 22 degrees.
-  crl [C2OpenWindow] :
-    < W :Window | Status: WS, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+  crl [CContrTempOkAqNotOk2] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
     =>
-    < W :Window | Status: open, RuleApplied: RA, EffectsTemp: ET > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
-    if DG > 22.0
-    [print "Degrees: " DG ", rule: [C2OpenWindow]"] .
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: yes >
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS == open
+    [print "rule: [CContrTempOkAqNotOk2]"] .
 
-  *** Controller 2 closes the window if the temperature is below 18 degrees.
-  crl [C2CloseWindow] :
-    < W :Window | Status: WS, RuleApplied: RA1, EffectsTemp: ET1 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
+  crl [CContrTempLow] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < CC :ComfortController | Selected: yes >
     =>
-    < W :Window | Status: closed, RuleApplied: RA1, EffectsTemp: ET1 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
-    if DG < 18.0
-    [print "Degrees: " DG ", rule: [C2CloseWindow]"] .
+    < H :Heater | Status: veryhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < CC :ComfortController | Selected: yes >
+    if morning?(TI) == false /\ cold?(DG) == true
+    [print "rule: [CContrTempLow]"] .
+
+  crl [CContrTempHigh] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < CC :ComfortController | Selected: yes >
+    =>
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < CC :ComfortController | Selected: yes >
+    if morning?(TI) == false /\ hot?(DG) == true
+    [print "rule: [CContrTempHigh]"] .
 
 
 
 endm
 eof
-
-
-  *** Controller 2 closes the window and turns the heater on if the temperature is below 18 degrees.
-  crl [C2CloseWindowHeaterOn] :
-    < W :Window | Status: WS, RuleApplied: RA1, EffectsTemp: ET1 > < H :Heater | Status: HS, RuleApplied: RA2, EffectsTemp: ET2 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
-    =>
-    < W :Window | Status: closed, RuleApplied: RA1, EffectsTemp: ET1 > < H :Heater | Status: fairlyhot, RuleApplied: RA2, EffectsTemp: ET2 > < T :Thermometer | Degrees: DG > < C2 :Controller2 | Selected: yes >
-    if DG < 18.0
-    [print "Degrees: " DG ", rule: [C2CloseWindow]"] .
+*** Rules for not morning
+***If T is low, then the H goes to VH, the WH to ON, and the W to closed
+***If T is ok and AQ is ok, then H and WH to off and W closed
+***If T is ok, AQ is not ok, and W is not open, then H and WH off and W mid-open
+***If T is ok, AQ is not ok, and W is open, then H and WH off and W open
+***If T is high, then H and WH off and W open
