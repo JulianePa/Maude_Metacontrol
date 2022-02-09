@@ -10,13 +10,24 @@ mod TEMPERATURE is
 
   op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
 
-  vars H WH W T C : Oid .
+  op cold? : Temperature -> Bool .
+  op hot? : Temperature -> Bool .
+
   var DG : Temperature .
+
+  ceq cold?(DG) = true if DG < 18.0 .
+  ceq cold?(DG) = false if DG >= 18.0 .
+
+  ceq hot?(DG) = true if DG > 22.0 .
+  ceq hot?(DG) = false if DG <= 22.0 .
+
+
+  vars H WH W T C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var RAAQ : RuleAppliedAQ .
-  vars ET : EffectTemp .
+  var ET : EffectTemp .
   vars EAQ : EffectAQ .
 
   *** Rules heater
