@@ -5,7 +5,7 @@ mod AIRQUALITY is
   subsort Airquality < Configuration .
 
   sort AirqualityStatus .
-  subsort Float < AirqualityStatus .        *** 0 Airquality is normal, airquality >0 is bad, airquality < 0 is good
+  subsort Float < AirqualityStatus .        *** 0 Airquality is normal, airquality >0 is good, airquality < 0 is bad
 
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
