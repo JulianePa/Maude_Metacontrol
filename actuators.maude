@@ -29,6 +29,6 @@ mod ACTUATORS is
   *** Specification of the components
   op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
   op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ -> Window [format (ntb b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
 endm

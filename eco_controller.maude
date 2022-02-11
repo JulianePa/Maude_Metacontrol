@@ -18,17 +18,17 @@ mod ECOCONTROLLER is
   *** Not in the morning
   *** If T ok, AQ ok -> H off, W closed, WH off
   crl [EContrTempOkAqOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -36,19 +36,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [EContrTempOkAqOk]"] .
 
-  *** If T ok, AQ not ok, W not open -> H off, W mid-open, WH on
+  *** If T ok, AQ not ok, W not open -> H off, W half open, WH on
   crl [EContrTempOkAqNotOk1] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -58,17 +58,17 @@ mod ECOCONTROLLER is
 
   *** If T ok, AQ not ok, W open -> H off, W open, WH on
   crl [EContrTempOkAqNotOk2] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -78,17 +78,17 @@ mod ECOCONTROLLER is
 
   *** If T low, AQ ok -> H fairly hot, W closed, WH on
   crl [EContrTempLowAqOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -96,19 +96,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [EContrTempLowAqOk]"] .
 
-  *** If T low, AQ not ok -> H fairly hot, W mid-open, WH off
+  *** If T low, AQ not ok -> H fairly hot, W half open, WH off
   crl [EContrTempLowAqNotOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -116,19 +116,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [EContrTempLowAqNotOk]"] .
 
-  *** If T high, AQ ok, W not open -> H off, W mid-open, WH off
+  *** If T high, AQ ok, W not open -> H off, W half open, WH off
   crl [EContrTempHighAqOk1] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -138,17 +138,17 @@ mod ECOCONTROLLER is
 
   *** If T high, AQ ok, W open -> H off, W open, WH off
   crl [EContrTempHighAqOk2] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -158,17 +158,17 @@ mod ECOCONTROLLER is
 
   *** If T high, AQ not ok -> H off, W open, WH off
   crl [EContrTempHighAqNotOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -183,17 +183,17 @@ mod ECOCONTROLLER is
   *** In the morning
   *** If T ok, AQ ok -> H off, W closed, WH on
   crl [EContrTempOkAqOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -201,19 +201,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [EContrTempOkAqOkM]"] .
 
-  *** It T ok, AQ not OK & W not open ->  H off, W mid-open, WH on
+  *** It T ok, AQ not OK & W not open ->  H off, W half open, WH on
   crl [EContrTempOkAqNotOkM1] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -222,18 +222,18 @@ mod ECOCONTROLLER is
     [print "rule: [EContrTempOkAqNotOkM1]"] .
 
   *** It T ok, AQ not OK & W open ->  H off, W open, WH on
-  crl [EContrTempOkAqNotOk2] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+  crl [EContrTempOkAqNotOkM2] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -243,17 +243,17 @@ mod ECOCONTROLLER is
 
   *** If T low, AQ ok -> H fairly hot, W closed, WH on
   crl [EContrTempLowAqOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -261,19 +261,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == true /\ cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [EContrTempLowAqOkM]"] .
 
-  *** If T low, AQ not ok -> H off, W mid-open, WH on
+  *** If T low, AQ not ok -> H off, W half open, WH on
   crl [EContrTempLowAqNotOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -281,19 +281,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == true /\ cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [EContrTempLowAqNotOkM]"] .
 
-  *** If T high AQ OK, W not open -> H off, W mid-open, WH on
+  *** If T high, AQ ok, W not open -> H off, W half open, WH on
   crl [EContrTempHighAqOkM1] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -301,19 +301,19 @@ mod ECOCONTROLLER is
     if morning?(TI) == true /\ hot?(DG) == true /\ aqok?(AQS) == true /\ WS =/= open
     [print "rule: [EContrTempHighAqOkM1]"] .
 
-  *** If T high, AQ OK, W open -> H off, W open, WH on
+  *** If T high, AQ ok, W open -> H off, W open, WH on
   crl [EContrTempHighAqOkM2] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -323,17 +323,17 @@ mod ECOCONTROLLER is
 
   *** if T high, AQ not ok -> H off, W open, WH on
   crl [EContrTempHighAqNotOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: yes >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no  >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no  >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2  >
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
+    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >

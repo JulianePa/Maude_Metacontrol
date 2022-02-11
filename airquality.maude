@@ -61,21 +61,21 @@ mod AIRQUALITY is
   *** Rules Window
   *** If the window did not affect the air quality in the room in the current hour yet, then the air quality increases depending on the status of the window.
   rl [AQWindowClosed] :
-    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     [print "Air quality: " AQS ", rule: [AQWindowClosed]"] .
 
   rl [AQWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS + EAQ >
+    < W :Window | Status: halfopen, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS + EAQ >
     [print "Air quality: " AQS "rule: [AQWindowHalfopen]"] .
 
   rl [AQWindowOpen] :
-    < W :Window | Status: open, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: open, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: open, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
+    < W :Window | Status: open, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQWindowOpen]"] .
 
 endm

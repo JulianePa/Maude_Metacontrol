@@ -3,6 +3,9 @@ mod TEST is
   protecting TIME .
   protecting TEMPERATURE .
   protecting AIRQUALITY .
+  protecting COMFORTCONTROLLER .
+  protecting ECOCONTROLLER .
+  ***protecting CONTROLLERS .
 
   op getTemp : Configuration -> Temperature .
   ***op getTime : Configuration -> Time .
@@ -23,17 +26,19 @@ mod TEST is
   eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
 
   op init : -> Configuration .
-  eq init = < "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.2, EffectsAQ: 0.4, Broken: no >
+  eq init = < "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
             < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
 
   op init2 : -> Configuration .
-  eq init2 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.2, EffectsAQ: 0.2, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.1, EffectsAQ: 0.1, Broken: no >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: -0.2, EffectsAQ: -0.2 >
-            < "homeThermometer" :Thermometer | Degrees: 22.0 >
-            < "homeAirquality" :Airquality | Value: 0.0 >
-            < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
+  eq init2 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 17.0 >
+            < "homeAirquality" :Airquality | Value: 1.0 >
+            < "homeClock" :Clock | Timesteps: 15, Time: 15 >
+            < "homeComfortController" :ComfortController | Selected: no >
+            < "homeEcoController" :EcoController | Selected: yes > .
 
 
 

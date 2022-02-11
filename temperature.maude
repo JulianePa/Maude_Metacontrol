@@ -67,21 +67,21 @@ mod TEMPERATURE is
   *** Rules Window
   *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
   rl [TempWindowClosed] :
-    < W :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG >
     [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
 
   rl [TempWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: halfopen, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: halfopen, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG + ET >
+    < W :Window | Status: halfopen, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG "rule: [TempWindowHalfopen]"] .
 
   rl [TempWindowOpen] :
-    < W :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    < W :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
 
 endm
