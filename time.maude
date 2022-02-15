@@ -1,33 +1,31 @@
 mod TIME is
-  protecting ACTUATORS .
-  protecting NAT .
+  protecting TEMPERATURE .
+  protecting AIRQUALITY .
 
-  sort Clock .
-  subsort Clock < Configuration .
+  sort Clock TimedConfiguration .
+  subsort Clock TimedConfiguration < Configuration .
 
   sort Timesteps Time .
   subsort Nat < Timesteps .
   subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
 
+  *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
+  op {_} : Configuration -> TimedConfiguration .
+
   op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
 
   op getTime : Timesteps -> Time .
-  op morning? : Time -> Bool .            *** For the controllers it's important to know whether it's morning or not
+  op morning? : Time -> Bool .              *** For the controllers it's important to know whether it's morning or not
+
+  op canAdvance : Configuration -> Bool .   *** Determines whether the time can advance or not
+  op advance : TimedConfiguration -> TimedConfiguration .   *** Advances the time by one step and sets the rule guards to 'no'
+
+
+
 
   vars TS : Timesteps .
   var N : Nat .
-
-  *** Compute time with given time steps as Timesteps mod 24
-  eq getTime(TS) = TS rem 24 .
-
-  *** Define morning to be between 6 and 12 o'clock.
-  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
-  ceq morning?(N) = false if N < 6 .
-  ceq morning?(N) = false if N > 12 .
-
-
-
-  vars H WH W T C : Oid .
+  vars H WH W T C CC EC AQ : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -36,6 +34,28 @@ mod TIME is
   var RAAQ : RuleAppliedAQ .
   vars ET ET1 ET2 : EffectTemp .
   vars EAQ EAQ1 EAQ2 : EffectAQ .
+  var B : Broken .
+  vars CONF1 CONF2 : Configuration .
+
+  *** Compute time with given time steps as Timesteps mod 24
+  eq getTime(TS) = TS rem 24 .
+
+  *** Define morning to be between 6 and 12 o'clock.
+  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
+  eq morning?(N) = false [owise] .
+
+  *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
+  eq canAdvance(CONF1) = true [owise] .
+
 
 
   *** Rule time
