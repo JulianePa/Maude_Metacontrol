@@ -18,7 +18,7 @@ mod TIME is
   op morning? : Time -> Bool .              *** For the controllers it's important to know whether it's morning or not
 
   op canAdvance : Configuration -> Bool .   *** Determines whether the time can advance or not
-  op advance : TimedConfiguration -> TimedConfiguration .   *** Advances the time by one step and sets the rule guards to 'no'
+  op advance : Configuration -> Configuration .   *** Advances the time by one step and sets the rule guards to 'no'
 
 
 
@@ -35,7 +35,7 @@ mod TIME is
   vars ET ET1 ET2 : EffectTemp .
   vars EAQ EAQ1 EAQ2 : EffectAQ .
   var B : Broken .
-  vars CONF1 CONF2 : Configuration .
+  vars CONF : Configuration .
 
   *** Compute time with given time steps as Timesteps mod 24
   eq getTime(TS) = TS rem 24 .
@@ -45,72 +45,41 @@ mod TIME is
   eq morning?(N) = false [owise] .
 
   *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF1) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF1) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF1) = false .
-  eq canAdvance(CONF1) = true [owise] .
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
+  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
+  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
+  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
+  eq canAdvance(CONF) = true [owise] .
+
+  *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
+  eq advance(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF)
+      = < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > advance(CONF) .
+  eq advance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF)
+      = < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > advance(CONF) .
+  eq advance(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF)
+      = < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > advance(CONF) .
+  eq advance(CONF) = CONF [owise] .
 
 
 
-  *** Rule time
-  rl [timeAdvances] :
-    < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
-    < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-    < C :Clock | Timesteps: TS, Time: TI >
-    =>
-    < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
-    < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-    < C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
-    [print "rule: [timeAdvancesHWH]"] .
 
 endm
 eof
 
-*** Case 1: heater is active and waterheater is not active
-*** If both the heater and the window affected the temperature in the current hour, then time goes to the next hour and the flags for the heater and window change (rules can be applied again)
-rl [timeAdvancesH] :
-  < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: no >
+*** Rule time
+rl [timeAdvances] :
+  < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+  < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
   < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
   < C :Clock | Timesteps: TS, Time: TI >
   =>
-  < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: no >
-  < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-  < C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
-  [print "rule: [timeAdvancesH]"] .
-
-*** Case 2: water heater is active and heater is not active
-rl [timeAdvancesWH] :
-  < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: no >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
-  < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-  < C :Clock | Timesteps: TS, Time: TI >
-  =>
-  < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Active: no >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
-  < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-  < C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
-  [print "rule: [timeAdvancesWH]"] .
-
-*** Case 3: both the water heater and the heater are active
-*** Case 2: water heater is active and heater is not active
-rl [timeAdvancesHWH] :
-  < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
-  < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
-  < C :Clock | Timesteps: TS, Time: TI >
-  =>
-  < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Active: yes >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Active: yes >
+  < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+  < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
   < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
   < C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
   [print "rule: [timeAdvancesHWH]"] .
