@@ -1,0 +1,33 @@
+mod BREAK is
+  protecting ACTUATORS .
+
+  vars H W WH : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  vars ET : EffectTemp .
+  vars EAQ : EffectAQ .
+  vars RAT : RuleAppliedTemp .
+  vars RAAQ : RuleAppliedAQ .
+
+  *** This breaks all actuators immediately, so we have to find another way to implement it
+  *** We assume that an actuator that is broken goes to status off/closed
+  rl [HeaterBreaks] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    =>
+    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    [print "rule: [HeaterBreaks]"] .
+
+  rl [WaterheaterBreaks] :
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    =>
+    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    [print "rule: [WaterheaterBreaks]"] .
+
+  rl [WindowBreaks] :
+    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    =>
+    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    [print "rule: [WindowBreaks]"] .
+
+endm
