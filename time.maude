@@ -66,6 +66,13 @@ mod TIME is
   eq advance(CONF) = CONF [owise] .
 
 
+  crl [timeAdvances] :
+    {< C :Clock | Timesteps: TS, Time: TI > CONF}
+    =>
+    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) > advance(CONF)}
+    if canAdvance(CONF)
+    [print "rule: [timeAdvances]"] .
+
 
 
 endm
