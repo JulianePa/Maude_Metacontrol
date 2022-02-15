@@ -10,13 +10,18 @@ mod AIRQUALITY is
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
   op aqok? : AirqualityStatus -> Bool .
+  op getAirquality : Configuration -> AirqualityStatus .
 
+  var AQ : Oid .
   var AQS : AirqualityStatus .
+  var CON : Configuration .
 
   ceq aqok?(AQS) = true if AQS >= 0.0 .
   ceq aqok?(AQS) = false if AQS < 0.0 .
 
-  vars H WH W AQ : Oid .
+  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
+
+  vars H WH W : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -42,7 +47,7 @@ mod AIRQUALITY is
     < H :Heater | Status: veryhot, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     =>
     < H :Heater | Status: veryhot, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
-    [print "Air quality: " AQS ", rule: [AQHeaterVeryhot] "] .
+    [print "Air quality: " AQS ", rule: [AQHeaterVeryhot]"] .
 
   *** Rules water heater
   *** If the water heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the water heater.
@@ -56,7 +61,7 @@ mod AIRQUALITY is
     < WH :Waterheater | Status: on, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS >
     =>
     < WH :Waterheater | Status: on, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
-    [print "Air quality: " AQS ", rule: [AQWaterheaterOn] "] .
+    [print "Air quality: " AQS ", rule: [AQWaterheaterOn]"] .
 
   *** Rules Window
   *** If the window did not affect the air quality in the room in the current hour yet, then the air quality increases depending on the status of the window.
