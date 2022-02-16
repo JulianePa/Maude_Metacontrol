@@ -52,8 +52,27 @@ mod ECOCONTROLLER is
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS == open
     [print "rule: [EContrTempOkAqNotOk2]"] .
 
+  *** If T low, AQ ok -> H fairly hot, W closed, WH on
+  crl [EContrTempLowAqOk] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < EC :EcoController | Selected: yes >
+    =>
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < EC :EcoController | Selected: yes >
+    if cold?(DG) == true /\ aqok?(AQS) == true
+    [print "rule: [EContrTempLowAqOk]"] .
 
-    
+
 
   *** Not in the morning
   *** If T ok, AQ ok -> H off, W closed, WH off
@@ -75,26 +94,6 @@ mod ECOCONTROLLER is
     < EC :EcoController | Selected: yes >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [EContrTempOkAqOk]"] .
-
-  *** If T low, AQ ok -> H fairly hot, W closed, WH on
-  crl [EContrTempLowAqOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < EC :EcoController | Selected: yes >
-    =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < EC :EcoController | Selected: yes >
-    if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == true
-    [print "rule: [EContrTempLowAqOk]"] .
 
   *** If T low, AQ not ok -> H fairly hot, W half open, WH off
   crl [EContrTempLowAqNotOk] :
@@ -200,26 +199,6 @@ mod ECOCONTROLLER is
     < EC :EcoController | Selected: yes >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [EContrTempOkAqOkM]"] .
-
-  *** If T low, AQ ok -> H fairly hot, W closed, WH on
-  crl [EContrTempLowAqOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < EC :EcoController | Selected: yes >
-    =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < EC :EcoController | Selected: yes >
-    if morning?(TI) == true /\ cold?(DG) == true /\ aqok?(AQS) == true
-    [print "rule: [EContrTempLowAqOkM]"] .
 
   *** If T low, AQ not ok -> H off, W half open, WH on
   crl [EContrTempLowAqNotOkM] :
