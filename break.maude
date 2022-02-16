@@ -1,7 +1,8 @@
 mod BREAK is
   protecting ACTUATORS .
+  protecting TIME . 
 
-  vars H W WH : Oid .
+  vars H W WH C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -9,25 +10,36 @@ mod BREAK is
   vars EAQ : EffectAQ .
   vars RAT : RuleAppliedTemp .
   vars RAAQ : RuleAppliedAQ .
+  var TS : Timesteps .
+  var TI : Time .
 
   *** This breaks all actuators immediately, so we have to find another way to implement it
   *** We assume that an actuator that is broken goes to status off/closed
-  rl [HeaterBreaks] :
+  crl [HeaterBreaks] :
     < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < C :Clock | Timesteps: TS, Time: TI >
     =>
     < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < C :Clock | Timesteps: TS, Time: TI >
+    if TS >= 20
     [print "rule: [HeaterBreaks]"] .
 
-  rl [WaterheaterBreaks] :
+  crl [WaterheaterBreaks] :
     < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < C :Clock | Timesteps: TS, Time: TI >
     =>
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < C :Clock | Timesteps: TS, Time: TI >
+    if TS >= 20
     [print "rule: [WaterheaterBreaks]"] .
 
-  rl [WindowBreaks] :
+  crl [WindowBreaks] :
     < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < C :Clock | Timesteps: TS, Time: TI >
     =>
     < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < C :Clock | Timesteps: TS, Time: TI >
+    if TS >= 20
     [print "rule: [WindowBreaks]"] .
 
 endm
