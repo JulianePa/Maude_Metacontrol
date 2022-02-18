@@ -7,6 +7,7 @@ mod TEST is
   protecting ECOCONTROLLER .
   protecting HEATERERRCONTROLLER .
   protecting WATERHEATERERRCONTROLLER .
+  protecting WINDOWERRCONTROLLER .
   ***protecting BREAK .
 
   op getTemp : Configuration -> Temperature .
@@ -33,15 +34,16 @@ mod TEST is
 
   op init2 : -> Configuration .
   eq init2 = {< "homeHeater" :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: yes >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 17.0 >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: yes >
+            < "homeThermometer" :Thermometer | Degrees: 25.0 >
             < "homeAirquality" :Airquality | Value: -1.0 >
-            < "homeClock" :Clock | Timesteps: 19, Time: 17 >
+            < "homeClock" :Clock | Timesteps: 7, Time: 17 >
             < "homeComfortController" :ComfortController | Selected: no >
             < "homeEcoController" :EcoController | Selected: no >
             < "homeHeaterErrController" :HeaterErrController | Selected: no >
-            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: yes >} .
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no >
+            < "homeWindowErrController" :WindowErrController | Selected: yes >} .
 
   op init3 : -> Configuration .
   eq init3 = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
