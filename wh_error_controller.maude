@@ -1,7 +1,7 @@
 mod WATERHEATERERRCONTROLLER is
   protecting CONTROLLERS .
 
-  vars H W WH T C HEC AQ : Oid .
+  vars H W WH T C WHEC AQ : Oid .
   var DG : Temperature .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -26,14 +26,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempOkAqOk]"] .
 
@@ -44,14 +44,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: fairlyhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempOkAqNotOk]"] .
 
@@ -62,14 +62,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: veryhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempLowAqOk]"] .
 
@@ -80,14 +80,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: veryhot, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempLowAqNotOk]"] .
 
@@ -98,14 +98,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if hot?(DG) == true /\ aqok?(AQS) == true /\ WS =/= open
     [print "rule: [WhErrContrTempHighAqOk1]"] .
 
@@ -116,14 +116,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if hot?(DG) == true /\ aqok?(AQS) == true /\ WS == open
     [print "rule: [WhErrContrTempHighAqOk2]"] .
 
@@ -134,14 +134,14 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     =>
     < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
     < WH :Waterheater | Status: off, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: yes >
     < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < HEC :WaterheaterErrController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: yes >
     if hot?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempHighAqNotOk]"] .
 
