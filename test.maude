@@ -5,11 +5,13 @@ mod TEST is
   protecting AIRQUALITY .
   protecting COMFORTCONTROLLER .
   protecting ECOCONTROLLER .
-  ***protecting CONTROLLERS .
+  protecting HEATERERRCONTROLLER .
+  protecting WATERHEATERERRCONTROLLER .
+  ***protecting BREAK .
 
   op getTemp : Configuration -> Temperature .
   ***op getTime : Configuration -> Time .
-  op getAirquality : Configuration -> AirqualityStatus .
+
 
   vars T C AQ : Oid .
   var DG : Temperature .
@@ -23,23 +25,27 @@ mod TEST is
 
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
   *** eq getTime(< C :Clock | Time: TI > CON) = TI .
-  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
 
   op init : -> Configuration .
-  eq init = < "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+  eq init = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
+            < "homeClock" :Clock | Timesteps: 48, Time: 0 >} .
 
   op init2 : -> Configuration .
-  eq init2 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
+  eq init2 = {< "homeHeater" :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: yes >
+            < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 17.0 >
-            < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 15, Time: 15 >
+            < "homeAirquality" :Airquality | Value: -1.0 >
+            < "homeClock" :Clock | Timesteps: 19, Time: 17 >
             < "homeComfortController" :ComfortController | Selected: no >
-            < "homeEcoController" :EcoController | Selected: yes > .
+            < "homeEcoController" :EcoController | Selected: no >
+            < "homeHeaterErrController" :HeaterErrController | Selected: no >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: yes >} .
 
+  op init3 : -> Configuration .
+  eq init3 = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >} .
 
 
 
