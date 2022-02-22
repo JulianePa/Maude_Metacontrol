@@ -25,9 +25,12 @@ mod HEATERERRCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg on from HEC to WH)
+    (msg halfopen from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: yes >
@@ -42,9 +45,12 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg on from HEC to WH)
+    (msg closed from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: yes >
     if cold?(DG) == true
@@ -64,9 +70,12 @@ mod HEATERERRCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg whOff from HEC to WH)
+    (msg closed from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -83,9 +92,12 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: halfopen, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg whOff from HEC to WH)
+    (msg halfopen from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < HEC :HeaterErrController | Selected: yes >
@@ -108,9 +120,12 @@ mod HEATERERRCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg on from HEC to WH)
+    (msg closed from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -128,9 +143,12 @@ mod HEATERERRCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: yes >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
-    < W :Window | Status: open, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
+    (msg hOff from HEC to H)
+    (msg on from HEC to WH)
+    (msg open from HEC to W)
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B >
+    < W :Window | Status: WS, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B1 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
