@@ -3,8 +3,9 @@ mod ACTUATORS is
   protecting FLOAT .
 
   *** The components of the system
-  sorts Oid Heater Waterheater Window Configuration .
-  subsorts Heater Window Waterheater < Configuration .
+  sorts Oid Heater Waterheater Window Actuator Configuration .
+  subsorts Heater Window Waterheater < Actuator .
+  subsort Actuator < Configuration .
   subsort String < Oid .  *** Object identifier
 
   op none : -> Configuration [ctor] .
@@ -41,4 +42,5 @@ mod ACTUATORS is
 
   *** Send messages
   op msg_from_to_ : Content Oid Oid -> Msg [format(ntg g g g g g g)] .
+
 endm
