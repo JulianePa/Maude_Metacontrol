@@ -1,6 +1,5 @@
 mod BREAK is
-  protecting ACTUATORS .
-  protecting TIME . 
+  protecting TIME .
 
   vars H W WH C : Oid .
   var HS : HeaterStatus .

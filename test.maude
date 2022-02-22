@@ -1,17 +1,12 @@
+*** load modules
+in ~/Documents/Maude_Metacontrol/metacontrol.maude
+in ~/Documents/Maude_Metacontrol/break.maude
+
 mod TEST is
-  ***protecting CONTROLLERS .
-  protecting TIME .
-  protecting TEMPERATURE .
-  protecting AIRQUALITY .
-  protecting COMFORTCONTROLLER .
-  protecting ECOCONTROLLER .
-  protecting HEATERERRCONTROLLER .
-  protecting WATERHEATERERRCONTROLLER .
-  protecting WINDOWERRCONTROLLER .
-  ***protecting BREAK .
+  protecting METACONTROL .
+  protecting BREAK .
 
   op getTemp : Configuration -> Temperature .
-  ***op getTime : Configuration -> Time .
 
 
   vars T C AQ : Oid .
@@ -25,7 +20,6 @@ mod TEST is
   vars ET ET1 ET2 : EffectTemp .
 
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
-  *** eq getTime(< C :Clock | Time: TI > CON) = TI .
 
   op init : -> Configuration .
   eq init = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >

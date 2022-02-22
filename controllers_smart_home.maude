@@ -1,7 +1,6 @@
+in ~/Documents/Maude_Metacontrol/time.maude
+
 mod CONTROLLERS is
-  protecting ACTUATORS .
-  protecting TEMPERATURE .
-  protecting AIRQUALITY .
   protecting TIME .
 
   sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController .
