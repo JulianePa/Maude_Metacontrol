@@ -12,7 +12,8 @@ mod ACTUATORS is
   op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
   *** The statuses of the components
-  sorts HeaterStatus WaterheaterStatus WindowStatus .
+  sorts HeaterStatus WaterheaterStatus WindowStatus ActuatorStatus .
+  subsorts HeaterStatus WaterheaterStatus WindowStatus < ActuatorStatus .
 
   *** The values the statuses can take
   ops hOff fairlyhot veryhot : -> HeaterStatus .
@@ -28,19 +29,48 @@ mod ACTUATORS is
   ops yes no : -> Broken .              *** Indicates if the heater/water heater is currently active or not.
 
   *** Specification of the components
-  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
 
 
+
+  vars H WH W : Oid .
+  var HS HS1 : HeaterStatus .
+  var WHS WHS1 : WaterheaterStatus .
+  var WS WS1 : WindowStatus .
+  var RAT : RuleAppliedTemp .
+  var RAAQ : RuleAppliedAQ .
+  var ET : EffectTemp .
+  var EAQ : EffectAQ .
+  var B : Broken .
+
+  *** Get status of actuator
+  op getStatus : Actuator -> ActuatorStatus .
+  eq getStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = HS .
+  eq getStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = WHS .
+  eq getStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = WS .
+
+  *** Change status of actuator (we assume that only valid statusses are inserted)
+  op setStatus : Actuator ActuatorStatus -> Actuator .
+  eq setStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, HS1)
+      = < H :Heater | Status: HS1, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > .
+  eq setStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, WHS1)
+      = < WH :Waterheater | Status: WHS1, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > .
+  eq setStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, WS1)
+      = < W :Window | Status: WS1, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > .
+
+endm
+eof
 
   *** Messages
-  sorts Content Msg .
+  sorts Msg .
   subsorts Msg < Configuration .
-  subsorts HeaterStatus WaterheaterStatus WindowStatus < Content .
 
   *** Send messages
-  op msg_from_to_ : Content Oid Oid -> Msg [format(ntg g g g g g g)] .
+  op msg_from_to_ : ActuatorStatus Oid Oid -> Msg [format(ntg g g g g g g)] .
 
+  *** Receive messages
+  op changeStatus : Actuator Msg -> Actuator .
 endm
