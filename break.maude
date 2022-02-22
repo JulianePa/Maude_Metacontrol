@@ -18,7 +18,7 @@ mod BREAK is
     < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
     < C :Clock | Timesteps: TS, Time: TI >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
     < C :Clock | Timesteps: TS, Time: TI >
     if TS >= 20
     [print "rule: [HeaterBreaks]"] .
@@ -27,7 +27,7 @@ mod BREAK is
     < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
     < C :Clock | Timesteps: TS, Time: TI >
     =>
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
     < C :Clock | Timesteps: TS, Time: TI >
     if TS >= 20
     [print "rule: [WaterheaterBreaks]"] .

@@ -36,9 +36,9 @@ mod TEMPERATURE is
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
   rl [TempHeaterOff] :
-    < H :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: hOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
     [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
 
   rl [TempHeaterFairlyhot] :
@@ -56,9 +56,9 @@ mod TEMPERATURE is
   *** Rules water heater
   *** If the water heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the water heater.
   rl [TempWaterheaterOff] :
-    < WH :Waterheater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
     =>
-    < WH :Waterheater | Status: off, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
     [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
 
   rl [TempWaterheaterOn] :

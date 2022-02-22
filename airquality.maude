@@ -33,9 +33,9 @@ mod AIRQUALITY is
   *** Rules heater
   *** If the heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the heater.
   rl [AQHeaterOff] :
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
     [print "Air quality: " AQS ", rule: [AQHeaterOff]"] .
 
   rl [AQHeaterFairlyhot] :
@@ -53,9 +53,9 @@ mod AIRQUALITY is
   *** Rules water heater
   *** If the water heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the water heater.
   rl [AQWaterheaterOff] :
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
     =>
-    < WH :Waterheater | Status: off, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
     [print "Air quality: " AQS ", rule: [AQWaterheaterOff]"] .
 
   rl [AQWaterheaterOn] :

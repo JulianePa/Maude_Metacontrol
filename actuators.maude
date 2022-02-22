@@ -14,8 +14,8 @@ mod ACTUATORS is
   sorts HeaterStatus WaterheaterStatus WindowStatus .
 
   *** The values the statuses can take
-  ops off fairlyhot veryhot : -> HeaterStatus .
-  ops off on : -> WaterheaterStatus .
+  ops hOff fairlyhot veryhot : -> HeaterStatus .
+  ops whOff on : -> WaterheaterStatus .
   ops open halfopen closed : -> WindowStatus .
 
   *** The additional attributes of the heater and window
@@ -31,4 +31,14 @@ mod ACTUATORS is
   op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
   op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _  > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
+
+
+
+  *** Messages
+  sorts Content Msg .
+  subsorts Msg < Configuration .
+  subsorts HeaterStatus WaterheaterStatus WindowStatus < Content .
+
+  *** Send messages
+  op msg_from_to_ : Content Oid Oid -> Msg [format(ntg g g g g g g)] .
 endm
