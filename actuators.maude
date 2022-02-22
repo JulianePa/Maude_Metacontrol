@@ -53,7 +53,7 @@ mod ACTUATORS is
   eq getStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = WHS .
   eq getStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = WS .
 
-  *** Change status of actuator (if wrong type of actuator status is inserted, nothing happens)
+  *** Set status of actuator (if wrong type of actuator status is inserted, nothing happens)
   op setStatus : Actuator ActuatorStatus -> Actuator .
   ceq setStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, AS)
       = < H :Heater | Status: AS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
@@ -66,7 +66,6 @@ mod ACTUATORS is
       if AS : WindowStatus .
 
 
-
   *** Messages
   sorts Msg .
   subsorts Msg < Configuration .
@@ -75,24 +74,23 @@ mod ACTUATORS is
   op msg_from_to_ : ActuatorStatus Oid Oid -> Msg [format(ntg g g g g g g)] .
 
   *** Receive messages
-  *** If actuator is not broken, set status. If actuator is broken, ignore message
-  op changeStatus : Actuator Msg -> Actuator .
-  ceq changeStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to H))
+  *** If actuator is not broken, set status. If actuator is broken, ignore message.
+  ceq < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to H)
       = setStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, AS)
       if B == no .
-  ceq changeStatus(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to H))
+  ceq < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to H)
       = < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
       if B == yes .
-  ceq changeStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to WH))
+  ceq < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to WH)
       = setStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, AS)
       if B == no .
-  ceq changeStatus(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to WH))
+  ceq < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to WH)
       = < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
       if B == yes .
-  ceq changeStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to W))
+  ceq < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to W)
       = setStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, AS)
       if B == no .
-  ceq changeStatus(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >, (msg AS from C to W))
+  ceq < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > (msg AS from C to W)
       = < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
       if B == yes .
 
