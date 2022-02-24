@@ -28,10 +28,11 @@ mod TEMPERATURE is
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
-  var RAAQ : RuleAppliedAQ .
-  var ET : EffectTemp .
-  vars EAQ : EffectAQ .
-  var B : Broken .
+  vars RAT RAT1 RAT2 : RuleAppliedTemp .
+  vars RAAQ RAAQ1 RAAQ2 : RuleAppliedAQ .
+  vars ET ET1 ET2 : EffectTemp .
+  vars EAQ EAQ1 EAQ2 : EffectAQ .
+  vars B B1 B2 : Broken .
 
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
@@ -86,5 +87,18 @@ mod TEMPERATURE is
     =>
     < W :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
+
+  *** If heater and water heater are off and the window is closed, then the temperature also decreases a bit
+  rl [TempAllOff] :
+    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
+    < W :Window | Status: closed, RuleAppliedTemp: RAT2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < T :Thermometer | Degrees: DG >
+    =>
+    < H :Heater | Status: hOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
+    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < T :Thermometer | Degrees: DG - 0.25 >
+    [print "Degrees: " DG ", rule: [TempAllOff]"] .
 
 endm
