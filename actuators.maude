@@ -24,9 +24,9 @@ mod ACTUATORS is
   sorts RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken .
   subsort Float < EffectTemp .              *** The effect indicates how much the actuator can decrease and increase the temperature in the room.
   subsort Float < EffectAQ .                *** The effect indicates how much the actuator can decrease and increase the air quality in the room.
-  ops yes no : -> RuleAppliedTemp .         *** Indicates if a temperature rule was applied at the current time step.
-  ops yes no : -> RuleAppliedAQ .           *** Indicates if an air quality rule was applied at the current time step
-  ops yes no : -> Broken .                  *** Indicates if the actuator is broken or not.
+  ops yes no : -> RuleAppliedTemp .         *** Indicates whether a temperature rule was applied at the current time step.
+  ops yes no : -> RuleAppliedAQ .           *** Indicates whether an air quality rule was applied at the current time step
+  ops yes no : -> Broken .                  *** Indicates whether the actuator is broken or not.
 
   *** Specification of the components
   op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
