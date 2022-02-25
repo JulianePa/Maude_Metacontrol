@@ -11,5 +11,103 @@ mod METACONTROL is
   protecting WATERHEATERERRCONTROLLER .
   protecting WINDOWERRCONTROLLER .
 
+  sort Metacontroller .
+  subsort Metacontroller < Configuration .
+
+  op < _ :Metacontroller > : Oid -> Metacontroller [format (ntr r r r o)] .
+
+  vars H WH W CC EC HEC WHEC WEC MC : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var RAT : RuleAppliedTemp .
+  var RAAQ : RuleAppliedAQ .
+  var ET : EffectTemp .
+  var EAQ : EffectAQ .
+
+*** TODO Should the metacontroller also turn the actuators off?
+
+  *** From comfort controller to error controller
+  *** If the comfort controller is active and the heater is broken, then activate the heater error controller
+  rl [MetaContrComfortToHErr] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: yes >
+    < HEC :HeaterErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: no >
+    < HEC :HeaterErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrComfortToHErr]"] .
+
+  *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
+  rl [MetaContrComfortToWhErr] :
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: no >
+    < WHEC :WaterheaterErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrComfortToWhErr]"] .
+
+  *** If the comfort controller is active and the window is broken, then activate the window error controller
+  rl [MetaContrComfortToWErr] :
+    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: yes >
+    < WEC :WindowErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < CC :ComfortController | Selected: no >
+    < WEC :WindowErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrComfortToWErr]"] .
+
+
+
+  *** From eco controller to error controller
+  *** If the eco controller is active and the heater is broken, then activate the heater error controller
+  rl [MetaContrEcoToHErr] :
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: yes >
+    < HEC :HeaterErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: no >
+    < HEC :HeaterErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrEcoToHErr]"] .
+
+  *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
+  rl [MetaContrEcoToWhErr] :
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: yes >
+    < WHEC :WaterheaterErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: no >
+    < WHEC :WaterheaterErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrEcoToWhErr]"] .
+
+  *** If the eco controller is active and the window is broken, then activate the window error controller
+  rl [MetaContrEcoToWErr] :
+    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: yes >
+    < WEC :WindowErrController | Selected: no >
+    < MC :Metacontroller >
+    =>
+    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < EC :EcoController | Selected: no >
+    < WEC :WindowErrController | Selected: yes >
+    < MC :Metacontroller >
+    [print "rule: [MetaContrEcoToWErr]"] .
 
 endm
+eof
