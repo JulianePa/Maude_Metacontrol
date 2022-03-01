@@ -1,7 +1,5 @@
-in ~/Documents/Maude_Metacontrol/time.maude
-
 mod QUALITYATTRIBUTES is
-  protecting TIME .
+  protecting SENSORS .
 
   *** Comfort
   sort Comfort ComfortList ComfortTuple ComfortStatus .

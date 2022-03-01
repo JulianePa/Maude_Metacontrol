@@ -1,7 +1,7 @@
-in ~/Documents/Maude_Metacontrol/time.maude
+in ~/Documents/Maude_Metacontrol/sensors.maude
 
 mod CONTROLLERS is
-  protecting TIME .
+  protecting SENSORS .
 
   sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController .
   subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Configuration .

@@ -1,9 +1,5 @@
-in ~/Documents/Maude_Metacontrol/temperature.maude
-in ~/Documents/Maude_Metacontrol/airquality.maude
-
 mod TIME is
-  protecting TEMPERATURE .
-  protecting AIRQUALITY .
+  protecting ACTUATORS .
 
   sort Clock TimedConfiguration .
   subsort Clock < Configuration .
