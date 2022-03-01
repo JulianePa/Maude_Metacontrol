@@ -1,0 +1,53 @@
+in ~/Documents/Maude_Metacontrol/time.maude
+
+mod QUALITYATTRIBUTES is
+  protecting TIME .
+
+  *** Comfort
+  sort Comfort ComfortList ComfortTuple ComfortStatus .
+  subsort Comfort < Configuration .
+  subsort Float < ComfortStatus .
+
+  *** A tuple indicating if the temperature at time step was comfortable or not
+  op (_, _) : Timesteps Bool -> ComfortTuple .
+  *** A list of the last five time steps and if they had comfortable temperature
+  op (_ _ _ _ _) : ComfortTuple ComfortTuple ComfortTuple ComfortTuple ComfortTuple -> ComfortList .
+  *** Compute the current comfort status out of the last five time steps
+  op getComfort : ComfortList -> ComfortStatus .
+  op getTrue : ComfortList -> Nat .
+
+
+  op < _ :Comfort | Past: _, Status: _ > : Oid ComfortList ComfortStatus -> Comfort [format (ntg g g g g g g g g g g)].
+
+  *** Ecology
+  sort Energyconsumption Ecology .
+  subsort Ecology < Configuration .
+  subsort Float < Energyconsumption .
+
+  op < _ :Ecology | Value: _ > : Oid Energyconsumption -> Ecology [format (ntg g g g g g g g)] .
+
+  *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
+  op getEnergyconsumption : Configuration -> Energyconsumption .
+
+  var CONF : Configuration .
+  vars H W WH : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  vars ET : EffectTemp .
+  vars EAQ : EffectAQ .
+  vars RA : RuleAppliedTemp .
+  vars RAAQ : RuleAppliedAQ .
+  var B : Broken .
+  var A : Actuator .
+
+  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 1.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 2.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 0.5 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(CONF) = 0.0 [owise] .
+
+  ***eq getTrue((N, true)) = true .
+  ***eq getTrue((N, false)) = false .
+  ***eq getComfort(CL)
+
+endm
