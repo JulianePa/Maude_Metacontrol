@@ -17,6 +17,8 @@ mod QUALITYATTRIBUTES is
 
   op < _ :Comfort | Past: _, Status: _ > : Oid ComfortList ComfortStatus -> Comfort [format (ntg g g g g g g g g g g)].
 
+
+
   *** Ecology
   sort Energyconsumption Ecology .
   subsort Ecology < Configuration .
@@ -26,9 +28,12 @@ mod QUALITYATTRIBUTES is
 
   *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
   op getEnergyconsumption : Configuration -> Energyconsumption .
+  *** The quality attribute value is the difference between the desired and current value
+  *** QA > 0 means less energy consumption, QA < 0 means more energy consumption
+  op qaEcology : Configuration -> Float .
 
   var CONF : Configuration .
-  vars H W WH : Oid .
+  vars H W WH E : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -37,12 +42,26 @@ mod QUALITYATTRIBUTES is
   vars RA : RuleAppliedTemp .
   vars RAAQ : RuleAppliedAQ .
   var B : Broken .
+  var EC : Energyconsumption .
   var A : Actuator .
 
-  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 1.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 2.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 0.5 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 2.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 4.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 1.0 + getEnergyconsumption(CONF) .
   eq getEnergyconsumption(CONF) = 0.0 [owise] .
+
+  eq qaEcology(CONF) = 2.0 - getEnergyconsumption(CONF) .
+
+  *** The value of the QA should be computed every time step
+  *** TODO How do we ensure that the rule is applied every time step?
+  crl [QaEcology] :
+    {< E :Ecology | Value: EQ > CONF}
+    =>
+    {< E :Ecology | Value: qaEcology(CONF) > CONF}
+    if canAdvance(CONF) == true
+    [print "rule: [QaEcology]"] .
+
+
 
   ***eq getTrue((N, true)) = true .
   ***eq getTrue((N, false)) = false .
