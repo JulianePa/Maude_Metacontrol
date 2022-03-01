@@ -33,7 +33,16 @@ mod ACTUATORS is
   op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
   op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
-
+  *** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
+  sort Attribute .
+  op none : -> Attribute .
+  op Status: _ : ActuatorStatus -> Attribute .
+  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
+  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
+  op EffectsTemp: _ : EffectTemp -> Attribute .
+  op EffectsAQ: _ : EffectAQ -> Attribute .
+  op Broken: _ : Broken -> Attribute .
+  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
 
 
   vars H WH W C : Oid .
@@ -46,6 +55,7 @@ mod ACTUATORS is
   var ET : EffectTemp .
   var EAQ : EffectAQ .
   var B : Broken .
+  var A : Attribute .
 
   *** Get status of actuator
   op getStatus : Actuator -> ActuatorStatus .
