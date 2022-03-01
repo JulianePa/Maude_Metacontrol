@@ -1,23 +1,24 @@
 mod QUALITYATTRIBUTES is
   protecting SENSORS .
+  protecting RAT .
 
-  *** Comfort
-  sort Comfort ComfortList ComfortTuple ComfortStatus .
-  subsort Comfort < Configuration .
-  subsort Float < ComfortStatus .
-
-  *** A tuple indicating if the temperature at time step was comfortable or not
-  op (_, _) : Timesteps Bool -> ComfortTuple .
-  *** A list of the last five time steps and if they had comfortable temperature
-  op (_ _ _ _ _) : ComfortTuple ComfortTuple ComfortTuple ComfortTuple ComfortTuple -> ComfortList .
-  *** Compute the current comfort status out of the last five time steps
-  op getComfort : ComfortList -> ComfortStatus .
-  op getTrue : ComfortList -> Nat .
-
-
-  op < _ :Comfort | Past: _, Status: _ > : Oid ComfortList ComfortStatus -> Comfort [format (ntg g g g g g g g g g g)].
-
-
+  var CONF : Configuration .
+  vars H W WH E T C : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var DG : Temperature .
+  vars ET : EffectTemp .
+  vars EAQ : EffectAQ .
+  vars RA : RuleAppliedTemp .
+  vars RAAQ : RuleAppliedAQ .
+  var B : Broken .
+  var EC : Energyconsumption .
+  var A : Actuator .
+  var CL : ComfortList .
+  var CS : ComfortStatus .
+  var N : Nat .
+  var BL : Bool .
 
   *** Ecology
   sort Energyconsumption Ecology .
@@ -32,19 +33,6 @@ mod QUALITYATTRIBUTES is
   *** QA > 0 means less energy consumption, QA < 0 means more energy consumption
   op qaEcology : Configuration -> Float .
 
-  var CONF : Configuration .
-  vars H W WH E : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
-  vars ET : EffectTemp .
-  vars EAQ : EffectAQ .
-  vars RA : RuleAppliedTemp .
-  vars RAAQ : RuleAppliedAQ .
-  var B : Broken .
-  var EC : Energyconsumption .
-  var A : Actuator .
-
   eq getEnergyconsumption(< H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 2.0 + getEnergyconsumption(CONF) .
   eq getEnergyconsumption(< H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 4.0 + getEnergyconsumption(CONF) .
   eq getEnergyconsumption(< WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 1.0 + getEnergyconsumption(CONF) .
@@ -52,19 +40,71 @@ mod QUALITYATTRIBUTES is
 
   eq qaEcology(CONF) = 2.0 - getEnergyconsumption(CONF) .
 
-  *** The value of the QA should be computed every time step
+
+
+  *** Comfort
+  sort Comfort ComfortList ComfortStatus .
+  subsort Comfort < Configuration .
+  subsort Bool < ComfortList .
+  subsort Rat < ComfortStatus .
+
+  *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
+  op comfortable? : Configuration -> Bool .
+  ceq comfortable?(< T :Thermometer | Degrees: DG > CONF) = true
+    if 20.0 <= DG and DG <= 22.0 .
+  eq comfortable?(CONF) = false [owise] .
+
+  *** A list which contains the comfortable? values for the last time steps
+  op nil : -> ComfortList [ctor] .
+  op __ : ComfortList ComfortList -> ComfortList [ctor assoc] .
+
+  *** Adds a new boolean value to the list
+  op addToList(_, _) : Configuration ComfortList -> ComfortList .
+  eq addToList(none, CL) = CL .
+  eq addToList(CONF, CL) = CL comfortable?(CONF) .
+
+  *** Get the n last added elements of a list (we suppose that ComfortList has at least n elements)
+  *** TODO ensure that ComfortList has at least n elements?
+  op getLast(_, _) : Nat ComfortList -> ComfortList .
+  eq getLast(0, CL) = nil .
+  eq getLast(1, BL) = BL .
+  eq getLast(s(N), CL BL) = getLast(N, CL) BL .
+
+  *** Compute the number of 'true' in a ComfortList
+  op computeTrue : ComfortList -> Nat .
+  eq computeTrue(nil) = 0 .
+  eq computeTrue(true) = 1 .
+  eq computeTrue(false) = 0 .
+  eq computeTrue(CL true) = 1 + computeTrue(CL) .
+  eq computeTrue(CL false) = computeTrue(CL) .
+
+  *** Compute the value of the quality attribute as the percentage of time in the last n time steps that the temperature was comfortable
+  op qaComfort(_, _) : Nat ComfortList -> ComfortStatus .
+  eq qaComfort(N, CL) = computeTrue(getLast(N,CL)) / N .
+
+  *** We can specify the number of time steps that we want to consider when computing the comfort value  here
+  op < _ :Comfort | Consider: _, Past: _, Status: _ > : Oid Nat ComfortList ComfortStatus -> Comfort [format (ntg g g g g g g g g g g g g g)].
+
+
+
+
+
+  *** Rules
+
+  *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :Ecology | Value: EQ > CONF}
+    {< E :Ecology | Value: EC > CONF}
     =>
     {< E :Ecology | Value: qaEcology(CONF) > CONF}
     if canAdvance(CONF) == true
-    [print "rule: [QaEcology]"] .
+    [print "QA Ecology = " EC ", rule: [QaEcology]"] .
 
-
-
-  ***eq getTrue((N, true)) = true .
-  ***eq getTrue((N, false)) = false .
-  ***eq getComfort(CL)
+  crl [QaComfort] :
+    {< C :Comfort | Consider: N, Past: CL, Status: CS > CONF}
+    =>
+    {< C :Comfort | Consider: N, Past: CL, Status: qaComfort(N, addToList(CONF, CL)) > CONF}
+    if canAdvance(CONF) == true
+    [print "QA Comfort = " CS ", rule: [QaComfort]"] .
 
 endm
