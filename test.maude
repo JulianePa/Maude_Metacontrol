@@ -22,26 +22,46 @@ mod TEST is
   eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
 
   op init : -> Configuration .
-  eq init = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 22.1 >
-            < "homeClock" :Clock | Timesteps: 48, Time: 0 >} .
+  eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 25.0 >
+            < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
 
   op init2 : -> Configuration .
-  eq init2 = {< "homeHeater" :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+  eq init2 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: yes >
-            < "homeThermometer" :Thermometer | Degrees: 25.0 >
-            < "homeAirquality" :Airquality | Value: -1.0 >
-            < "homeClock" :Clock | Timesteps: 7, Time: 17 >
+            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeAirquality" :Airquality | Value: 1.0 >
+            < "homeClock" :Clock | Timesteps: 15, Time: 7 >
             < "homeComfortController" :ComfortController | Selected: no >
-            < "homeEcoController" :EcoController | Selected: no >
+            < "homeEcoController" :EcoController | Selected: yes >
             < "homeHeaterErrController" :HeaterErrController | Selected: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no >
-            < "homeWindowErrController" :WindowErrController | Selected: yes >} .
+            < "homeWindowErrController" :WindowErrController | Selected: no >
+            < "homeMetacontroller" :Metacontroller > .
 
   op init3 : -> Configuration .
-  eq init3 = {< "homeHeater" :Heater | Status: off, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >} .
+  eq init3 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 15.0 >
+            < "homeAirquality" :Airquality | Value: 1.0 > .
+
+  op init4 : -> TimedConfiguration .
+  eq init4 = {< "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.0 >
+            < "homeAirquality" :Airquality | Value: 1.0 >
+            < "homeClock" :Clock | Timesteps: 15, Time: 7 >
+            < "homeComfortController" :ComfortController | Selected: no >
+            < "homeEcoController" :EcoController | Selected: yes >
+            < "homeHeaterErrController" :HeaterErrController | Selected: no >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no >
+            < "homeWindowErrController" :WindowErrController | Selected: no >
+            < "homeMetacontroller" :Metacontroller >
+            < "homeEcology" :Ecology | Value: 0.0 >
+            < "homeComfort" :Comfort | Consider: 5, Past: true false false true true true false, Status: 0 >} .
 
 
 
