@@ -7,7 +7,7 @@ mod BREAK is
   var WS : WindowStatus .
   vars ET : EffectTemp .
   vars EAQ : EffectAQ .
-  vars RAT : RuleAppliedTemp .
+  vars RA : RuleAppliedTemp .
   vars RAAQ : RuleAppliedAQ .
   var TS : Timesteps .
   var TI : Time .
@@ -15,28 +15,28 @@ mod BREAK is
   *** This breaks all actuators immediately, so we have to find another way to implement it
   *** We assume that an actuator that is broken goes to status off/closed
   crl [HeaterBreaks] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
     < C :Clock | Timesteps: TS, Time: TI >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < H :Heater | Status: hOff, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
     < C :Clock | Timesteps: TS, Time: TI >
     if TS >= 20
     [print "rule: [HeaterBreaks]"] .
 
   crl [WaterheaterBreaks] :
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
     < C :Clock | Timesteps: TS, Time: TI >
     =>
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
     < C :Clock | Timesteps: TS, Time: TI >
     if TS >= 20
     [print "rule: [WaterheaterBreaks]"] .
 
   crl [WindowBreaks] :
-    < W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
+    < W :Window | Status: WS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
     < C :Clock | Timesteps: TS, Time: TI >
     =>
-    < W :Window | Status: closed, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
+    < W :Window | Status: closed, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: yes >
     < C :Clock | Timesteps: TS, Time: TI >
     if TS >= 20
     [print "rule: [WindowBreaks]"] .

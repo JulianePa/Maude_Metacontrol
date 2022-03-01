@@ -33,7 +33,7 @@ mod TIME is
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var TI : Time .
-  var RAT : RuleAppliedTemp .
+  var RA : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
   vars ET ET1 ET2 : EffectTemp .
   vars EAQ EAQ1 EAQ2 : EffectAQ .
@@ -60,11 +60,11 @@ mod TIME is
   eq canAdvance(CONF) = true [owise] .
 
   *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
-  eq advance(< H :Heater | Status: HS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF)
+  eq advance(< H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF)
       = < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > advance(CONF) .
-  eq advance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF)
+  eq advance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF)
       = < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > advance(CONF) .
-  eq advance(< W :Window | Status: WS, RuleAppliedTemp: RAT, RuleAppliedAQ: RAAQ, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF)
+  eq advance(< W :Window | Status: WS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF)
       = < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
