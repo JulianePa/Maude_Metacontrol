@@ -6,7 +6,7 @@ mod TIME is
   protecting AIRQUALITY .
 
   sort Clock TimedConfiguration .
-  subsort Clock TimedConfiguration < Configuration .
+  subsort Clock < Configuration .
 
   sort Timesteps Time .
   subsort Nat < Timesteps .
