@@ -6,4 +6,4 @@ To get the print statements in the terminal during execution, execude the follow
     set print attribute on .
 
 The structure of the modules is as follows:
-![2022-02-22_Maude_structure](https://user-images.githubusercontent.com/58590193/155167448-d3cb0e29-b5dc-4e41-b4e7-b4eb1019fc1b.png)
+![2022-03-01_Maude_structure](https://user-images.githubusercontent.com/58590193/156160414-d3095c7e-1ed6-4c02-90b9-ca70ecd1f72c.png)
