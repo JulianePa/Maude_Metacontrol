@@ -3,11 +3,12 @@ mod QUALITYATTRIBUTES is
   protecting RAT .
 
   var CONF : Configuration .
-  vars H W WH E T C : Oid .
+  vars H W WH E T C AQ : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var DG : Temperature .
+  var AQS : AirqualityStatus .
   vars ET : EffectTemp .
   vars EAQ : EffectAQ .
   vars RA : RuleAppliedTemp .
@@ -15,17 +16,17 @@ mod QUALITYATTRIBUTES is
   var B : Broken .
   var EC : Energyconsumption .
   var A : Actuator .
-  var CL : ComfortList .
-  var CS : ComfortStatus .
+  var QAL : QaList .
+  var QAS : QaStatus .
   var N : Nat .
   var BL : Bool .
 
-  *** Ecology
+  ********************************* Ecology
   sort Energyconsumption Ecology .
   subsort Ecology < Configuration .
   subsort Float < Energyconsumption .
 
-  op < _ :Ecology | Value: _ > : Oid Energyconsumption -> Ecology [format (ntg g g g g g g g)] .
+  op < _ :QaEcology | Value: _ > : Oid Energyconsumption -> Ecology [format (ntg g g g g g g g)] .
 
   *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
   op getEnergyconsumption : Configuration -> Energyconsumption .
@@ -42,11 +43,37 @@ mod QUALITYATTRIBUTES is
 
 
 
-  *** Comfort
-  sort Comfort ComfortList ComfortStatus .
+  ******************************** Relevant for both comfort and air quality quality attribute
+  sort QaList QaStatus .
+  subsort Bool < QaList .
+  subsort Rat < QaStatus .
+  *** A list which contains the boolean values for the last time steps
+  op nil : -> QaList [ctor] .
+  op __ : QaList QaList -> QaList [ctor assoc] .
+
+  *** Get the n last added elements of a list (we suppose that QaList has at least n elements)
+  *** TODO ensure that QaList has at least n elements?
+  op getLast(_, _) : Nat QaList -> QaList .
+  eq getLast(0, QAL) = nil .
+  eq getLast(1, BL) = BL .
+  eq getLast(s(N), QAL BL) = getLast(N, QAL) BL .
+
+  *** Compute the number of 'true' in a QaList
+  op computeTrue : QaList -> Nat .
+  eq computeTrue(nil) = 0 .
+  eq computeTrue(true) = 1 .
+  eq computeTrue(false) = 0 .
+  eq computeTrue(QAL true) = 1 + computeTrue(QAL) .
+  eq computeTrue(QAL false) = computeTrue(QAL) .
+
+  *** Compute the value of the quality attribute comfort or ecology as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
+  op computeQA(_, _) : Nat QaList -> QaStatus .
+  eq computeQA(N, QAL) = computeTrue(getLast(N,QAL)) / N .
+
+
+  ********************************* Comfort
+  sort Comfort .
   subsort Comfort < Configuration .
-  subsort Bool < ComfortList .
-  subsort Rat < ComfortStatus .
 
   *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
   op comfortable? : Configuration -> Bool .
@@ -54,37 +81,34 @@ mod QUALITYATTRIBUTES is
     if 20.0 <= DG and DG <= 22.0 .
   eq comfortable?(CONF) = false [owise] .
 
-  *** A list which contains the comfortable? values for the last time steps
-  op nil : -> ComfortList [ctor] .
-  op __ : ComfortList ComfortList -> ComfortList [ctor assoc] .
+  *** Adds a new boolean value to the list
+  op addToListC(_, _) : Configuration QaList -> QaList .
+  eq addToListC(none, QAL) = QAL .
+  eq addToListC(CONF, QAL) = QAL comfortable?(CONF) .
+
+  *** We can specify the number of time steps that we want to consider when computing the comfort value here
+  op < _ :QaComfort | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> Comfort [format (ntg g g g g g g g g g g g g g)] .
+
+
+
+
+  ****************************************** Air quality
+  sort QaAirquality .
+  subsort QaAirquality < Configuration .
+
+  *** Determine whether current configuration is in good air quality status or not (above 2)
+  op aqGood? : Configuration -> Bool .
+  ceq aqGood?(< AQ :Airquality | Value: AQS > CONF) = true
+    if AQS >= 2.0  .
+  eq aqGood?(CONF) = false [owise] .
 
   *** Adds a new boolean value to the list
-  op addToList(_, _) : Configuration ComfortList -> ComfortList .
-  eq addToList(none, CL) = CL .
-  eq addToList(CONF, CL) = CL comfortable?(CONF) .
+  op addToListAq(_, _) : Configuration QaList -> QaList .
+  eq addToListAq(none, QAL) = QAL .
+  eq addToListAq(CONF, QAL) = QAL aqGood?(CONF) .
 
-  *** Get the n last added elements of a list (we suppose that ComfortList has at least n elements)
-  *** TODO ensure that ComfortList has at least n elements?
-  op getLast(_, _) : Nat ComfortList -> ComfortList .
-  eq getLast(0, CL) = nil .
-  eq getLast(1, BL) = BL .
-  eq getLast(s(N), CL BL) = getLast(N, CL) BL .
-
-  *** Compute the number of 'true' in a ComfortList
-  op computeTrue : ComfortList -> Nat .
-  eq computeTrue(nil) = 0 .
-  eq computeTrue(true) = 1 .
-  eq computeTrue(false) = 0 .
-  eq computeTrue(CL true) = 1 + computeTrue(CL) .
-  eq computeTrue(CL false) = computeTrue(CL) .
-
-  *** Compute the value of the quality attribute as the percentage of time in the last n time steps that the temperature was comfortable
-  op qaComfort(_, _) : Nat ComfortList -> ComfortStatus .
-  eq qaComfort(N, CL) = computeTrue(getLast(N,CL)) / N .
-
-  *** We can specify the number of time steps that we want to consider when computing the comfort value  here
-  op < _ :Comfort | Consider: _, Past: _, Status: _ > : Oid Nat ComfortList ComfortStatus -> Comfort [format (ntg g g g g g g g g g g g g g)].
-
+  *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
+  op < _ :QaAirquality | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> QaAirquality [format (ntg g g g g g g g g g g g g g)] .
 
 
 
@@ -94,17 +118,24 @@ mod QUALITYATTRIBUTES is
   *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :Ecology | Value: EC > CONF}
+    {< E :QaEcology | Value: EC > CONF}
     =>
-    {< E :Ecology | Value: qaEcology(CONF) > CONF}
+    {< E :QaEcology | Value: qaEcology(CONF) > CONF}
     if canAdvance(CONF) == true
     [print "QA Ecology = " EC ", rule: [QaEcology]"] .
 
   crl [QaComfort] :
-    {< C :Comfort | Consider: N, Past: CL, Status: CS > CONF}
+    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
-    {< C :Comfort | Consider: N, Past: CL, Status: qaComfort(N, addToList(CONF, CL)) > CONF}
+    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: computeQA(N, addToListC(CONF, QAL)) > CONF}
     if canAdvance(CONF) == true
-    [print "QA Comfort = " CS ", rule: [QaComfort]"] .
+    [print "QA Comfort = " QAS ", rule: [QaComfort]"] .
+
+  crl [QaAirquality] :
+    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS > CONF}
+    =>
+    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: computeQA(N, addToListAq(CONF, QAL)) > CONF}
+    if canAdvance(CONF) == true
+    [print "QA Air Quality = " QAS ", rule: [QaAirquality]"] .
 
 endm
