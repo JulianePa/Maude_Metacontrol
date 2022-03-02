@@ -31,7 +31,7 @@ mod TEST is
             < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 20.0 >
-            < "homeAirquality" :Airquality | Value: 1.0 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 15, Time: 7 >
             < "homeComfortController" :ComfortController | Selected: no >
             < "homeEcoController" :EcoController | Selected: yes >
@@ -60,10 +60,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no >
             < "homeWindowErrController" :WindowErrController | Selected: no >
             < "homeMetacontroller" :Metacontroller >
-            < "homeEcology" :Ecology | Value: 0.0 >
-            < "homeComfort" :Comfort | Consider: 5, Past: true false false true true true false, Status: 0 >} .
-
-
+            < "homeQaEcology" :QaEcology | Value: 0.0 >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: true false false true true true false, Status: 0 >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 0 >} .
 
 
 endm
