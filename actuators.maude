@@ -2,7 +2,7 @@ mod ACTUATORS is
   protecting STRING .
   protecting FLOAT .
 
-  *** The components of the system
+  *********************** Actuator definition
   sorts Oid Heater Waterheater Window Actuator Configuration .
   subsorts Heater Window Waterheater < Actuator .
   subsort Actuator < Configuration .
@@ -33,17 +33,6 @@ mod ACTUATORS is
   op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
   op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
-  *** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
-  sort Attribute .
-  op none : -> Attribute .
-  op Status: _ : ActuatorStatus -> Attribute .
-  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
-  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
-  op EffectsTemp: _ : EffectTemp -> Attribute .
-  op EffectsAQ: _ : EffectAQ -> Attribute .
-  op Broken: _ : Broken -> Attribute .
-  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
-
 
   vars H WH W C : Oid .
   var HS : HeaterStatus .
@@ -57,6 +46,7 @@ mod ACTUATORS is
   var B : Broken .
   var A : Attribute .
 
+  ************************ Helpful functions
   *** Get status of actuator
   op getStatus : Actuator -> ActuatorStatus .
   eq getStatus(< H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >) = HS .
@@ -76,7 +66,7 @@ mod ACTUATORS is
       if AS : WindowStatus .
 
 
-  *** Messages
+  ************************* Messages
   sorts Msg .
   subsorts Msg < Configuration .
 
@@ -104,6 +94,18 @@ mod ACTUATORS is
       = < W :Window | Status: WS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
       if B == yes .
 
+
+  **************************** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
+  *** THE PROBLEM HERE IS THAT THE ATTRIBUTES IN THE ACTUATORS ARE NOT COMMUTATIVE, I.E. YOU MIGHT HAVE TO WRITE VARIABLE BEFORE AND AFTER
+  sort Attribute .
+  op none : -> Attribute .
+  op Status: _ : ActuatorStatus -> Attribute .
+  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
+  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
+  op EffectsTemp: _ : EffectTemp -> Attribute .
+  op EffectsAQ: _ : EffectAQ -> Attribute .
+  op Broken: _ : Broken -> Attribute .
+  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
 
 
 endm
