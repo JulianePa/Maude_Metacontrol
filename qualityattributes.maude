@@ -49,7 +49,7 @@ mod QUALITYATTRIBUTES is
   subsort Rat < QaStatus .
   *** A list which contains the boolean values for the last time steps
   op nil : -> QaList [ctor] .
-  op __ : QaList QaList -> QaList [ctor assoc] .
+  op __ : QaList QaList -> QaList [ctor assoc id: nil] .
 
   *** Get the n last added elements of a list (we suppose that QaList has at least n elements)
   *** TODO ensure that QaList has at least n elements?
@@ -113,7 +113,7 @@ mod QUALITYATTRIBUTES is
 
 
 
-  *** Rules
+  ****************************************** Rules
 
   *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
