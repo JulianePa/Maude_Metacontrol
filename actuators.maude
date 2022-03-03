@@ -28,11 +28,23 @@ mod ACTUATORS is
   ops yes no : -> RuleAppliedAQ .           *** Indicates whether an air quality rule was applied at the current time step
   ops yes no : -> Broken .                  *** Indicates whether the actuator is broken or not.
 
-  *** Specification of the components
-  op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-  op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
 
+  *** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
+  sort Attribute .
+  op none : -> Attribute .
+  op Status: _ : ActuatorStatus -> Attribute .
+  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
+  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
+  op EffectsTemp: _ : EffectTemp -> Attribute .
+  op EffectsAQ: _ : EffectAQ -> Attribute .
+  op Broken: _ : Broken -> Attribute .
+  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
+
+  *** Every actuator needs to have all attributes
+  *** TODO Ensure that every actuator has all attributes
+  op < _ :Heater | _ > : Oid Attribute -> Heater [format(ntb b b b b b b)] .
+  op < _ :Waterheater | _ > : Oid Attribute -> Waterheater [format(ntb b b b b b b)] .
+  op < _ :Window | _ > : Oid Attribute -> Window [format(ntb b b b b b b)] .
 
   vars H WH W C : Oid .
   var HS : HeaterStatus .
@@ -95,25 +107,11 @@ mod ACTUATORS is
       if B == yes .
 
 
-  **************************** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
-  *** THE PROBLEM HERE IS THAT THE ATTRIBUTES IN THE ACTUATORS ARE NOT COMMUTATIVE, I.E. YOU MIGHT HAVE TO WRITE VARIABLE BEFORE AND AFTER
-  sort Attribute .
-  op none : -> Attribute .
-  op Status: _ : ActuatorStatus -> Attribute .
-  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
-  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
-  op EffectsTemp: _ : EffectTemp -> Attribute .
-  op EffectsAQ: _ : EffectAQ -> Attribute .
-  op Broken: _ : Broken -> Attribute .
-  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
-
 
 endm
 eof
 
-red changeStatus(< "homeHeater" :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >, (msg hOff from "C" to "homeHeater")) .
-red changeStatus(< "homeHeater" :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 1.0, EffectsAQ: -0.5, Broken: no >, (msg whOff from "C" to "homeHeater")) .
-red changeStatus(< "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >, (msg whOff from "C" to "homeWaterheater")) .
-red changeStatus(< "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: 0.5, EffectsAQ: -0.25, Broken: no >, (msg hOff from "C" to "homeWaterheater")) .
-red changeStatus(< "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >, (msg closed from "C" to "homeWindow")) .
-red changeStatus(< "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: -0.5, EffectsAQ: 1.0, Broken: no >, (msg hOff from "C" to "homeWindow")) .
+*** Specification of the components
+op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
