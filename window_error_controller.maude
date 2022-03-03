@@ -3,25 +3,18 @@ mod WINDOWERRCONTROLLER is
 
   vars H W WH T C WEC AQ : Oid .
   var DG : Temperature .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
   var AQS : AirqualityStatus .
   var TI : Time .
   var TS : Timesteps .
-  vars ET ET1 ET2 : EffectTemp .
-  vars EAQ EAQ1 EAQ2 : EffectAQ .
-  vars RA RA1 RA2 : RuleAppliedTemp .
-  vars RAAQ RAAQ1 RAAQ2 : RuleAppliedAQ .
-  var B B1 : Broken .
+  vars A A1 A2 : Attribute .
 
 
   *** Rules for both in the morning and not in the morning
   *** If T ok -> H off, WH on, W half open
   crl [WinErrContrTempOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -29,9 +22,9 @@ mod WINDOWERRCONTROLLER is
     (msg hOff from WEC to H)
     (msg on from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -44,9 +37,9 @@ mod WINDOWERRCONTROLLER is
   *** Rules for not in the morning
   *** If T low, AQ ok -> H very hot, WH off, W half open
   crl [WinErrContrTempLowAqOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -55,9 +48,9 @@ mod WINDOWERRCONTROLLER is
     (msg veryhot from WEC to H)
     (msg whOff from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -67,9 +60,9 @@ mod WINDOWERRCONTROLLER is
 
   *** If T low, AQ not ok -> H fairly hot, WH off, W half open
   crl [WinErrContrTempLowAqNotOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -78,9 +71,9 @@ mod WINDOWERRCONTROLLER is
     (msg fairlyhot from WEC to H)
     (msg whOff from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
@@ -90,9 +83,9 @@ mod WINDOWERRCONTROLLER is
 
   *** If T high -> H off, WH off, W half open
   crl [WinErrContrTempHigh] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -100,9 +93,9 @@ mod WINDOWERRCONTROLLER is
     (msg hOff from WEC to H)
     (msg whOff from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -115,9 +108,9 @@ mod WINDOWERRCONTROLLER is
   *** Rules for the morning
   *** If T low -> H fairly hot, WH on, W half open
   crl [WinErrContrTempLowM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -125,9 +118,9 @@ mod WINDOWERRCONTROLLER is
     (msg fairlyhot from WEC to H)
     (msg on from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -136,9 +129,9 @@ mod WINDOWERRCONTROLLER is
 
   *** If T high -> H off, WH on, W half open
   crl [WinErrContrTempHighM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -146,9 +139,9 @@ mod WINDOWERRCONTROLLER is
     (msg hOff from WEC to H)
     (msg on from WEC to WH)
     (msg halfopen from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -163,9 +156,9 @@ eof
 
   *** If T ok -> H off, W closed, WH off
   crl [WinErrContrTempOk] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -173,9 +166,9 @@ eof
     (msg hOff from WEC to H)
     (msg whOff from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -184,9 +177,9 @@ eof
 
   *** If T low -> H fairly hot, W closed, WH off
   crl [WinErrContrTempLow] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -194,9 +187,9 @@ eof
     (msg fairlyhot from WEC to H)
     (msg whOff from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -205,9 +198,9 @@ eof
 
   *** If T high -> H off, W closed, WH off
   crl [WinErrContrTempHigh] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -215,9 +208,9 @@ eof
     (msg hOff from WEC to H)
     (msg whOff from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -230,9 +223,9 @@ eof
 
   *** If T ok -> H off, W closed, WH on
   crl [WinErrContrTempOkM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -240,9 +233,9 @@ eof
     (msg hOff from WEC to H)
     (msg on from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -251,9 +244,9 @@ eof
 
   *** If T low -> H fairly hot, W closed, WH on
   crl [WinErrContrTempLowM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -261,9 +254,9 @@ eof
     (msg fairlyhot from WEC to H)
     (msg on from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -272,9 +265,9 @@ eof
 
   *** If T high -> H off, W closed, WH on
   crl [WinErrContrTempHighM] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
@@ -282,9 +275,9 @@ eof
     (msg hOff from WEC to H)
     (msg on from WEC to WH)
     (msg closed from WEC to W)
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: yes >
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < WEC :WindowErrController | Selected: yes >
