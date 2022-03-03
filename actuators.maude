@@ -31,20 +31,21 @@ mod ACTUATORS is
 
   *** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
   sort Attribute .
-  op none : -> Attribute .
-  op Status: _ : ActuatorStatus -> Attribute .
-  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute .
-  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute .
-  op EffectsTemp: _ : EffectTemp -> Attribute .
-  op EffectsAQ: _ : EffectAQ -> Attribute .
-  op Broken: _ : Broken -> Attribute .
-  op _, _ : Attribute Attribute -> Attribute [comm assoc] .
+  op none : -> Attribute [ctor] .
+  op Status: _ : ActuatorStatus -> Attribute [ctor] .
+  op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute [ctor] .
+  op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute [ctor] .
+  op EffectsTemp: _ : EffectTemp -> Attribute [ctor] .
+  op EffectsAQ: _ : EffectAQ -> Attribute [ctor] .
+  op Broken: _ : Broken -> Attribute [ctor] .
+  op _, _ : Attribute Attribute -> Attribute [ctor comm assoc id: none] .
 
   *** Every actuator needs to have all attributes
   *** TODO Ensure that every actuator has all attributes
   op < _ :Heater | _ > : Oid Attribute -> Heater [format(ntb b b b b b b)] .
   op < _ :Waterheater | _ > : Oid Attribute -> Waterheater [format(ntb b b b b b b)] .
   op < _ :Window | _ > : Oid Attribute -> Window [format(ntb b b b b b b)] .
+
 
   vars H WH W C : Oid .
   var HS : HeaterStatus .
@@ -57,6 +58,8 @@ mod ACTUATORS is
   var EAQ : EffectAQ .
   var B : Broken .
   var A : Attribute .
+
+
 
   ************************ Helpful functions
   *** Get status of actuator
