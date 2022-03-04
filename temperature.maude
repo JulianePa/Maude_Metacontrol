@@ -94,8 +94,8 @@ mod TEMPERATURE is
     < W :Window | Status: closed, RuleAppliedTemp: no, A2 >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: HS >
-    < WH :Waterheater | Status: WHS >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: WHS, A1 >
     < W :Window | Status: closed, RuleAppliedTemp: yes, A2 >
     < T :Thermometer | Degrees: DG >
     if not (HS == hOff and WHS == whOff)
