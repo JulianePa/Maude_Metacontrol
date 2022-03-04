@@ -31,10 +31,8 @@ mod TIME is
   var TI : Time .
   var RA : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
-  vars ET ET1 ET2 : EffectTemp .
-  vars EAQ EAQ1 EAQ2 : EffectAQ .
-  var B : Broken .
   vars CONF : Configuration .
+  var A : Attribute .
 
   *** Compute time with given time steps as Timesteps mod 24
   eq getTime(TS) = TS rem 24 .
@@ -44,24 +42,24 @@ mod TIME is
   eq morning?(N) = false [owise] .
 
   *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
-  eq canAdvance(< H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
-  eq canAdvance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
-  eq canAdvance(< W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF) = false .
+  eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq canAdvance(< H :Heater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq canAdvance(< W :Window | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
   eq canAdvance(CONF) = true [owise] .
 
   *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
-  eq advance(< H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF)
-      = < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > advance(CONF) .
-  eq advance(< WH :Waterheater | Status: WHS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > CONF)
-      = < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B > advance(CONF) .
-  eq advance(< W :Window | Status: WS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > CONF)
-      = < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B > advance(CONF) .
+  eq advance(< H :Heater | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
+      = < H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
+  eq advance(< WH :Waterheater | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
+      = < WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
+  eq advance(< W :Window | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
+      = < W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
 

@@ -4,15 +4,8 @@ mod QUALITYATTRIBUTES is
 
   var CONF : Configuration .
   vars H W WH E T C AQ : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
   var DG : Temperature .
   var AQS : AirqualityStatus .
-  vars ET : EffectTemp .
-  vars EAQ : EffectAQ .
-  vars RA : RuleAppliedTemp .
-  vars RAAQ : RuleAppliedAQ .
   var B : Broken .
   var EC : Energyconsumption .
   var A : Actuator .
@@ -20,6 +13,7 @@ mod QUALITYATTRIBUTES is
   var QAS : QaStatus .
   var N : Nat .
   var BL : Bool .
+  var AT : Attribute .
 
   ********************************* Ecology
   sort Energyconsumption Ecology .
@@ -34,9 +28,9 @@ mod QUALITYATTRIBUTES is
   *** QA > 0 means less energy consumption, QA < 0 means more energy consumption
   op qaEcology : Configuration -> Float .
 
-  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 2.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 4.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > CONF) = 1.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1.0 + getEnergyconsumption(CONF) .
   eq getEnergyconsumption(CONF) = 0.0 [owise] .
 
   eq qaEcology(CONF) = 2.0 - getEnergyconsumption(CONF) .
