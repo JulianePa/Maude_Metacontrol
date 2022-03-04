@@ -44,18 +44,18 @@ mod AIRQUALITY is
     [print "Air quality: " AQS ", rule: [AQHeaterOff]"] .
 
   rl [AQHeaterFairlyhot] :
-    < H :Heater | Status: fairlyhot, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < H :Heater | Status: fairlyhot, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < H :Heater | Status: fairlyhot, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + EAQ >
     [print "Air quality: " AQS ", rule: [AQHeaterFairlyhot]"] .
 
   rl [AQHeaterVeryhot] :
-    < H :Heater | Status: veryhot, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < H :Heater | Status: veryhot, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: veryhot, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < H :Heater | Status: veryhot, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQHeaterVeryhot]"] .
 
@@ -75,10 +75,10 @@ mod AIRQUALITY is
     [print "Air quality: " AQS ", rule: [AQWaterheaterOff]"] .
 
   rl [AQWaterheaterOn] :
-    < WH :Waterheater | Status: on, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < WH :Waterheater | Status: on, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
-    < WH :Waterheater | Status: on, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < WH :Waterheater | Status: on, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQWaterheaterOn]"] .
 
@@ -98,29 +98,29 @@ mod AIRQUALITY is
     [print "Air quality: " AQS ", rule: [AQWindowClosed]"] .
 
   rl [AQWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < W :Window | Status: halfopen, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: halfopen, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < W :Window | Status: halfopen, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + EAQ >
     [print "Air quality: " AQS "rule: [AQWindowHalfopen]"] .
 
   rl [AQWindowOpen] :
-    < W :Window | Status: open, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < W :Window | Status: open, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: open, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < W :Window | Status: open, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQWindowOpen]"] .
 
   *** If heater and water heater are off and the window is closed, then the air quality decreases a bit
   rl [AQAllOff] :
-    < H :Heater | Status: hOff, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < H :Heater | Status: hOff, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < WH :Waterheater | Status: whOff, RuleAppliedAQ: no, A1 >
     < W :Window | Status: closed, RuleAppliedAQ: no, A2 >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: hOff, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < H :Heater | Status: hOff, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < WH :Waterheater | Status: whOff, RuleAppliedAQ: yes, A1 >
     < W :Window | Status: closed, RuleAppliedAQ: yes, A2 >
     < AQ :Airquality | Value: AQS - 0.25 >

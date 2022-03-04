@@ -77,13 +77,13 @@ eof
 
 *** Rule time
 rl [timeAdvances] :
-  < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
-  < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
+  < H :Heater | Status: HS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: ET, EffectAQ: EAQ, Broken: no >
+  < WH :Waterheater | Status: WHS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: ET1, EffectAQ: EAQ1, Broken: no >
+  < W :Window | Status: WS, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: ET2, EffectAQ: EAQ2, Broken: no >
   < C :Clock | Timesteps: TS, Time: TI >
   =>
-  < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: no >
-  < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: no >
-  < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: no >
+  < H :Heater | Status: HS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: ET, EffectAQ: EAQ, Broken: no >
+  < WH :Waterheater | Status: WHS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: ET1, EffectAQ: EAQ1, Broken: no >
+  < W :Window | Status: WS, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: ET2, EffectAQ: EAQ2, Broken: no >
   < C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
   [print "rule: [timeAdvancesHWH]"] .

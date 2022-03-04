@@ -35,8 +35,8 @@ mod ACTUATORS is
   op Status: _ : ActuatorStatus -> Attribute [ctor] .
   op RuleAppliedTemp: _ : RuleAppliedTemp -> Attribute [ctor] .
   op RuleAppliedAQ: _ : RuleAppliedAQ -> Attribute [ctor] .
-  op EffectsTemp: _ : EffectTemp -> Attribute [ctor] .
-  op EffectsAQ: _ : EffectAQ -> Attribute [ctor] .
+  op EffectTemp: _ : EffectTemp -> Attribute [ctor] .
+  op EffectAQ: _ : EffectAQ -> Attribute [ctor] .
   op Broken: _ : Broken -> Attribute [ctor] .
   op _, _ : Attribute Attribute -> Attribute [ctor comm assoc id: none] .
 
@@ -115,6 +115,6 @@ endm
 eof
 
 *** Specification of the components
-op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
-op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectsTemp: _, EffectsAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+op < _ :Heater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectTemp: _, EffectAQ: _, Broken: _ > : Oid HeaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Heater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+op < _ :Waterheater | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectTemp: _, EffectAQ: _, Broken: _ > : Oid WaterheaterStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Waterheater [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .
+op < _ :Window | Status: _, RuleAppliedTemp: _, RuleAppliedAQ: _, EffectTemp: _, EffectAQ: _, Broken: _ > : Oid WindowStatus RuleAppliedTemp RuleAppliedAQ EffectTemp EffectAQ Broken -> Window [format (ntb b b b b b b b b b b b b b b b b b b b b b o)] .

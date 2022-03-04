@@ -48,18 +48,18 @@ mod TEMPERATURE is
     [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
 
   rl [TempHeaterFairlyhot] :
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: yes, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
 
   rl [TempHeaterVeryhot] :
-    < H :Heater | Status: veryhot, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < H :Heater | Status: veryhot, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: veryhot, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < H :Heater | Status: veryhot, RuleAppliedTemp: yes, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
 
@@ -79,10 +79,10 @@ mod TEMPERATURE is
     [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
 
   rl [TempWaterheaterOn] :
-    < WH :Waterheater | Status: on, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
-    < WH :Waterheater | Status: on, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: yes, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG ", rule: [TempWaterheaterOn] "] .
 
@@ -102,18 +102,18 @@ mod TEMPERATURE is
     [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
 
   rl [TempWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < W :Window | Status: halfopen, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: halfopen, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < W :Window | Status: halfopen, RuleAppliedTemp: yes, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG "rule: [TempWindowHalfopen]"] .
 
   rl [TempWindowOpen] :
-    < W :Window | Status: open, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < W :Window | Status: open, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: open, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < W :Window | Status: open, RuleAppliedTemp: yes, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
 
