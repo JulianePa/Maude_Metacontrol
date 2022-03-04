@@ -25,97 +25,104 @@ mod AIRQUALITY is
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
-  vars RA RA1 RA2 : RuleAppliedTemp .
-  vars RAAQ RAAQ1 RAAQ2 : RuleAppliedAQ .
-  vars ET ET1 ET2 : EffectTemp .
-  vars EAQ EAQ1 EAQ2 : EffectAQ .
-  vars B B1 B2 : Broken .
+  vars EAQ : EffectAQ .
+  vars A A1 A2 : Attribute .
 
   *** Rules heater
   *** If the heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the heater.
   crl [AQHeaterOff] :
-    < H :Heater | Status: hOff, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedAQ: no, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedAQ: yes, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     if not (WHS == whOff and WS == closed)
     [print "Air quality: " AQS ", rule: [AQHeaterOff]"] .
 
   rl [AQHeaterFairlyhot] :
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < H :Heater | Status: fairlyhot, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS + EAQ >
+    < H :Heater | Status: fairlyhot, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS + EAQ >
     [print "Air quality: " AQS ", rule: [AQHeaterFairlyhot]"] .
 
   rl [AQHeaterVeryhot] :
-    < H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < H :Heater | Status: veryhot, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: veryhot, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
+    < H :Heater | Status: veryhot, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQHeaterVeryhot]"] .
 
   *** Rules water heater
   *** If the water heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the water heater.
   crl [AQWaterheaterOff] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RA1, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedAQ: no, A1 >
+    < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RA1, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedAQ: yes, A1 >
+    < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     if not (HS == hOff and WS == closed)
     [print "Air quality: " AQS ", rule: [AQWaterheaterOff]"] .
 
   rl [AQWaterheaterOn] :
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < WH :Waterheater | Status: on, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS >
     =>
-    < WH :Waterheater | Status: on, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
+    < WH :Waterheater | Status: on, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQWaterheaterOn]"] .
 
   *** Rules Window
   *** If the window did not affect the air quality in the room in the current hour yet, then the air quality increases depending on the status of the window.
   crl [AQWindowClosed] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ2, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: RA2, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: closed, RuleAppliedAQ: no, A2 >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ2, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: RA2, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: closed, RuleAppliedAQ: yes, A2 >
     < AQ :Airquality | Value: AQS >
     if not (HS == hOff and WHS == whOff)
     [print "Air quality: " AQS ", rule: [AQWindowClosed]"] .
 
   rl [AQWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: halfopen, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: halfopen, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS + EAQ >
+    < W :Window | Status: halfopen, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS + EAQ >
     [print "Air quality: " AQS "rule: [AQWindowHalfopen]"] .
 
   rl [AQWindowOpen] :
-    < W :Window | Status: open, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS >
+    < W :Window | Status: open, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS >
     =>
-    < W :Window | Status: open, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < AQ :Airquality | Value: AQS + 2.0 * EAQ >
+    < W :Window | Status: open, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < AQ :Airquality | Value: AQS + 2.0 * EAQ >
     [print "Air quality: " AQS ", rule: [AQWindowOpen]"] .
 
   *** If heater and water heater are off and the window is closed, then the air quality decreases a bit
   rl [AQAllOff] :
-    < H :Heater | Status: hOff, RuleAppliedTemp: RA, RuleAppliedAQ: no, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RA1, RuleAppliedAQ: no, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: RA2, RuleAppliedAQ: no, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedAQ: no, EffectsAQ: EAQ, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedAQ: no, A1 >
+    < W :Window | Status: closed, RuleAppliedAQ: no, A2 >
     < AQ :Airquality | Value: AQS >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: RA, RuleAppliedAQ: yes, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: RA1, RuleAppliedAQ: yes, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: RA2, RuleAppliedAQ: yes, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedAQ: yes, EffectsAQ: EAQ, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedAQ: yes, A1 >
+    < W :Window | Status: closed, RuleAppliedAQ: yes, A2 >
     < AQ :Airquality | Value: AQS - 0.25 >
     [print "Air quality: " AQS ", rule: [AQAllOff]"] .
 

@@ -28,97 +28,105 @@ mod TEMPERATURE is
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
-  vars RA RA1 RA2 : RuleAppliedTemp .
-  vars RAAQ RAAQ1 RAAQ2 : RuleAppliedAQ .
-  vars ET ET1 ET2 : EffectTemp .
-  vars EAQ EAQ1 EAQ2 : EffectAQ .
-  vars B B1 B2 : Broken .
+  vars RA : RuleAppliedTemp .
+  vars ET : EffectTemp .
+  vars A A1 A2 : Attribute .
 
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
   crl [TempHeaterOff] :
-    < H :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedTemp: no, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedTemp: yes, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     if not (WHS == whOff and WS == closed)
     [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
 
   rl [TempHeaterFairlyhot] :
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: fairlyhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + ET >
+    < H :Heater | Status: fairlyhot, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
 
   rl [TempHeaterVeryhot] :
-    < H :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < H :Heater | Status: veryhot, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    < H :Heater | Status: veryhot, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
 
   *** Rules water heater
   *** If the water heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the water heater.
   crl [TempWaterheaterOff] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, A1 >
+    < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: WS, RuleAppliedTemp: RA2, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, A1 >
+    < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     if not (HS == hOff and WS == closed)
     [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
 
   rl [TempWaterheaterOn] :
-    < WH :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG >
     =>
-    < WH :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + ET >
+    < WH :Waterheater | Status: on, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG ", rule: [TempWaterheaterOn] "] .
 
   *** Rules Window
   *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
   crl [TempWindowClosed] :
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS, A >
+    < WH :Waterheater | Status: WHS, A1 >
+    < W :Window | Status: closed, RuleAppliedTemp: no, A2 >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: HS, RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: WHS, RuleAppliedTemp: RA1, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: HS >
+    < WH :Waterheater | Status: WHS >
+    < W :Window | Status: closed, RuleAppliedTemp: yes, A2 >
     < T :Thermometer | Degrees: DG >
     if not (HS == hOff and WHS == whOff)
     [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
 
   rl [TempWindowHalfopen] :
-    < W :Window | Status: halfopen, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: halfopen, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: halfopen, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + ET >
+    < W :Window | Status: halfopen, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG + ET >
     [print "Degrees: " DG "rule: [TempWindowHalfopen]"] .
 
   rl [TempWindowOpen] :
-    < W :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG >
+    < W :Window | Status: open, RuleAppliedTemp: no, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG >
     =>
-    < W :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B > < T :Thermometer | Degrees: DG + 2.0 * ET >
+    < W :Window | Status: open, RuleAppliedTemp: yes, EffectsTemp: ET, A >
+    < T :Thermometer | Degrees: DG + 2.0 * ET >
     [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
 
   *** If heater and water heater are off and the window is closed, then the temperature also decreases a bit
   rl [TempAllOff] :
-    < H :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedTemp: no, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, A1 >
+    < W :Window | Status: closed, RuleAppliedTemp: no, A2 >
     < T :Thermometer | Degrees: DG >
     =>
-    < H :Heater | Status: hOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ, EffectsTemp: ET, EffectsAQ: EAQ, Broken: B >
-    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ1, EffectsTemp: ET1, EffectsAQ: EAQ1, Broken: B1 >
-    < W :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: RAAQ2, EffectsTemp: ET2, EffectsAQ: EAQ2, Broken: B2 >
+    < H :Heater | Status: hOff, RuleAppliedTemp: yes, A >
+    < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, A1 >
+    < W :Window | Status: closed, RuleAppliedTemp: yes, A2 >
     < T :Thermometer | Degrees: DG - 0.25 >
     [print "Degrees: " DG ", rule: [TempAllOff]"] .
 
