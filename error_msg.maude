@@ -1,0 +1,97 @@
+*** Module for testing initial configurations. If there are faults in initial configuration (e.g. not all necessary attributes specified in an actuator), then an error message is thrown.
+mod ERRORMSG is
+  protecting METACONTROL .
+
+  vars H WH W : Oid .
+  var RA RA1 : RuleAppliedTemp .
+  var RAAQ RAAQ1 : RuleAppliedAQ .
+  var ET ET1 : EffectTemp .
+  var EAQ EAQ1 : EffectAQ .
+  var B B1 : Broken .
+  var AS AS1 : ActuatorStatus .
+  var A : Attribute .
+  var CONF : Configuration .
+  *** Want to ensure that
+  *** 1. all attributes are in specification of actuator
+  *** 2. attributes are there exactly once
+
+  *** Check whether attribute is in the list of attributes
+  op checkStatus : Attribute -> Bool .
+  eq checkStatus(Status: AS, A) = true .
+  eq checkStatus(A) = false [owise] .
+
+  op checkRuleAppliedTemp : Attribute -> Bool .
+  eq checkRuleAppliedTemp(RuleAppliedTemp: RA, A) = true .
+  eq checkRuleAppliedTemp(A) = false [owise] .
+
+  op checkRuleAppliedAQ : Attribute -> Bool .
+  eq checkRuleAppliedAQ(RuleAppliedAQ: RAAQ, A) = true .
+  eq checkRuleAppliedAQ(A) = false [owise] .
+
+  op checkEffectTemp : Attribute -> Bool .
+  eq checkEffectTemp(EffectTemp: ET, A) = true .
+  eq checkEffectTemp(A) = false [owise] .
+
+  op checkEffectAQ : Attribute -> Bool .
+  eq checkEffectAQ(EffectAQ: EAQ, A) = true .
+  eq checkEffectAQ(A) = false [owise] .
+
+  op checkBroken : Attribute -> Bool .
+  eq checkBroken(Broken: B, A) = true .
+  eq checkBroken(A) = false [owise] .
+
+  op checkAll : Attribute -> Bool .
+  eq checkAll(A) = checkStatus(A) and checkRuleAppliedTemp(A) and checkRuleAppliedAQ(A) and checkEffectTemp(A) and checkEffectAQ(A) and checkBroken(A) .
+
+
+  *** All attributes are only once in the list of attributes
+  op singleStatus : Attribute -> Bool .
+  eq singleStatus(Status: AS, Status: AS1, A) = false .
+  eq singleStatus(A) = true [owise] .
+
+  op singleRuleAppliedTemp : Attribute -> Bool .
+  eq singleRuleAppliedTemp(RuleAppliedTemp: RA, RuleAppliedTemp: RA1, A) = false .
+  eq singleRuleAppliedTemp(A) = true [owise] .
+
+  op singleRuleAppliedAQ : Attribute -> Bool .
+  eq singleRuleAppliedAQ(RuleAppliedAQ: RAAQ, RuleAppliedAQ: RAAQ1, A) = false .
+  eq singleRuleAppliedAQ(A) = true [owise] .
+
+  op singleEffectTemp : Attribute -> Bool .
+  eq singleEffectTemp(EffectTemp: ET, EffectTemp: ET1, A) = false .
+  eq singleEffectTemp(A) = true [owise] .
+
+  op singleEffectAQ : Attribute -> Bool .
+  eq singleEffectAQ(EffectAQ: EAQ, EffectAQ: EAQ1, A) = false .
+  eq singleEffectAQ(A) = true [owise] .
+
+  op singleBroken : Attribute -> Bool .
+  eq singleBroken(Broken: B, Broken: B1, A) = false .
+  eq singleBroken(A) = true [owise] .
+
+  op singleAll : Attribute -> Bool .
+  eq singleAll(A) = singleStatus(A) and singleRuleAppliedTemp(A) and singleRuleAppliedAQ(A) and singleEffectTemp(A) and singleEffectAQ(A) and singleBroken(A) .
+
+
+  *** If not all actuators have all needed attributes or more than one of the same attribute, then throw an error message and delete everything else
+  op checkActuators : Configuration -> Bool .
+  ceq checkActuators(< H :Heater | A > CONF)
+      = false and checkActuators(CONF)
+      if not (checkAll(A) and singleAll(A)) .
+  ceq checkActuators(< WH :Waterheater | A > CONF)
+      = false and checkActuators(CONF)
+      if not (checkAll(A) and singleAll(A)) .
+  ceq checkActuators(< W :Window | A > CONF)
+      = false and checkActuators(CONF)
+      if not(checkAll(A) and singleAll(A)) .
+  eq checkActuators(CONF) = true [owise] .
+
+endm
+eof
+
+  *** Error messages
+  op msg_ : String -> Msg [format(ntg g g)].
+
+  *** These equations are applied in the beginning (and actually always) and throw an error message if some property is violated
+  ceq {CONF} =  (msg "Attributes not properly specified")
+      if checkActuators(CONF) == false .
