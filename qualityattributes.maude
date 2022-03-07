@@ -10,11 +10,13 @@ mod QUALITYATTRIBUTES is
   var A : Actuator .
   var QAL : QaList .
   var QAS : QaStatus .
-  var N : Nat .
+  vars N M : Nat .
   var BL : Bool .
   var AT : Attribute .
+  var EL : EcoList .
 
-  ******************************** Relevant for all quality attributes
+
+  ******************************** Relevant for quality attributes comfort and air quality
   sort QaList QaStatus .
   subsort Bool < QaList .
   subsort Rat < QaStatus .
@@ -39,6 +41,7 @@ mod QUALITYATTRIBUTES is
 
   *** Compute the value of the quality attribute comfort or ecology as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
   op computeQA(_, _) : Nat QaList -> QaStatus .
+  eq computeQA(0, QAL) = 0 .
   eq computeQA(N, QAL) = computeTrue(getLast(N,QAL)) / N .
 
 
@@ -83,32 +86,44 @@ mod QUALITYATTRIBUTES is
 
 
 
-  ***************************************** Ecology
-  sort Ecology .
+  **************************************** Ecology
+  sort Ecology EcoList .
   subsort Ecology < Configuration .
+  subsort Nat < EcoList .
+
+  *** List of energy consumption values of different time steps
+  op nil : -> EcoList [ctor] .
+  op __ : EcoList EcoList -> EcoList [ctor assoc id: nil] .
 
   *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
-  op getEnergyconsumption : Configuration -> Float .
-  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(CONF) = 0.0 [owise] .
+  op getEnergyconsumption : Configuration -> Nat .
+  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(CONF) = 0 [owise] .
 
-  *** Determine whether current configuration has reasonable energy consumption
-  *** TODO Which value is reasonable here?
-  op energyConsOk? : Configuration -> Bool .
-  ceq energyConsOk?(CONF) = true
-    if getEnergyconsumption(CONF) <= 3.0 .
-  eq energyConsOk?(CONF) = false [owise] .
+  *** Adds a new energy consumption value to the list
+  op addToListEco(_, _) : Configuration EcoList -> EcoList .
+  eq addToListEco(none, EL) = EL .
+  eq addToListEco(CONF, EL) = EL getEnergyconsumption(CONF) .
 
-  *** Adds a new boolean value to the list
-  op addToListEco(_, _) : Configuration QaList -> QaList .
-  eq addToListEco(none, QAL) = QAL .
-  eq addToListEco(CONF, QAL) = QAL energyConsOk?(CONF) .
+  *** Gets the last N entries
+  op getLastEco(_,_) : Nat EcoList -> EcoList .
+  eq getLastEco(0, EL) = nil .
+  eq getLastEco(1, M) = M .
+  eq getLastEco(s(N), EL M) = getLastEco(N, EL) M .
 
-  op < _ :QaEcology | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> Ecology [format (ntg g g g g g g g g g g g g g)] .
+  *** Sums entries
+  op sum : EcoList -> Nat .
+  eq sum(nil) = 0 .
+  eq sum(N EL) = N + sum(EL) .
 
+  *** Computes the quality attribute value as the average of the last N time steps
+  op computeEcoQa(_,_) : Nat EcoList -> QaStatus .
+  eq computeEcoQa(0, EL) = 0 .
+  eq computeEcoQa(N, EL) = sum(getLastEco(N, EL)) / N .
 
+  op < _ :QaEcology | Consider: _, Past: _, Status: _ > : Oid Nat EcoList QaStatus -> Ecology [format (ntg g g g g g g g g g g g g g)] .
 
 
 
@@ -118,9 +133,9 @@ mod QUALITYATTRIBUTES is
   *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :QaEcology | Consider: N, Past: QAL, Status: QAS > CONF}
+    {< E :QaEcology | Consider: N, Past: EL, Status: QAS > CONF}
     =>
-    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, QAL), Status: computeQA(N, addToListEco(CONF, QAL)) > CONF}
+    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: computeEcoQa(N, addToListEco(CONF, EL)) > CONF}
     if canAdvance(CONF) == true
     [print "QA Ecology = " QAS ", rule: [QaEcology]"] .
 
