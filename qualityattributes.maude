@@ -7,7 +7,6 @@ mod QUALITYATTRIBUTES is
   var DG : Temperature .
   var AQS : AirqualityStatus .
   var B : Broken .
-  var EC : Energyconsumption .
   var A : Actuator .
   var QAL : QaList .
   var QAS : QaStatus .
@@ -15,29 +14,7 @@ mod QUALITYATTRIBUTES is
   var BL : Bool .
   var AT : Attribute .
 
-  ********************************* Ecology
-  sort Energyconsumption Ecology .
-  subsort Ecology < Configuration .
-  subsort Float < Energyconsumption .
-
-  op < _ :QaEcology | Value: _ > : Oid Energyconsumption -> Ecology [format (ntg g g g g g g g)] .
-
-  *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
-  op getEnergyconsumption : Configuration -> Energyconsumption .
-  *** The quality attribute value is the difference between the desired and current value
-  *** QA > 0 means less energy consumption, QA < 0 means more energy consumption
-  op qaEcology : Configuration -> Float .
-
-  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1.0 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(CONF) = 0.0 [owise] .
-
-  eq qaEcology(CONF) = 2.0 - getEnergyconsumption(CONF) .
-
-
-
-  ******************************** Relevant for both comfort and air quality quality attribute
+  ******************************** Relevant for all quality attributes
   sort QaList QaStatus .
   subsort Bool < QaList .
   subsort Rat < QaStatus .
@@ -106,17 +83,46 @@ mod QUALITYATTRIBUTES is
 
 
 
+  ***************************************** Ecology
+  sort Ecology .
+  subsort Ecology < Configuration .
+
+  *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
+  op getEnergyconsumption : Configuration -> Float .
+  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1.0 + getEnergyconsumption(CONF) .
+  eq getEnergyconsumption(CONF) = 0.0 [owise] .
+
+  *** Determine whether current configuration has reasonable energy consumption
+  *** TODO Which value is reasonable here?
+  op energyConsOk? : Configuration -> Bool .
+  ceq energyConsOk?(CONF) = true
+    if getEnergyconsumption(CONF) <= 3.0 .
+  eq energyConsOk?(CONF) = false [owise] .
+
+  *** Adds a new boolean value to the list
+  op addToListEco(_, _) : Configuration QaList -> QaList .
+  eq addToListEco(none, QAL) = QAL .
+  eq addToListEco(CONF, QAL) = QAL energyConsOk?(CONF) .
+
+  op < _ :QaEcology | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> Ecology [format (ntg g g g g g g g g g g g g g)] .
+
+
+
+
+
 
   ****************************************** Rules
 
   *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :QaEcology | Value: EC > CONF}
+    {< E :QaEcology | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
-    {< E :QaEcology | Value: qaEcology(CONF) > CONF}
+    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, QAL), Status: computeQA(N, addToListEco(CONF, QAL)) > CONF}
     if canAdvance(CONF) == true
-    [print "QA Ecology = " EC ", rule: [QaEcology]"] .
+    [print "QA Ecology = " QAS ", rule: [QaEcology]"] .
 
   crl [QaComfort] :
     {< C :QaComfort | Consider: N, Past: QAL, Status: QAS > CONF}
@@ -131,5 +137,8 @@ mod QUALITYATTRIBUTES is
     {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: computeQA(N, addToListAq(CONF, QAL)) > CONF}
     if canAdvance(CONF) == true
     [print "QA Air Quality = " QAS ", rule: [QaAirquality]"] .
+
+
+
 
 endm
