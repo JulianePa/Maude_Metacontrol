@@ -18,15 +18,18 @@ mod METACONTROL is
 
   op < _ :Metacontroller > : Oid -> Metacontroller [format (ntr r r r o)] .
 
-  vars H WH W CC EC HEC WHEC WEC MC : Oid .
+  vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var A : Attribute .
+  var N : Nat .
+  var QAL : QaList .
+  var QAS : QaStatus .
 
 *** TODO Should the metacontroller also turn the actuators off?
 
-  *** From comfort controller to error controller
+  ****************************************** From comfort controller to error controller
   *** If the comfort controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrComfortToHErr] :
     < H :Heater | Broken: yes, A >
@@ -68,7 +71,7 @@ mod METACONTROL is
 
 
 
-  *** From eco controller to error controller
+  ******************************************* From eco controller to error controller
   *** If the eco controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrEcoToHErr] :
     < H :Heater | Broken: yes, A >
@@ -107,6 +110,38 @@ mod METACONTROL is
     < WEC :WindowErrController | Selected: yes >
     < MC :Metacontroller >
     [print "rule: [MetaContrEcoToWErr]"] .
+
+
+
+
+  ************************************** Change between comfort and eco controller
+  *** If QA comfort is below 0.6 and eco controller is active, then change to comfort controller
+  crl [MetaContrEcoToComf] :
+    < CC :ComfortController | Selected: no >
+    < EC :EcoController | Selected: yes >
+    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS >
+    < MC :Metacontroller >
+    =>
+    < CC :ComfortController | Selected: yes >
+    < EC :EcoController | Selected: no >
+    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS >
+    < MC :Metacontroller >
+    if QAS < 6/10
+    [print "rule: [MetaContrEcoToComf]"] .
+
+  *** If QA air quality is below 0.6 and comfort controller is active, then change to eco controller
+  crl [MetaContrComfToEco] :
+    < CC :ComfortController | Selected: yes >
+    < EC :EcoController | Selected: no >
+    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS >
+    < MC :Metacontroller >
+    =>
+    < CC :ComfortController | Selected: no >
+    < EC :EcoController | Selected: yes >
+    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS >
+    < MC :Metacontroller >
+    if QAS < 6/10
+    [print "rule: [MetaContrComfToEco]"] .
 
 endm
 eof
