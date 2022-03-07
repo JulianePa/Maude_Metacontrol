@@ -3,8 +3,9 @@ in ~/Documents/Maude_Metacontrol/sensors.maude
 mod CONTROLLERS is
   protecting SENSORS .
 
-  sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController .
-  subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Configuration .
+  sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController Controller .
+  subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Controller .
+  subsort Controller < Configuration .
 
   *** Indicates whether the current controller is active or passive at the moment.
   sort Selected .
@@ -15,6 +16,16 @@ mod CONTROLLERS is
   op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
   op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
   op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
+
+  var C : Oid .
+  var CONTR : Controller .
+  op selected : Controller -> Bool .
+  eq selected(< C :HeaterErrController | Selected: yes >) = true .
+  eq selected(< C :WaterheaterErrController | Selected: yes >) = true .
+  eq selected(< C :WindowErrController | Selected: yes >) = true .
+  eq selected(< C :ComfortController | Selected: yes >) = true .
+  eq selected(< C :EcoController | Selected: yes >) = true .
+  eq selected(CONTR) = false [owise] .
 
 endm
 eof
