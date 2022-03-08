@@ -1,46 +1,26 @@
 mod TIME is
-  protecting ACTUATORS .
+  protecting COMFORTCONTROLLER .
+  protecting ECOCONTROLLER .
+  protecting HEATERERRCONTROLLER .
+  protecting WATERHEATERERRCONTROLLER .
+  protecting WINDOWERRCONTROLLER .
+  protecting QUALITYATTRIBUTES .
 
-  sort Clock TimedConfiguration .
-  subsort Clock < Configuration .
-
-  sort Timesteps Time .
-  subsort Nat < Timesteps .
-  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
-
-  *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
-  op {_} : Configuration -> TimedConfiguration .
-
-  op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
-
-  op getTime : Timesteps -> Time .
-  op morning? : Time -> Bool .              *** For the controllers it's important to know whether it's morning or not
-
-  op canAdvance : Configuration -> Bool .   *** Determines whether the time can advance or not
-  op advance : Configuration -> Configuration .   *** Advances the time by one step and sets the rule guards to 'no'
-
-
-
-
-  vars TS : Timesteps .
+  var TS : Timesteps .
   var N : Nat .
-  vars H WH W T C CC EC AQ : Oid .
+  vars H WH W T C CC EC AQ HEC WHEC WEC : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var TI : Time .
   var RA : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
+  var RAC : RuleAppliedContr .
   vars CONF : Configuration .
   var A : Attribute .
 
-  *** Compute time with given time steps as Timesteps mod 24
-  eq getTime(TS) = TS rem 24 .
-
-  *** Define morning to be between 6 and 12 o'clock.
-  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
-  eq morning?(N) = false [owise] .
-
+  *** Determines whether the time can advance or not
+  op canAdvance : Configuration -> Bool .
   *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
   eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
   eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
@@ -51,8 +31,15 @@ mod TIME is
   eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
   eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
   eq canAdvance(< W :Window | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< HEC :HeaterErrController | Selected: yes , RuleApplied: no >) = false .
+  eq canAdvance(< WHEC :WaterheaterErrController | Selected: yes, RuleApplied: no >) = false .
+  eq canAdvance(< WEC :WindowErrController | Selected: yes, RuleApplied: no >) = false .
+  eq canAdvance(< CC :ComfortController | Selected: yes, RuleApplied: no >) = false .
+  eq canAdvance(< EC :EcoController | Selected: yes, RuleApplied: no >) = false .
   eq canAdvance(CONF) = true [owise] .
 
+  *** Advances the time by one step and sets the rule guards to 'no'
+  op advance : Configuration -> Configuration .
   *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
   eq advance(< H :Heater | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
       = < H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
@@ -60,6 +47,16 @@ mod TIME is
       = < WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
   eq advance(< W :Window | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
       = < W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
+  eq advance(< HEC :HeaterErrController | Selected: yes, RuleApplied: RAC > CONF)
+      = < HEC :HeaterErrController | Selected: yes, RuleApplied: no > advance(CONF) .
+  eq advance(< WHEC :WaterheaterErrController | Selected: yes, RuleApplied: RAC > CONF)
+      = < WHEC :WaterheaterErrController | Selected: yes, RuleApplied: no > advance(CONF) .
+  eq advance(< WEC :WindowErrController | Selected: yes, RuleApplied: RAC > CONF)
+      = < WEC :WindowErrController | Selected: yes, RuleApplied: no > advance(CONF) .
+  eq advance(< CC :ComfortController | Selected: yes, RuleApplied: RAC > CONF)
+      = < CC :ComfortController | Selected: yes, RuleApplied: no > advance(CONF) .
+  eq advance(< EC :EcoController | Selected: yes, RuleApplied: RAC > CONF)
+      = < EC :EcoController | Selected: yes, RuleApplied: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
 
