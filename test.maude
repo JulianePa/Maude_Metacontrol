@@ -1,5 +1,6 @@
 *** load modules
 in ~/Documents/Maude_Metacontrol/metacontrol.maude
+in ~/Documents/Maude_Metacontrol/time.maude
 in ~/Documents/Maude_Metacontrol/break.maude
 in ~/Documents/Maude_Metacontrol/error_msg.maude
 
@@ -7,6 +8,7 @@ mod TEST is
   protecting METACONTROL .
   protecting ERRORMSG .
   protecting BREAK .
+  protecting: TIME .
 
   op getTemp : Configuration -> Temperature .
 
