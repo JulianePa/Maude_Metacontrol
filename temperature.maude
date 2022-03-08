@@ -15,7 +15,7 @@ mod TEMPERATURE is
   op cold? : Temperature -> Bool .
   op hot? : Temperature -> Bool .
 
-  var DG : Temperature .
+  vars DG newDG : Temperature .
 
   ceq cold?(DG) = true if DG < 18.0 .
   ceq cold?(DG) = false if DG >= 18.0 .
@@ -45,23 +45,25 @@ mod TEMPERATURE is
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     if not (WHS == whOff and WS == closed)
-    [print "Degrees: " DG ", rule: [TempHeaterOff]"] .
+    [print "rule: [TempHeaterOff], Degrees before: " DG ", Degrees after: " DG] .
 
-  rl [TempHeaterFairlyhot] :
+  crl [TempHeaterFairlyhot] :
     < H :Heater | Status: fairlyhot, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
     < H :Heater | Status: fairlyhot, RuleAppliedTemp: yes, EffectTemp: ET, A >
-    < T :Thermometer | Degrees: DG + ET >
-    [print "Degrees: " DG ", rule: [TempHeaterFairlyhot]"] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG + ET
+    [print "rule: [TempHeaterFairlyhot], Degrees before: " DG ", Degrees after: " newDG] .
 
-  rl [TempHeaterVeryhot] :
+  crl [TempHeaterVeryhot] :
     < H :Heater | Status: veryhot, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
     < H :Heater | Status: veryhot, RuleAppliedTemp: yes, EffectTemp: ET, A >
-    < T :Thermometer | Degrees: DG + 2.0 * ET >
-    [print "Degrees: " DG ", rule: [TempHeaterVeryhot] "] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG + 2.0 * ET
+    [print "rule: [TempHeaterVeryhot], Degrees before: " DG ", Degrees after: " newDG] .
 
   *** Rules water heater
   *** If the water heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the water heater.
@@ -76,15 +78,16 @@ mod TEMPERATURE is
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
     if not (HS == hOff and WS == closed)
-    [print "Degrees: " DG ", rule: [TempWaterheaterOff]"] .
+    [print "rule: [TempWaterheaterOff], Degrees before: " DG ", Degrees after: " DG] .
 
-  rl [TempWaterheaterOn] :
+  crl [TempWaterheaterOn] :
     < WH :Waterheater | Status: on, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
     < WH :Waterheater | Status: on, RuleAppliedTemp: yes, EffectTemp: ET, A >
-    < T :Thermometer | Degrees: DG + ET >
-    [print "Degrees: " DG ", rule: [TempWaterheaterOn] "] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG + ET
+    [print "rule: [TempWaterheaterOn], Degrees before: " DG ", Degrees after: " newDG] .
 
   *** Rules Window
   *** If the window did not affect the temperature in the room in the current hour yet, then the temperature decreases depending on the status of the window.
@@ -99,26 +102,28 @@ mod TEMPERATURE is
     < W :Window | Status: closed, RuleAppliedTemp: yes, A2 >
     < T :Thermometer | Degrees: DG >
     if not (HS == hOff and WHS == whOff)
-    [print "Degrees: " DG ", rule: [TempWindowClosed]"] .
+    [print "rule: [TempWindowClosed], Degrees before: " DG ", Degrees after: " DG] .
 
-  rl [TempWindowHalfopen] :
+  crl [TempWindowHalfopen] :
     < W :Window | Status: halfopen, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
     < W :Window | Status: halfopen, RuleAppliedTemp: yes, EffectTemp: ET, A >
-    < T :Thermometer | Degrees: DG + ET >
-    [print "Degrees: " DG "rule: [TempWindowHalfopen]"] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG + ET
+    [print "rule: [TempWindowHalfopen], Degrees before: " DG ", Degrees after: " newDG] .
 
-  rl [TempWindowOpen] :
+  crl [TempWindowOpen] :
     < W :Window | Status: open, RuleAppliedTemp: no, EffectTemp: ET, A >
     < T :Thermometer | Degrees: DG >
     =>
     < W :Window | Status: open, RuleAppliedTemp: yes, EffectTemp: ET, A >
-    < T :Thermometer | Degrees: DG + 2.0 * ET >
-    [print "Degrees: " DG ", rule: [TempWindowOpen]"] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG + 2.0 * ET
+    [print "rule: [TempWaterheaterOn], Degrees before: " DG ", Degrees after: " newDG] .
 
   *** If heater and water heater are off and the window is closed, then the temperature also decreases a bit
-  rl [TempAllOff] :
+  crl [TempAllOff] :
     < H :Heater | Status: hOff, RuleAppliedTemp: no, A >
     < WH :Waterheater | Status: whOff, RuleAppliedTemp: no, A1 >
     < W :Window | Status: closed, RuleAppliedTemp: no, A2 >
@@ -127,7 +132,8 @@ mod TEMPERATURE is
     < H :Heater | Status: hOff, RuleAppliedTemp: yes, A >
     < WH :Waterheater | Status: whOff, RuleAppliedTemp: yes, A1 >
     < W :Window | Status: closed, RuleAppliedTemp: yes, A2 >
-    < T :Thermometer | Degrees: DG - 0.25 >
-    [print "Degrees: " DG ", rule: [TempAllOff]"] .
+    < T :Thermometer | Degrees: newDG >
+    if newDG := DG - 0.25
+    [print "rule: [TempAllOff], Degrees before: " DG ", Degrees after: " newDG] .
 
 endm
