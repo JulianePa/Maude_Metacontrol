@@ -13,7 +13,7 @@ mod AIRQUALITY is
   op getAirquality : Configuration -> AirqualityStatus .
 
   var AQ : Oid .
-  var AQS : AirqualityStatus .
+  vars AQS newAQS : AirqualityStatus .
   var CON : Configuration .
 
   ceq aqok?(AQS) = true if AQS >= 0.0 .
@@ -41,23 +41,25 @@ mod AIRQUALITY is
     < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     if not (WHS == whOff and WS == closed)
-    [print "Air quality: " AQS ", rule: [AQHeaterOff]"] .
+    [print "rule: [AQHeaterOff], Air quality before: " AQS ", Air quality after: " AQS] .
 
-  rl [AQHeaterFairlyhot] :
+  crl [AQHeaterFairlyhot] :
     < H :Heater | Status: fairlyhot, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
     < H :Heater | Status: fairlyhot, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
-    < AQ :Airquality | Value: AQS + EAQ >
-    [print "Air quality: " AQS ", rule: [AQHeaterFairlyhot]"] .
+    < AQ :Airquality | Value: newAQS >
+    if newAQS := AQS + EAQ
+    [print "rule: [AQHeaterFairlyhot], Air quality before: " AQS ", Air quality after: " newAQS] .
 
-  rl [AQHeaterVeryhot] :
+  crl [AQHeaterVeryhot] :
     < H :Heater | Status: veryhot, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
     < H :Heater | Status: veryhot, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
-    < AQ :Airquality | Value: AQS + 2.0 * EAQ >
-    [print "Air quality: " AQS ", rule: [AQHeaterVeryhot]"] .
+    < AQ :Airquality | Value: newAQS >
+    if newAQS := AQS + 2.0 * EAQ
+    [print "rule: [AQHeaterVeryhot], Air quality before: " AQS ", Air quality after: " newAQS] .
 
   *** Rules water heater
   *** If the water heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the water heater.
@@ -72,15 +74,16 @@ mod AIRQUALITY is
     < W :Window | Status: WS, A2 >
     < AQ :Airquality | Value: AQS >
     if not (HS == hOff and WS == closed)
-    [print "Air quality: " AQS ", rule: [AQWaterheaterOff]"] .
+    [print "rule: [AQWaterheaterOff], Air quality before: " AQS ", Air quality after: " AQS] .
 
-  rl [AQWaterheaterOn] :
+  crl [AQWaterheaterOn] :
     < WH :Waterheater | Status: on, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
     < WH :Waterheater | Status: on, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
-    < AQ :Airquality | Value: AQS + 2.0 * EAQ >
-    [print "Air quality: " AQS ", rule: [AQWaterheaterOn]"] .
+    < AQ :Airquality | Value: newAQS >
+    if newAQS := AQS + EAQ
+    [print "rule: [AQWaterheaterOn], Air quality before: " AQS ", Air quality after: " newAQS] .
 
   *** Rules Window
   *** If the window did not affect the air quality in the room in the current hour yet, then the air quality increases depending on the status of the window.
@@ -95,26 +98,28 @@ mod AIRQUALITY is
     < W :Window | Status: closed, RuleAppliedAQ: yes, A2 >
     < AQ :Airquality | Value: AQS >
     if not (HS == hOff and WHS == whOff)
-    [print "Air quality: " AQS ", rule: [AQWindowClosed]"] .
+    [print "rule: [AQWindowClosed], Air quality before: " AQS ", Air quality after: " AQS] .
 
-  rl [AQWindowHalfopen] :
+  crl [AQWindowHalfopen] :
     < W :Window | Status: halfopen, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
     < W :Window | Status: halfopen, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
-    < AQ :Airquality | Value: AQS + EAQ >
-    [print "Air quality: " AQS "rule: [AQWindowHalfopen]"] .
+    < AQ :Airquality | Value: newAQS >
+    if newAQS := AQS + EAQ
+    [print "rule: [AQWindowHalfopen], Air quality before: " AQS ", Air quality after: " newAQS] .
 
-  rl [AQWindowOpen] :
+  crl [AQWindowOpen] :
     < W :Window | Status: open, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS >
     =>
     < W :Window | Status: open, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < AQ :Airquality | Value: AQS + 2.0 * EAQ >
-    [print "Air quality: " AQS ", rule: [AQWindowOpen]"] .
+    if newAQS := AQS + 2.0 * EAQ
+    [print "rule: [AQWindowOpen], Air quality before: " AQS ", Air quality after: " newAQS] .
 
   *** If heater and water heater are off and the window is closed, then the air quality decreases a bit
-  rl [AQAllOff] :
+  crl [AQAllOff] :
     < H :Heater | Status: hOff, RuleAppliedAQ: no, EffectAQ: EAQ, A >
     < WH :Waterheater | Status: whOff, RuleAppliedAQ: no, A1 >
     < W :Window | Status: closed, RuleAppliedAQ: no, A2 >
@@ -123,7 +128,8 @@ mod AIRQUALITY is
     < H :Heater | Status: hOff, RuleAppliedAQ: yes, EffectAQ: EAQ, A >
     < WH :Waterheater | Status: whOff, RuleAppliedAQ: yes, A1 >
     < W :Window | Status: closed, RuleAppliedAQ: yes, A2 >
-    < AQ :Airquality | Value: AQS - 0.25 >
-    [print "Air quality: " AQS ", rule: [AQAllOff]"] .
+    < AQ :Airquality | Value: newAQS >
+    if newAQS := AQS - 0.25
+    [print "rule: [AQAllOff], Air quality before: " AQS ", Air quality after: " newAQS] .
 
 endm
