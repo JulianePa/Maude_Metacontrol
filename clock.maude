@@ -1,0 +1,30 @@
+mod CLOCK is
+  protecting ACTUATORS .
+
+  sort Clock TimedConfiguration .
+  subsort Clock < Configuration .
+
+  sort Timesteps Time .
+  subsort Nat < Timesteps .
+  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
+
+  *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
+  op {_} : Configuration -> TimedConfiguration .
+
+  op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
+
+
+  var TS : Timesteps .
+  var N : Time .
+
+  *** Compute time with given time steps as Timesteps mod 24
+  op getTime : Timesteps -> Time .
+  eq getTime(TS) = TS rem 24 .
+
+  *** For the controllers it's important to know whether it's morning or not
+  *** Define morning to be between 6 and 12 o'clock.
+  op morning? : Time -> Bool .
+  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
+  eq morning?(N) = false [owise] .
+
+endm
