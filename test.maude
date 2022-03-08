@@ -1,9 +1,11 @@
 *** load modules
 in ~/Documents/Maude_Metacontrol/metacontrol.maude
 in ~/Documents/Maude_Metacontrol/break.maude
+in ~/Documents/Maude_Metacontrol/error_msg.maude
 
 mod TEST is
   protecting METACONTROL .
+  protecting ERRORMSG .
   protecting BREAK .
 
   op getTemp : Configuration -> Temperature .
@@ -51,8 +53,8 @@ mod TEST is
   eq init4 = {< "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 20.0 >
-            < "homeAirquality" :Airquality | Value: -1.0 >
+            < "homeThermometer" :Thermometer | Degrees: 15.0 >
+            < "homeAirquality" :Airquality | Value: 5.0 >
             < "homeClock" :Clock | Timesteps: 7, Time: 7 >
             < "homeComfortController" :ComfortController | Selected: yes >
             < "homeEcoController" :EcoController | Selected: no >
@@ -60,9 +62,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no >
             < "homeWindowErrController" :WindowErrController | Selected: no >
             < "homeMetacontroller" :Metacontroller >
-            < "homeQaEcology" :QaEcology | Value: 0.0 >
-            < "homeQaComfort" :QaComfort | Consider: 5, Past: true false false true true true false, Status: 0 >
-            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 0 >} .
+            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1 >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1 >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1 >} .
 
 
 endm
