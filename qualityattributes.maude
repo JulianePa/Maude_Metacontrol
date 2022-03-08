@@ -15,6 +15,8 @@ mod QUALITYATTRIBUTES is
   var AT : Attribute .
   var EL : EcoList .
 
+  sort RuleAppliedQA .
+  ops yes no : -> RuleAppliedQA .
 
   ******************************** Relevant for quality attributes comfort and air quality
   sort QaList QaStatus .
@@ -61,7 +63,7 @@ mod QUALITYATTRIBUTES is
   eq addToListC(CONF, QAL) = QAL comfortable?(CONF) .
 
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
-  op < _ :QaComfort | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> Comfort [format (ntg g g g g g g g g g g g g g)] .
+  op < _ :QaComfort | Consider: _, Past: _, Status: _, RuleApplied: _ > : Oid Nat QaList QaStatus RuleAppliedQA -> Comfort [format (ntg g g g g g g g g g g g g g g g g)] .
 
 
 
@@ -82,7 +84,7 @@ mod QUALITYATTRIBUTES is
   eq addToListAq(CONF, QAL) = QAL aqGood?(CONF) .
 
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
-  op < _ :QaAirquality | Consider: _, Past: _, Status: _ > : Oid Nat QaList QaStatus -> QaAirquality [format (ntg g g g g g g g g g g g g g)] .
+  op < _ :QaAirquality | Consider: _, Past: _, Status: _, RuleApplied: _ > : Oid Nat QaList QaStatus RuleAppliedQA -> QaAirquality [format (ntg g g g g g g g g g g g g g g g g)] .
 
 
 
@@ -123,7 +125,7 @@ mod QUALITYATTRIBUTES is
   eq computeEcoQa(0, EL) = 0 .
   eq computeEcoQa(N, EL) = sum(getLastEco(N, EL)) / N .
 
-  op < _ :QaEcology | Consider: _, Past: _, Status: _ > : Oid Nat EcoList QaStatus -> Ecology [format (ntg g g g g g g g g g g g g g)] .
+  op < _ :QaEcology | Consider: _, Past: _, Status: _, RuleApplied: _ > : Oid Nat EcoList QaStatus RuleAppliedQA -> Ecology [format (ntg g g g g g g g g g g g g g g g g)] .
 
 
 
@@ -133,23 +135,23 @@ mod QUALITYATTRIBUTES is
   *** The value of the QAs should be computed every time step
   *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :QaEcology | Consider: N, Past: EL, Status: QAS > CONF}
+    {< E :QaEcology | Consider: N, Past: EL, Status: QAS, RuleApplied: no > CONF}
     =>
-    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS > CONF}
+    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS, RuleApplied: yes > CONF}
     if actuatorsReady(CONF) == true /\ newQAS := computeEcoQa(N, addToListEco(CONF, EL))
     [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
 
   crl [QaComfort] :
-    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS > CONF}
+    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > CONF}
     =>
-    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS > CONF}
+    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS, RuleApplied: yes > CONF}
     if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListC(CONF, QAL))
     [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
 
   crl [QaAirquality] :
-    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS > CONF}
+    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > CONF}
     =>
-    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS > CONF}
+    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS, RuleApplied: yes > CONF}
     if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListAq(CONF, QAL))
     [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 

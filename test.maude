@@ -8,7 +8,7 @@ mod TEST is
   protecting METACONTROL .
   protecting ERRORMSG .
   protecting BREAK .
-  protecting: TIME .
+  protecting TIME .
 
   op getTemp : Configuration -> Temperature .
 
@@ -52,7 +52,7 @@ mod TEST is
             < "homeAirquality" :Airquality | Value: 1.0 > .
 
   op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+  eq init4 = {< "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: yes >
             < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
@@ -64,9 +64,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, RuleApplied: no >
             < "homeWindowErrController" :WindowErrController | Selected: no, RuleApplied: no >
             < "homeMetacontroller" :Metacontroller >
-            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1 >
-            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1 >
-            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1 >} .
+            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1, RuleApplied: no >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1, RuleApplied: no >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1, RuleApplied: no >} .
 
 
 endm
