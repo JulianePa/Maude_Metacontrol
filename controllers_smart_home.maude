@@ -11,21 +11,25 @@ mod CONTROLLERS is
   sort Selected .
   ops yes no : -> Selected .
 
-  op < _ :HeaterErrController | Selected: _ > : Oid Selected -> HeaterErrController [format (nty y y y y y y o)] .
-  op < _ :WaterheaterErrController | Selected: _ > : Oid Selected -> WaterheaterErrController [format (nty y y y y y y o)] .
-  op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
-  op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
-  op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
+  sort RuleAppliedContr .
+  ops yes no : -> RuleAppliedContr .
 
-  var C : Oid .
-  var CONTR : Controller .
-  op selected : Controller -> Bool .
-  eq selected(< C :HeaterErrController | Selected: yes >) = true .
-  eq selected(< C :WaterheaterErrController | Selected: yes >) = true .
-  eq selected(< C :WindowErrController | Selected: yes >) = true .
-  eq selected(< C :ComfortController | Selected: yes >) = true .
-  eq selected(< C :EcoController | Selected: yes >) = true .
-  eq selected(CONTR) = false [owise] .
+  op < _ :HeaterErrController | Selected: _ , RuleApplied: _ > : Oid Selected RuleAppliedContr -> HeaterErrController [format (nty y y y y y y y y y o)] .
+  op < _ :WaterheaterErrController | Selected: _, RuleApplied: _ > : Oid Selected RuleAppliedContr -> WaterheaterErrController [format (nty y y y y y y y y y o)] .
+  op < _ :WindowErrController | Selected: _, RuleApplied: _ > : Oid Selected RuleAppliedContr -> WindowErrController [format (nty y y y y y y y y y o)] .
+  op < _ :ComfortController | Selected: _, RuleApplied: _ > : Oid Selected RuleAppliedContr -> ComfortController [format (nty y y y y y y y y y o)] .
+  op < _ :EcoController | Selected: _, RuleApplied: _ > : Oid Selected RuleAppliedContr -> EcoController [format (nty y y y y y y y y y o)] .
 
 endm
 eof
+
+var C : Oid .
+var CONTR : Controller .
+*** TODO DO WE NEED TO TAKE CONFIGURATION HERE?
+op selected : Controller -> Bool .
+eq selected(< C :HeaterErrController | Selected: yes >) = true .
+eq selected(< C :WaterheaterErrController | Selected: yes >) = true .
+eq selected(< C :WindowErrController | Selected: yes >) = true .
+eq selected(< C :ComfortController | Selected: yes >) = true .
+eq selected(< C :EcoController | Selected: yes >) = true .
+eq selected(CONTR) = false [owise] .
