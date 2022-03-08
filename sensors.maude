@@ -1,11 +1,12 @@
 in ~/Documents/Maude_Metacontrol/temperature.maude
 in ~/Documents/Maude_Metacontrol/airquality.maude
 in ~/Documents/Maude_Metacontrol/time.maude
+in ~/Documents/Maude_Metacontrol/clock.maude
 
 mod SENSORS is
  protecting TEMPERATURE .
- protecting TIME .
  protecting AIRQUALITY .
+ protecting CLOCK .
 
 
 endm
