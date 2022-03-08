@@ -58,6 +58,7 @@ mod ACTUATORS is
   var EAQ : EffectAQ .
   var B : Broken .
   var A : Attribute .
+  var CONF : Configuration .
 
 
 
@@ -79,6 +80,19 @@ mod ACTUATORS is
   ceq setStatus(< W :Window | Status: WS, A >, AS)
       = < W :Window | Status: AS, A >
       if AS : WindowStatus .
+
+  *** Function to determin whether all actuators applied the rules to change temperature and air quality
+  op actuatorsReady : Configuration -> Bool .
+  eq actuatorsReady(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq actuatorsReady(< H :Heater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq actuatorsReady(< WH :Waterheater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
+  eq actuatorsReady(< W :Window | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq actuatorsReady(CONF) = true [owise] .
 
 
   ************************* Messages
