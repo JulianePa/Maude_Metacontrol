@@ -9,7 +9,7 @@ mod QUALITYATTRIBUTES is
   var B : Broken .
   var A : Actuator .
   var QAL : QaList .
-  var QAS : QaStatus .
+  vars QAS newQAS : QaStatus .
   vars N M : Nat .
   var BL : Bool .
   var AT : Attribute .
@@ -135,23 +135,23 @@ mod QUALITYATTRIBUTES is
   crl [QaEcology] :
     {< E :QaEcology | Consider: N, Past: EL, Status: QAS > CONF}
     =>
-    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: computeEcoQa(N, addToListEco(CONF, EL)) > CONF}
-    if canAdvance(CONF) == true
-    [print "QA Ecology = " QAS ", rule: [QaEcology]"] .
+    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS > CONF}
+    if canAdvance(CONF) == true /\ newQAS := computeEcoQa(N, addToListEco(CONF, EL))
+    [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
 
   crl [QaComfort] :
     {< C :QaComfort | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
-    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: computeQA(N, addToListC(CONF, QAL)) > CONF}
-    if canAdvance(CONF) == true
-    [print "QA Comfort = " QAS ", rule: [QaComfort]"] .
+    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS > CONF}
+    if canAdvance(CONF) == true /\ newQAS := computeQA(N, addToListC(CONF, QAL))
+    [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
 
   crl [QaAirquality] :
     {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
-    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: computeQA(N, addToListAq(CONF, QAL)) > CONF}
-    if canAdvance(CONF) == true
-    [print "QA Air Quality = " QAS ", rule: [QaAirquality]"] .
+    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS > CONF}
+    if canAdvance(CONF) == true /\ newQAS := computeQA(N, addToListAq(CONF, QAL))
+    [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 
 
 
