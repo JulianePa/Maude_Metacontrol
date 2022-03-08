@@ -136,21 +136,21 @@ mod QUALITYATTRIBUTES is
     {< E :QaEcology | Consider: N, Past: EL, Status: QAS > CONF}
     =>
     {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS > CONF}
-    if canAdvance(CONF) == true /\ newQAS := computeEcoQa(N, addToListEco(CONF, EL))
+    if actuatorsReady(CONF) == true /\ newQAS := computeEcoQa(N, addToListEco(CONF, EL))
     [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
 
   crl [QaComfort] :
     {< C :QaComfort | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
     {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS > CONF}
-    if canAdvance(CONF) == true /\ newQAS := computeQA(N, addToListC(CONF, QAL))
+    if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListC(CONF, QAL))
     [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
 
   crl [QaAirquality] :
     {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS > CONF}
     =>
     {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS > CONF}
-    if canAdvance(CONF) == true /\ newQAS := computeQA(N, addToListAq(CONF, QAL))
+    if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListAq(CONF, QAL))
     [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 
 
