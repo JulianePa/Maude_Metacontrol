@@ -16,7 +16,7 @@ mod TIME is
   var RA : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
   var RAC : RuleAppliedContr .
-  var RAQA : RuleAppliedQA .
+  var QAC : QAComputed .
   vars CONF : Configuration .
   var A : Attribute .
   var EL : EcoList .
@@ -40,9 +40,9 @@ mod TIME is
   eq canAdvance(< WEC :WindowErrController | Selected: yes, RuleApplied: no > CONF) = false .
   eq canAdvance(< CC :ComfortController | Selected: yes, RuleApplied: no > CONF) = false .
   eq canAdvance(< EC :EcoController | Selected: yes, RuleApplied: no > CONF) = false .
-  eq canAdvance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, RuleApplied: no > CONF) = false .
-  eq canAdvance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > CONF) = false .
-  eq canAdvance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > CONF) = false .
+  eq canAdvance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
+  eq canAdvance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
+  eq canAdvance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
   eq canAdvance(CONF) = true [owise] .
 
   *** Advances the time by one step and sets the rule guards to 'no'
@@ -64,12 +64,12 @@ mod TIME is
       = < CC :ComfortController | Selected: yes, RuleApplied: no > advance(CONF) .
   eq advance(< EC :EcoController | Selected: yes, RuleApplied: RAC > CONF)
       = < EC :EcoController | Selected: yes, RuleApplied: no > advance(CONF) .
-  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, RuleApplied: RAQA > CONF)
-      = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, RuleApplied: no > advance(CONF) .
-  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA > CONF)
-      = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > advance(CONF) .
-  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA > CONF)
-      = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: no > advance(CONF) .
+  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF)
+      = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
+  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
+      = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
+  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
+      = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
 

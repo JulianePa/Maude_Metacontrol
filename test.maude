@@ -64,9 +64,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, RuleApplied: no >
             < "homeWindowErrController" :WindowErrController | Selected: no, RuleApplied: no >
             < "homeMetacontroller" :Metacontroller >
-            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1, RuleApplied: no >
-            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1, RuleApplied: no >
-            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1, RuleApplied: no >} .
+            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1, QAComputed: no >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1, QAComputed: no >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1, QAComputed: no >} .
 
 
 endm
