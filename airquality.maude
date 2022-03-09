@@ -9,18 +9,9 @@ mod AIRQUALITY is
 
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
-  op aqok? : AirqualityStatus -> Bool .
-  op getAirquality : Configuration -> AirqualityStatus .
-
   var AQ : Oid .
   vars AQS newAQS : AirqualityStatus .
   var CON : Configuration .
-
-  ceq aqok?(AQS) = true if AQS >= 0.0 .
-  ceq aqok?(AQS) = false if AQS < 0.0 .
-
-  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
-
   vars H WH W : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -28,7 +19,17 @@ mod AIRQUALITY is
   vars EAQ : EffectAQ .
   vars A A1 A2 : Attribute .
 
-  *** Rules heater
+
+  op aqok? : AirqualityStatus -> Bool .
+  ceq aqok?(AQS) = true if AQS >= 0.0 .
+  ceq aqok?(AQS) = false if AQS < 0.0 .
+
+  op getAirquality : Configuration -> AirqualityStatus .
+  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
+
+
+
+  **** Rules heater
   *** If the heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the heater.
   crl [AQHeaterOff] :
     < H :Heater | Status: hOff, RuleAppliedAQ: no, A >
@@ -61,7 +62,7 @@ mod AIRQUALITY is
     if newAQS := AQS + 2.0 * EAQ
     [print "rule: [AQHeaterVeryhot], Air quality before: " AQS ", Air quality after: " newAQS] .
 
-  *** Rules water heater
+  **** Rules water heater
   *** If the water heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the water heater.
   crl [AQWaterheaterOff] :
     < H :Heater | Status: HS, A >
@@ -85,7 +86,7 @@ mod AIRQUALITY is
     if newAQS := AQS + EAQ
     [print "rule: [AQWaterheaterOn], Air quality before: " AQS ", Air quality after: " newAQS] .
 
-  *** Rules Window
+  **** Rules window
   *** If the window did not affect the air quality in the room in the current hour yet, then the air quality increases depending on the status of the window.
   crl [AQWindowClosed] :
     < H :Heater | Status: HS, A >
@@ -118,6 +119,8 @@ mod AIRQUALITY is
     if newAQS := AQS + 2.0 * EAQ
     [print "rule: [AQWindowOpen], Air quality before: " AQS ", Air quality after: " newAQS] .
 
+
+  **** Rule all off
   *** If heater and water heater are off and the window is closed, then the air quality decreases a bit
   crl [AQAllOff] :
     < H :Heater | Status: hOff, RuleAppliedAQ: no, EffectAQ: EAQ, A >
