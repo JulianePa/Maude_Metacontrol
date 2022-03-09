@@ -27,7 +27,7 @@ mod METACONTROL is
   var QAL : QaList .
   var QAS : QaStatus .
   var RAC : RuleAppliedContr .
-  var RAQA : RuleAppliedQA .
+  var QACOM : QAComputed .
 
 *** TODO Should the metacontroller also turn the actuators off?
 
@@ -121,12 +121,12 @@ mod METACONTROL is
   crl [MetaContrEcoToComf] :
     < CC :ComfortController | Selected: no, RuleApplied: RAC >
     < EC :EcoController | Selected: yes, RuleApplied: no >
-    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA >
+    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     =>
     < CC :ComfortController | Selected: yes, RuleApplied: no >
     < EC :EcoController | Selected: no, RuleApplied: no >
-    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA >
+    < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     if QAS < 6/10
     [print "rule: [MetaContrEcoToComf]"] .
@@ -135,12 +135,12 @@ mod METACONTROL is
   crl [MetaContrComfToEco] :
     < CC :ComfortController | Selected: yes, RuleApplied: no >
     < EC :EcoController | Selected: no, RuleApplied: RAC >
-    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA >
+    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     =>
     < CC :ComfortController | Selected: no, RuleApplied: no >
     < EC :EcoController | Selected: yes, RuleApplied: no >
-    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, RuleApplied: RAQA >
+    < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     if QAS < 6/10
     [print "rule: [MetaContrComfToEco]"] .
