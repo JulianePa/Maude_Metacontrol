@@ -12,18 +12,7 @@ mod TEMPERATURE is
 
   op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
 
-  op cold? : Temperature -> Bool .
-  op hot? : Temperature -> Bool .
-
   vars DG newDG : Temperature .
-
-  ceq cold?(DG) = true if DG < 18.0 .
-  ceq cold?(DG) = false if DG >= 18.0 .
-
-  ceq hot?(DG) = true if DG > 22.0 .
-  ceq hot?(DG) = false if DG <= 22.0 .
-
-
   vars H WH W T C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -31,6 +20,18 @@ mod TEMPERATURE is
   vars RA : RuleAppliedTemp .
   vars ET : EffectTemp .
   vars A A1 A2 : Attribute .
+  var CONF : Configuration .
+  
+  op getTemp : Configuration -> Temperature .
+  eq getTemp(< T :Thermometer | Degrees: DG > CONF) = DG .
+
+  op cold? : Temperature -> Bool .
+  ceq cold?(DG) = true if DG < 18.0 .
+  ceq cold?(DG) = false if DG >= 18.0 .
+
+  op hot? : Temperature -> Bool .
+  ceq hot?(DG) = true if DG > 22.0 .
+  ceq hot?(DG) = false if DG <= 22.0 .
 
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.

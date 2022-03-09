@@ -10,9 +10,6 @@ mod TEST is
   protecting BREAK .
   protecting TIME .
 
-  op getTemp : Configuration -> Temperature .
-
-
   vars T C AQ : Oid .
   var DG : Temperature .
   var TI : Time .
@@ -20,10 +17,9 @@ mod TEST is
   var HS : HeaterStatus .
   var WS : WindowStatus .
   var AQS : AirqualityStatus .
-  vars INIT CON : Configuration .
+  vars INIT CONF : Configuration .
   vars ET ET1 ET2 : EffectTemp .
 
-  eq getTemp(< T :Thermometer | Degrees: DG > CON) = DG .
 
   op init : -> Configuration .
   eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
@@ -71,6 +67,10 @@ mod TEST is
 
 endm
 eof
+
+search [1, 100] init4 =>* {INIT:Configuration} such that getTemp(INIT) <= 18.0 .
+
+
 
 
 search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
