@@ -37,11 +37,11 @@ mod TEST is
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 15, Time: 15 >
-            < "homeComfortController" :ComfortController | Selected: no, RuleApplied: no >
-            < "homeEcoController" :EcoController | Selected: yes, RuleApplied: no >
-            < "homeHeaterErrController" :HeaterErrController | Selected: no, RuleApplied: no >
-            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, RuleApplied: no >
-            < "homeWindowErrController" :WindowErrController | Selected: no, RuleApplied: no >
+            < "homeComfortController" :ComfortController | Selected: no, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: yes, ConfigChanged: no >
+            < "homeHeaterErrController" :HeaterErrController | Selected: no, ConfigChanged: no >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, ConfigChanged: no >
+            < "homeWindowErrController" :WindowErrController | Selected: no, ConfigChanged: no >
             < "homeMetacontroller" :Metacontroller > .
 
   op init3 : -> Configuration .
@@ -58,11 +58,11 @@ mod TEST is
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 5.0 >
             < "homeClock" :Clock | Timesteps: 7, Time: 7 >
-            < "homeComfortController" :ComfortController | Selected: yes, RuleApplied: no >
-            < "homeEcoController" :EcoController | Selected: no, RuleApplied: no >
-            < "homeHeaterErrController" :HeaterErrController | Selected: no, RuleApplied: no >
-            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, RuleApplied: no >
-            < "homeWindowErrController" :WindowErrController | Selected: no, RuleApplied: no >
+            < "homeComfortController" :ComfortController | Selected: yes, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: no, ConfigChanged: no >
+            < "homeHeaterErrController" :HeaterErrController | Selected: no, ConfigChanged: no >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, ConfigChanged: no >
+            < "homeWindowErrController" :WindowErrController | Selected: no, ConfigChanged: no >
             < "homeMetacontroller" :Metacontroller >
             < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1, QAComputed: no >

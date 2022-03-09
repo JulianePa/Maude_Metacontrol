@@ -15,7 +15,7 @@ mod TIME is
   var TI : Time .
   var RA : RuleAppliedTemp .
   var RAAQ : RuleAppliedAQ .
-  var RAC : RuleAppliedContr .
+  var CCH : ConfigChanged .
   var QAC : QAComputed .
   vars CONF : Configuration .
   var A : Attribute .
@@ -35,11 +35,11 @@ mod TIME is
   eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
   eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
   eq canAdvance(< W :Window | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< HEC :HeaterErrController | Selected: yes , RuleApplied: no > CONF) = false .
-  eq canAdvance(< WHEC :WaterheaterErrController | Selected: yes, RuleApplied: no > CONF) = false .
-  eq canAdvance(< WEC :WindowErrController | Selected: yes, RuleApplied: no > CONF) = false .
-  eq canAdvance(< CC :ComfortController | Selected: yes, RuleApplied: no > CONF) = false .
-  eq canAdvance(< EC :EcoController | Selected: yes, RuleApplied: no > CONF) = false .
+  eq canAdvance(< HEC :HeaterErrController | Selected: yes , ConfigChanged: no > CONF) = false .
+  eq canAdvance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< WEC :WindowErrController | Selected: yes, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< CC :ComfortController | Selected: yes, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< EC :EcoController | Selected: yes, ConfigChanged: no > CONF) = false .
   eq canAdvance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
   eq canAdvance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
   eq canAdvance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
@@ -54,16 +54,16 @@ mod TIME is
       = < WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
   eq advance(< W :Window | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
       = < W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
-  eq advance(< HEC :HeaterErrController | Selected: yes, RuleApplied: RAC > CONF)
-      = < HEC :HeaterErrController | Selected: yes, RuleApplied: no > advance(CONF) .
-  eq advance(< WHEC :WaterheaterErrController | Selected: yes, RuleApplied: RAC > CONF)
-      = < WHEC :WaterheaterErrController | Selected: yes, RuleApplied: no > advance(CONF) .
-  eq advance(< WEC :WindowErrController | Selected: yes, RuleApplied: RAC > CONF)
-      = < WEC :WindowErrController | Selected: yes, RuleApplied: no > advance(CONF) .
-  eq advance(< CC :ComfortController | Selected: yes, RuleApplied: RAC > CONF)
-      = < CC :ComfortController | Selected: yes, RuleApplied: no > advance(CONF) .
-  eq advance(< EC :EcoController | Selected: yes, RuleApplied: RAC > CONF)
-      = < EC :EcoController | Selected: yes, RuleApplied: no > advance(CONF) .
+  eq advance(< HEC :HeaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
+      = < HEC :HeaterErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
+  eq advance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
+      = < WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
+  eq advance(< WEC :WindowErrController | Selected: yes, ConfigChanged: CCH > CONF)
+      = < WEC :WindowErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
+  eq advance(< CC :ComfortController | Selected: yes, ConfigChanged: CCH > CONF)
+      = < CC :ComfortController | Selected: yes, ConfigChanged: no > advance(CONF) .
+  eq advance(< EC :EcoController | Selected: yes, ConfigChanged: CCH > CONF)
+      = < EC :EcoController | Selected: yes, ConfigChanged: no > advance(CONF) .
   eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF)
       = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
