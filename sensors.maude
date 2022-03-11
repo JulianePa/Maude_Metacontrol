@@ -1,6 +1,6 @@
-in ~/Documents/Maude_Metacontrol/temperature.maude
-in ~/Documents/Maude_Metacontrol/airquality.maude
-in ~/Documents/Maude_Metacontrol/clock.maude
+in temperature.maude
+in airquality.maude
+in clock.maude
 
 mod SENSORS is
  protecting TEMPERATURE .

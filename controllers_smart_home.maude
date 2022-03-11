@@ -1,4 +1,4 @@
-in ~/Documents/Maude_Metacontrol/physics.maude
+in physics.maude
 
 mod CONTROLLERS is
   protecting PHYSICS .

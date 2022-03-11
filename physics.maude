@@ -1,4 +1,4 @@
-in ~/Documents/Maude_Metacontrol/sensors.maude
+in sensors.maude
 
 mod PHYSICS is
   protecting SENSORS .

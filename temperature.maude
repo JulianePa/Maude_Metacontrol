@@ -1,4 +1,4 @@
-in ~/Documents/Maude_Metacontrol/actuators.maude
+in actuators.maude
 
 mod TEMPERATURE is
   protecting ACTUATORS .
@@ -33,7 +33,7 @@ mod TEMPERATURE is
   ceq hot?(DG) = true if DG > 22.0 .
   ceq hot?(DG) = false if DG <= 22.0 .
 
-  
+
 endm
 eof
   *** Rules heater

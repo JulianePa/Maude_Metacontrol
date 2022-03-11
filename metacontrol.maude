@@ -1,9 +1,9 @@
-in ~/Documents/Maude_Metacontrol/comfort_controller.maude
-in ~/Documents/Maude_Metacontrol/eco_controller.maude
-in ~/Documents/Maude_Metacontrol/heater_err_controller.maude
-in ~/Documents/Maude_Metacontrol/wh_error_controller.maude
-in ~/Documents/Maude_Metacontrol/window_error_controller.maude
-in ~/Documents/Maude_Metacontrol/qualityattributes.maude
+in comfort_controller.maude
+in eco_controller.maude
+in heater_err_controller.maude
+in wh_error_controller.maude
+in window_error_controller.maude
+in qualityattributes.maude
 
 mod METACONTROL is
   protecting COMFORTCONTROLLER .
