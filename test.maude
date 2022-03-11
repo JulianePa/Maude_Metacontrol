@@ -22,14 +22,14 @@ mod TEST is
 
 
   op init : -> Configuration .
-  eq init = < "homeHeater" :Heater | Status: hOff, RuleAppliedTemp: no, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+  eq init = < "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 25.0 >
             < "homeClock" :Clock | Timesteps: 48, Time: 0 > .
 
   op init2 : -> Configuration .
-  eq init2 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
+  eq init2 = < "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 15, Time: 15 >
@@ -38,41 +38,58 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: no, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: no, ConfigChanged: no >
-            < "homeMetacontroller" :Metacontroller > .
+            ***< "homeMetacontroller" :Metacontroller >
+             .
 
   op init3 : -> Configuration .
-  eq init3 = < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: closed, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
+  eq init3 = < "homeHeater" :Heater | Status: veryhot, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 1.0 > .
 
   op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 1.0, EffectAQ: -0.5, Broken: yes >
-            < "homeWaterheater" :Waterheater | Status: on, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: yes, RuleAppliedAQ: yes, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 15.0 >
-            < "homeAirquality" :Airquality | Value: 5.0 >
+  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 23.0 >
+            < "homeAirquality" :Airquality | Value: -1.0 >
             < "homeClock" :Clock | Timesteps: 7, Time: 7 >
-            < "homeComfortController" :ComfortController | Selected: yes, ConfigChanged: no >
-            < "homeEcoController" :EcoController | Selected: no, ConfigChanged: no >
+            < "homeComfortController" :ComfortController | Selected: no, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: yes, ConfigChanged: no >
             < "homeHeaterErrController" :HeaterErrController | Selected: no, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: no, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: no, ConfigChanged: no >
-            < "homeMetacontroller" :Metacontroller >
-            < "homeQaEcology" :QaEcology | Consider: 5, Past: 2 1 4 3 5 2, Status: 1, QAComputed: no >
-            < "homeQaComfort" :QaComfort | Consider: 5, Past: false false false true false false true, Status: 1, QAComputed: no >
-            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: false false true true false true, Status: 1, QAComputed: no >} .
+            ***< "homeMetacontroller" :Metacontroller >
+            < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < TempAqChanged: no >} .
+
+  op init5 : -> TimedConfiguration .
+  eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 19.0 >
+            < "homeAirquality" :Airquality | Value: 7.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0 >
+            < "homeComfortController" :ComfortController | Selected: yes, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: no, ConfigChanged: no >
+            < TempAqChanged: no >} .
 
 
 endm
 eof
 
-search [1, 100] init4 =>* {INIT:Configuration} such that getTemp(INIT) <= 18.0 .
+search [1, 100] init5 =>* {INIT:Configuration} such that getTemp(INIT) < 18.0 .
+
+search [1, 100] init5 =>* {INIT:Configuration} such that getTemp(INIT) > 22.0 .
+
+search [1, 100] init5 =>* {INIT:Configuration} such that getAirquality(INIT) < 0.0 .
 
 
 
-
+*** Old searches
 search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
 
 search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 /\ getTime(INIT) <= 30 /\ getAirquality(INIT) <= 2.0 .
@@ -98,8 +115,8 @@ search [1] init2
 
 search [1] init =>* INIT:Configuration such that INIT == init .
 
-search [1] < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: 0.2 >
-          < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: -0.2 >
+search [1] < "homeHeater" :Heater | Status: veryhot, EffectTemp: 0.2 >
+          < "homeWindow" :Window | Status: open, EffectTemp: -0.2 >
           < "homeThermometer" :Thermometer | Degrees: 20.0 >
           < "homeClock" :Clock | Time: 0 >
            =>*
@@ -110,12 +127,12 @@ search [1] < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAp
            such that TI == 0 /\ DG == 20.0 /\ ET1 == 0.2 /\ ET2 == - 0.2
            /\ HS == veryhot /\ WS == open /\ RA1 == no /\ RA2 == no .
 
-search [1] < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: 0.2 >
-           < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: -0.2 >
+search [1] < "homeHeater" :Heater | Status: veryhot, EffectTemp: 0.2 >
+           < "homeWindow" :Window | Status: open, EffectTemp: -0.2 >
            < "homeThermometer" :Thermometer | Degrees: 20.0 >
            < "homeClock" :Clock | Time: 0 >
             =>*
-            < "homeHeater" :Heater | Status: veryhot, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: 0.2 >
-            < "homeWindow" :Window | Status: open, RuleAppliedTemp: no, RuleAppliedAQ: no, EffectTemp: -0.2 >
+            < "homeHeater" :Heater | Status: veryhot, EffectTemp: 0.2 >
+            < "homeWindow" :Window | Status: open, EffectTemp: -0.2 >
             < "homeThermometer" :Thermometer | Degrees: 20.0 >
             < "homeClock" :Clock | Time: 0 > .
