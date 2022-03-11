@@ -28,11 +28,11 @@ mod TIME is
   op canAdvance : Configuration -> Bool .
   *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
   eq canAdvance(< TempAqChanged: no > CONF) = false .
-  eq canAdvance(< HEC :HeaterErrController | Selected: yes , ConfigChanged: no > CONF) = false .
-  eq canAdvance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< WEC :WindowErrController | Selected: yes, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< CC :ComfortController | Selected: yes, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< EC :EcoController | Selected: yes, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< HEC :HeaterErrController | Selected: true , ConfigChanged: no > CONF) = false .
+  eq canAdvance(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< WEC :WindowErrController | Selected: true, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< CC :ComfortController | Selected: true, ConfigChanged: no > CONF) = false .
+  eq canAdvance(< EC :EcoController | Selected: true, ConfigChanged: no > CONF) = false .
   eq canAdvance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
   eq canAdvance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
   eq canAdvance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
@@ -43,16 +43,16 @@ mod TIME is
   *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
   eq advance(< TempAqChanged: TAQC > CONF)
       = < TempAqChanged: no > advance(CONF) .
-  eq advance(< HEC :HeaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
-      = < HEC :HeaterErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
-  eq advance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
-      = < WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
-  eq advance(< WEC :WindowErrController | Selected: yes, ConfigChanged: CCH > CONF)
-      = < WEC :WindowErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
-  eq advance(< CC :ComfortController | Selected: yes, ConfigChanged: CCH > CONF)
-      = < CC :ComfortController | Selected: yes, ConfigChanged: no > advance(CONF) .
-  eq advance(< EC :EcoController | Selected: yes, ConfigChanged: CCH > CONF)
-      = < EC :EcoController | Selected: yes, ConfigChanged: no > advance(CONF) .
+  eq advance(< HEC :HeaterErrController | Selected: true, ConfigChanged: CCH > CONF)
+      = < HEC :HeaterErrController | Selected: true, ConfigChanged: no > advance(CONF) .
+  eq advance(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: CCH > CONF)
+      = < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no > advance(CONF) .
+  eq advance(< WEC :WindowErrController | Selected: true, ConfigChanged: CCH > CONF)
+      = < WEC :WindowErrController | Selected: true, ConfigChanged: no > advance(CONF) .
+  eq advance(< CC :ComfortController | Selected: true, ConfigChanged: CCH > CONF)
+      = < CC :ComfortController | Selected: true, ConfigChanged: no > advance(CONF) .
+  eq advance(< EC :EcoController | Selected: true, ConfigChanged: CCH > CONF)
+      = < EC :EcoController | Selected: true, ConfigChanged: no > advance(CONF) .
   eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF)
       = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)

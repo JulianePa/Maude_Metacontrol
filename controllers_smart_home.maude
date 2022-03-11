@@ -9,7 +9,7 @@ mod CONTROLLERS is
 
   *** Indicates whether the current controller is active or passive at the moment.
   sort Selected .
-  ops yes no : -> Selected .
+  subsort Bool < Selected .
 
   sort ConfigChanged .
   ops yes no : -> ConfigChanged .

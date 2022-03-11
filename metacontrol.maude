@@ -13,6 +13,9 @@ mod METACONTROL is
   protecting WINDOWERRCONTROLLER .
   protecting QUALITYATTRIBUTES .
 
+endm
+eof
+
   sort Metacontroller .
   subsort Metacontroller < Configuration .
 
@@ -35,39 +38,39 @@ mod METACONTROL is
   *** If the comfort controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrComfortToHErr] :
     < H :Heater | Broken: yes, A >
-    < CC :ComfortController | Selected: yes, ConfigChanged: no >
-    < HEC :HeaterErrController | Selected: no, ConfigChanged: CCH >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < H :Heater | Broken: yes, A >
-    < CC :ComfortController | Selected: no, ConfigChanged: no >
-    < HEC :HeaterErrController | Selected: yes, ConfigChanged: no >
+    < CC :ComfortController | Selected: false, ConfigChanged: no >
+    < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrComfortToHErr]"] .
 
   *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
   rl [MetaContrComfortToWhErr] :
     < WH :Waterheater | Broken: yes, A >
-    < CC :ComfortController | Selected: yes, ConfigChanged: no >
-    < WHEC :WaterheaterErrController | Selected: no, ConfigChanged: CCH >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < WH :Waterheater | Broken: yes, A >
-    < CC :ComfortController | Selected: no, ConfigChanged: no >
-    < WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no >
+    < CC :ComfortController | Selected: false, ConfigChanged: no >
+    < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrComfortToWhErr]"] .
 
   *** If the comfort controller is active and the window is broken, then activate the window error controller
   rl [MetaContrComfortToWErr] :
     < W :Window | Broken: yes, A >
-    < CC :ComfortController | Selected: yes, ConfigChanged: no >
-    < WEC :WindowErrController | Selected: no, ConfigChanged: CCH >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < W :Window | Broken: yes, A >
-    < CC :ComfortController | Selected: no, ConfigChanged: no >
-    < WEC :WindowErrController | Selected: yes, ConfigChanged: no >
+    < CC :ComfortController | Selected: false, ConfigChanged: no >
+    < WEC :WindowErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrComfortToWErr]"] .
 
@@ -77,39 +80,39 @@ mod METACONTROL is
   *** If the eco controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrEcoToHErr] :
     < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: yes, ConfigChanged: no >
-    < HEC :HeaterErrController | Selected: no, ConfigChanged: CCH >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
+    < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: no, ConfigChanged: no >
-    < HEC :HeaterErrController | Selected: yes, ConfigChanged: no >
+    < EC :EcoController | Selected: false, ConfigChanged: no >
+    < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrEcoToHErr]"] .
 
   *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
   rl [MetaContrEcoToWhErr] :
     < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: yes, ConfigChanged: no >
-    < WHEC :WaterheaterErrController | Selected: no, ConfigChanged: CCH >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
+    < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: no, ConfigChanged: no >
-    < WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no >
+    < EC :EcoController | Selected: false, ConfigChanged: no >
+    < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrEcoToWhErr]"] .
 
   *** If the eco controller is active and the window is broken, then activate the window error controller
   rl [MetaContrEcoToWErr] :
     < W :Window | Broken: yes, A >
-    < EC :EcoController | Selected: yes, ConfigChanged: no >
-    < WEC :WindowErrController | Selected: no, ConfigChanged: CCH >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
+    < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
     =>
     < W :Window | Broken: yes, A >
-    < EC :EcoController | Selected: no, ConfigChanged: no >
-    < WEC :WindowErrController | Selected: yes, ConfigChanged: no >
+    < EC :EcoController | Selected: false, ConfigChanged: no >
+    < WEC :WindowErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
     [print "rule: [MetaContrEcoToWErr]"] .
 
@@ -119,13 +122,13 @@ mod METACONTROL is
   ************************************** Change between comfort and eco controller
   *** If QA comfort is below 0.6 and eco controller is active, then change to comfort controller
   crl [MetaContrEcoToComf] :
-    < CC :ComfortController | Selected: no, ConfigChanged: CCH >
-    < EC :EcoController | Selected: yes, ConfigChanged: no >
+    < CC :ComfortController | Selected: false, ConfigChanged: CCH >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     =>
-    < CC :ComfortController | Selected: yes, ConfigChanged: no >
-    < EC :EcoController | Selected: no, ConfigChanged: no >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < EC :EcoController | Selected: false, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     if QAS < 6/10
@@ -133,13 +136,13 @@ mod METACONTROL is
 
   *** If QA air quality is below 0.6 and comfort controller is active, then change to eco controller
   crl [MetaContrComfToEco] :
-    < CC :ComfortController | Selected: yes, ConfigChanged: no >
-    < EC :EcoController | Selected: no, ConfigChanged: CCH >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < EC :EcoController | Selected: false, ConfigChanged: CCH >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     =>
-    < CC :ComfortController | Selected: no, ConfigChanged: no >
-    < EC :EcoController | Selected: yes, ConfigChanged: no >
+    < CC :ComfortController | Selected: false, ConfigChanged: no >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
     if QAS < 6/10
