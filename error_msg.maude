@@ -2,15 +2,17 @@
 mod ERRORMSG is
   protecting METACONTROL .
 
-  vars H WH W : Oid .
-  var RA RA1 : RuleAppliedTemp .
-  var RAAQ RAAQ1 : RuleAppliedAQ .
-  var ET ET1 : EffectTemp .
-  var EAQ EAQ1 : EffectAQ .
-  var B B1 : Broken .
-  var AS AS1 : ActuatorStatus .
+  vars H WH W C : Oid .
+  vars ET ET1  : EffectTemp .
+  vars EAQ EAQ1 : EffectAQ .
+  vars B B1 : Broken .
+  vars AS AS1 : ActuatorStatus .
   var A : Attribute .
   var CONF : Configuration .
+  var S : Selected .
+  var CS : ConfigChanged .
+
+  *************************************************** Check actuator specification
   *** Want to ensure that
   *** 1. all attributes are in specification of actuator
   *** 2. attributes are there exactly once
@@ -19,14 +21,6 @@ mod ERRORMSG is
   op checkStatus : Attribute -> Bool .
   eq checkStatus(Status: AS, A) = true .
   eq checkStatus(A) = false [owise] .
-
-  op checkRuleAppliedTemp : Attribute -> Bool .
-  eq checkRuleAppliedTemp(RuleAppliedTemp: RA, A) = true .
-  eq checkRuleAppliedTemp(A) = false [owise] .
-
-  op checkRuleAppliedAQ : Attribute -> Bool .
-  eq checkRuleAppliedAQ(RuleAppliedAQ: RAAQ, A) = true .
-  eq checkRuleAppliedAQ(A) = false [owise] .
 
   op checkEffectTemp : Attribute -> Bool .
   eq checkEffectTemp(EffectTemp: ET, A) = true .
@@ -41,21 +35,13 @@ mod ERRORMSG is
   eq checkBroken(A) = false [owise] .
 
   op checkAll : Attribute -> Bool .
-  eq checkAll(A) = checkStatus(A) and checkRuleAppliedTemp(A) and checkRuleAppliedAQ(A) and checkEffectTemp(A) and checkEffectAQ(A) and checkBroken(A) .
+  eq checkAll(A) = checkStatus(A) and checkEffectTemp(A) and checkEffectAQ(A) and checkBroken(A) .
 
 
   *** All attributes are only once in the list of attributes
   op singleStatus : Attribute -> Bool .
   eq singleStatus(Status: AS, Status: AS1, A) = false .
   eq singleStatus(A) = true [owise] .
-
-  op singleRuleAppliedTemp : Attribute -> Bool .
-  eq singleRuleAppliedTemp(RuleAppliedTemp: RA, RuleAppliedTemp: RA1, A) = false .
-  eq singleRuleAppliedTemp(A) = true [owise] .
-
-  op singleRuleAppliedAQ : Attribute -> Bool .
-  eq singleRuleAppliedAQ(RuleAppliedAQ: RAAQ, RuleAppliedAQ: RAAQ1, A) = false .
-  eq singleRuleAppliedAQ(A) = true [owise] .
 
   op singleEffectTemp : Attribute -> Bool .
   eq singleEffectTemp(EffectTemp: ET, EffectTemp: ET1, A) = false .
@@ -70,7 +56,7 @@ mod ERRORMSG is
   eq singleBroken(A) = true [owise] .
 
   op singleAll : Attribute -> Bool .
-  eq singleAll(A) = singleStatus(A) and singleRuleAppliedTemp(A) and singleRuleAppliedAQ(A) and singleEffectTemp(A) and singleEffectAQ(A) and singleBroken(A) .
+  eq singleAll(A) = singleStatus(A) and singleEffectTemp(A) and singleEffectAQ(A) and singleBroken(A) .
 
 
   *** If not all actuators have all needed attributes or more than one of the same attribute, then throw an error message and delete everything else
@@ -87,13 +73,29 @@ mod ERRORMSG is
   eq checkActuators(CONF) = true [owise] .
 
 
-  *** Error messages
-  op msg_ : String -> Msg [format(ntg g g)].
+  ********************************************************** Only one controller is selected
+  *** If exactly one controller is selected, then give 'true'
+  *** If more than one or no controller is selected, give 'false'
+  op checkControllers : Configuration -> Bool .
+  eq checkControllers(< C :ComfortController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :EcoController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :HeaterErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :WaterheaterErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :WindowErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(CONF) = false [owise] .
+
+  ********************************************************** Error messages
+  op msg_ : String -> Msg [format(ntg g g)] .
   op _ : TimedConfiguration -> TimedConfiguration .
 
   *** These equations are applied in the beginning (and actually always) and throw an error message if some property is violated
   ceq {CONF} =  {(msg "Attributes not properly specified")}
       if checkActuators(CONF) == false .
 
+
+
 endm
 eof
+
+ceq {CONF} = {(msg "No or more than one controller selected")}
+    if checkControllers(CONF) == false .
