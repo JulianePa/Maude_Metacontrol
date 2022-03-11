@@ -133,26 +133,31 @@ mod QUALITYATTRIBUTES is
   ****************************************** Rules
 
   *** The value of the QAs should be computed every time step
-  *** TODO How do we ensure that the rule is applied every time step?
   crl [QaEcology] :
-    {< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF}
+    {< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no >
+    < TempAqChanged: yes > CONF}
     =>
-    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS, QAComputed: yes > CONF}
-    if actuatorsReady(CONF) == true /\ newQAS := computeEcoQa(N, addToListEco(CONF, EL))
+    {< E :QaEcology | Consider: N, Past: addToListEco(CONF, EL), Status: newQAS, QAComputed: yes >
+    < TempAqChanged: yes > CONF}
+    if newQAS := computeEcoQa(N, addToListEco(CONF, EL))
     [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
 
   crl [QaComfort] :
-    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF}
+    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
+    < TempAqChanged: yes > CONF}
     =>
-    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS, QAComputed: yes > CONF}
-    if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListC(CONF, QAL))
+    {< C :QaComfort | Consider: N, Past: addToListC(CONF, QAL), Status: newQAS, QAComputed: yes >
+    < TempAqChanged: yes > CONF}
+    if newQAS := computeQA(N, addToListC(CONF, QAL))
     [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
 
   crl [QaAirquality] :
-    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF}
+    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
+    < TempAqChanged: yes > CONF}
     =>
-    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS, QAComputed: yes > CONF}
-    if actuatorsReady(CONF) == true /\ newQAS := computeQA(N, addToListAq(CONF, QAL))
+    {< AQ :QaAirquality | Consider: N, Past: addToListAq(CONF, QAL), Status: newQAS, QAComputed: yes >
+    < TempAqChanged: yes > CONF}
+    if newQAS := computeQA(N, addToListAq(CONF, QAL))
     [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 
 
