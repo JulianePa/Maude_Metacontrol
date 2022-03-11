@@ -22,14 +22,3 @@ mod CONTROLLERS is
 
 endm
 eof
-
-var C : Oid .
-var CONTR : Controller .
-*** TODO DO WE NEED TO TAKE CONFIGURATION HERE?
-op selected : Controller -> Bool .
-eq selected(< C :HeaterErrController | Selected: yes >) = true .
-eq selected(< C :WaterheaterErrController | Selected: yes >) = true .
-eq selected(< C :WindowErrController | Selected: yes >) = true .
-eq selected(< C :ComfortController | Selected: yes >) = true .
-eq selected(< C :EcoController | Selected: yes >) = true .
-eq selected(CONTR) = false [owise] .
