@@ -1,0 +1,63 @@
+in ~/Documents/Maude_Metacontrol/sensors.maude
+
+mod PHYSICS is
+  protecting SENSORS .
+
+  vars H WH W T C AQ : Oid .
+  vars DG newDG : Temperature .
+  vars AQS newAQS : AirqualityStatus .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  vars RA : RuleAppliedTemp .
+  vars ET ET1 ET2 : EffectTemp .
+  vars EAQ EAQ1 EAQ2 : EffectAQ .
+  vars A A1 A2 : Attribute .
+  var CONF : Configuration .
+
+  op changeTempBy : Configuration -> Float .
+  eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
+  eq changeTempBy(< H :Heater | Status: veryhot, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
+  eq changeTempBy(< WH :Waterheater | Status: on, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
+  eq changeTempBy(< W :Window | Status: halfopen, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
+  eq changeTempBy(< W :Window | Status: open, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
+  eq changeTempBy(CONF) = 0.0 [owise] .
+
+  op changeAqBy : Configuration -> Float .
+  eq changeAqBy(< H :Heater | Status: fairlyhot, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
+  eq changeAqBy(< H :Heater | Status: veryhot, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
+  eq changeAqBy(< WH :Waterheater | Status: on, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
+  eq changeAqBy(< W :Window | Status: halfopen, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
+  eq changeAqBy(< W :Window | Status: open, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
+  eq changeAqBy(CONF) = 0.0 [owise] .
+
+  op allOff : Configuration -> Bool .
+  eq allOff(< H :Heater | Status: fairlyhot, A > CONF) = false .
+  eq allOff(< H :Heater | Status: veryhot, A > CONF) = false .
+  eq allOff(< H :Waterheater | Status: on, A > CONF) = false .
+  eq allOff(< H :Window | Status: halfopen, A > CONF) = false .
+  eq allOff(< H :Window | Status: open, A > CONF) = false .
+  eq allOff(CONF) = true [owise] .
+
+
+  *** Rule for changing temperature and air quality in the room depending on the statuses of the actuators
+  crl [changeTempAq] :
+    {< T :Thermometer | Degrees: DG >
+    < AQ :Airquality | Value: AQS > CONF}
+    =>
+    {< T :Thermometer | Degrees: newDG >
+    < AQ :Airquality | Value: newAQS > CONF}
+    if allOff(CONF) == false /\ newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
+    [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
+
+  crl [changeAllOff] :
+    {< T :Thermometer | Degrees: DG >
+    < AQ :Airquality | Value: AQS > CONF}
+    =>
+    {< T :Thermometer | Degrees: newDG >
+    < AQ :Airquality | Value: newAQS > CONF}
+    if allOff(CONF) == true /\ newDG := DG - 0.25 /\ newAQS := AQS - 0.25
+    [print "rule: [changeAllOff], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
+
+
+endm

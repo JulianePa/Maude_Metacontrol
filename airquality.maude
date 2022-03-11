@@ -27,7 +27,8 @@ mod AIRQUALITY is
   op getAirquality : Configuration -> AirqualityStatus .
   eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
 
-
+endm
+eof
 
   **** Rules heater
   *** If the heater did not affect the air quality in the room in the current hour yet, then the air quality decreases depending on the status of the heater.

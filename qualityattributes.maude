@@ -1,5 +1,5 @@
 mod QUALITYATTRIBUTES is
-  protecting SENSORS .
+  protecting PHYSICS .
   protecting RAT .
 
   var CONF : Configuration .

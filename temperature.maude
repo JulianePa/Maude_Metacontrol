@@ -21,7 +21,7 @@ mod TEMPERATURE is
   vars ET : EffectTemp .
   vars A A1 A2 : Attribute .
   var CONF : Configuration .
-  
+
   op getTemp : Configuration -> Temperature .
   eq getTemp(< T :Thermometer | Degrees: DG > CONF) = DG .
 
@@ -33,6 +33,9 @@ mod TEMPERATURE is
   ceq hot?(DG) = true if DG > 22.0 .
   ceq hot?(DG) = false if DG <= 22.0 .
 
+  
+endm
+eof
   *** Rules heater
   *** If the heater did not affect the temperature in the room in the current hour yet, then the temperature increases depending on the status of the heater.
   crl [TempHeaterOff] :

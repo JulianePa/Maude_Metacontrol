@@ -1,7 +1,7 @@
-in ~/Documents/Maude_Metacontrol/sensors.maude
+in ~/Documents/Maude_Metacontrol/physics.maude
 
 mod CONTROLLERS is
-  protecting SENSORS .
+  protecting PHYSICS .
 
   sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController Controller .
   subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Controller .
