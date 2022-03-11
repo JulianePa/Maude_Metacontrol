@@ -22,19 +22,12 @@ mod TIME is
   var EL : EcoList .
   var QAL : QaList .
   var QAS : QaStatus .
+  var TAQC : TempAqChanged .
 
   *** Determines whether the time can advance or not
   op canAdvance : Configuration -> Bool .
   *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
-  eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
-  eq canAdvance(< H :Heater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
-  eq canAdvance(< WH :Waterheater | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > CONF) = false .
-  eq canAdvance(< W :Window | RuleAppliedTemp: no, RuleAppliedAQ: yes, A > CONF) = false .
-  eq canAdvance(< W :Window | RuleAppliedTemp: yes, RuleAppliedAQ: no, A > CONF) = false .
+  eq canAdvance(< TempAqChanged: no > CONF) = false .
   eq canAdvance(< HEC :HeaterErrController | Selected: yes , ConfigChanged: no > CONF) = false .
   eq canAdvance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: no > CONF) = false .
   eq canAdvance(< WEC :WindowErrController | Selected: yes, ConfigChanged: no > CONF) = false .
@@ -48,12 +41,8 @@ mod TIME is
   *** Advances the time by one step and sets the rule guards to 'no'
   op advance : Configuration -> Configuration .
   *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
-  eq advance(< H :Heater | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
-      = < H :Heater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
-  eq advance(< WH :Waterheater | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
-      = < WH :Waterheater | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
-  eq advance(< W :Window | RuleAppliedTemp: RA, RuleAppliedAQ: RAAQ, A > CONF)
-      = < W :Window | RuleAppliedTemp: no, RuleAppliedAQ: no, A > advance(CONF) .
+  eq advance(< TempAqChanged: TAQC > CONF)
+      = < TempAqChanged: no > advance(CONF) .
   eq advance(< HEC :HeaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
       = < HEC :HeaterErrController | Selected: yes, ConfigChanged: no > advance(CONF) .
   eq advance(< WHEC :WaterheaterErrController | Selected: yes, ConfigChanged: CCH > CONF)
