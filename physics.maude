@@ -3,6 +3,14 @@ in ~/Documents/Maude_Metacontrol/sensors.maude
 mod PHYSICS is
   protecting SENSORS .
 
+  sort TempAqGuard TempAqChanged .
+  subsort TempAqGuard < Configuration .
+
+  ops yes no : -> TempAqChanged .
+
+  *** Indicates whether rule changing temperature and air quality have been applied
+  op < TempAqChanged: _ > : TempAqChanged -> TempAqGuard .
+
   vars H WH W T C AQ : Oid .
   vars DG newDG : Temperature .
   vars AQS newAQS : AirqualityStatus .
@@ -14,6 +22,7 @@ mod PHYSICS is
   vars EAQ EAQ1 EAQ2 : EffectAQ .
   vars A A1 A2 : Attribute .
   var CONF : Configuration .
+  var TAQC : TempAqChanged .
 
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
@@ -43,19 +52,23 @@ mod PHYSICS is
   *** Rule for changing temperature and air quality in the room depending on the statuses of the actuators
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
-    < AQ :Airquality | Value: AQS > CONF}
+    < AQ :Airquality | Value: AQS >
+    < TempAqChanged: no > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
-    < AQ :Airquality | Value: newAQS > CONF}
+    < AQ :Airquality | Value: newAQS >
+    < TempAqChanged: yes > CONF}
     if allOff(CONF) == false /\ newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
   crl [changeAllOff] :
     {< T :Thermometer | Degrees: DG >
-    < AQ :Airquality | Value: AQS > CONF}
+    < AQ :Airquality | Value: AQS >
+    < TempAqChanged: no > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
-    < AQ :Airquality | Value: newAQS > CONF}
+    < AQ :Airquality | Value: newAQS >
+    < TempAqChanged: yes > CONF}
     if allOff(CONF) == true /\ newDG := DG - 0.25 /\ newAQS := AQS - 0.25
     [print "rule: [changeAllOff], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
