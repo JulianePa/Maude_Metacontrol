@@ -12,8 +12,8 @@ mod COMFORTCONTROLLER is
   vars A A1 A2 : Attribute .
 
   *** Not in the morning
-  *** If T ok, AQ ok -> H off, WH off, W closed
-  crl [CContrTempOkAqOk] :
+  *** If T ok, AQ ok, T>20 -> H off, WH off, W closed
+  crl [CContrTempOkAqOkWhOff] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
@@ -32,8 +32,31 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
-    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [CContrTempOkAqOk]"] .
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG > 20.0
+    [print "rule: [CContrTempOkAqOkWhOff]"] .
+
+  *** If T ok, AQ ok, T<=20 -> H off, WH on, W closed
+  crl [CContrTempOkAqOkWhOn] :
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: true, ConfigChanged: no >
+    =>
+    (msg hOff from CC to H)
+    (msg on from CC to WH)
+    (msg closed from CC to W)
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG <= 20.0
+    [print "rule: [CContrTempOkAqOkWhOn]"] .
 
   *** If T ok, AQ not ok, W not open -> H off, WH off, W half open
   crl [CContrTempOkAqNotOk1] :

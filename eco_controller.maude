@@ -79,8 +79,8 @@ mod ECOCONTROLLER is
 
 
   *** Not in the morning
-  *** If T ok, AQ ok -> H off, W closed, WH off
-  crl [EContrTempOkAqOk] :
+  *** If T ok, AQ ok, T > 20 -> H off, W closed, WH off
+  crl [EContrTempOkAqOkWhOff] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
@@ -99,8 +99,31 @@ mod ECOCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true, ConfigChanged: yes >
-    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [EContrTempOkAqOk]"] .
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG > 20.0
+    [print "rule: [EContrTempOkAqOkWhOff]"] .
+
+  *** If T ok, AQ ok, T <= 20 -> H off, W closed, WH on
+  crl [EContrTempOkAqOkWhOn] :
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < EC :EcoController | Selected: true, ConfigChanged: no >
+    =>
+    (msg hOff from EC to H)
+    (msg on from EC to WH)
+    (msg closed from EC to W)
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI >
+    < AQ :Airquality | Value: AQS >
+    < EC :EcoController | Selected: true, ConfigChanged: yes >
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG <= 20.0
+    [print "rule: [EContrTempOkAqOkWhOn]"] .
 
   *** If T low, AQ not ok -> H fairly hot, W half open, WH off
   crl [EContrTempLowAqNotOk] :
