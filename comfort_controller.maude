@@ -21,6 +21,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg whOff from CC to WH)
@@ -32,6 +33,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG > 20.0
     [print "rule: [CContrTempOkAqOkWhOff]"] .
 
@@ -44,6 +46,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg on from CC to WH)
@@ -55,6 +58,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG <= 20.0
     [print "rule: [CContrTempOkAqOkWhOn]"] .
 
@@ -67,6 +71,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg whOff from CC to WH)
@@ -78,6 +83,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS =/= open
     [print "rule: [CContrTempOkAqNotOk1]"] .
 
@@ -90,6 +96,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg whOff from CC to WH)
@@ -101,6 +108,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS == open
     [print "rule: [CContrTempOkAqNotOk2]"] .
 
@@ -112,6 +120,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg veryhot from CC to H)
     (msg on from CC to WH)
@@ -122,6 +131,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ cold?(DG) == true
     [print "rule: [CContrTempLow]"] .
 
@@ -133,6 +143,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg whOff from CC to WH)
@@ -143,6 +154,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == true
     [print "rule: [CContrTempHigh]"] .
 
@@ -159,6 +171,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg on from CC to WH)
@@ -170,6 +183,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [CContrTempOkAqOkM]"] .
 
@@ -182,6 +196,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg on from CC to WH)
@@ -193,6 +208,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS =/= open
     [print "rule: [CContrTempOkAqNotOkM1]"] .
 
@@ -205,6 +221,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg on from CC to WH)
@@ -216,6 +233,7 @@ mod COMFORTCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS == open
     [print "rule: [CContrTempOkAqNotOkM2]"] .
 
@@ -227,6 +245,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg fairlyhot from CC to H)
     (msg on from CC to WH)
@@ -237,6 +256,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == true /\ cold?(DG) == true
     [print "rule: [CContrTempLowM]"] .
 
@@ -248,6 +268,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from CC to H)
     (msg on from CC to WH)
@@ -258,6 +279,7 @@ mod COMFORTCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if morning?(TI) == true /\ hot?(DG) == true
     [print "rule: [CContrTempHighM]"] .
 

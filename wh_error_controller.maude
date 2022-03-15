@@ -19,6 +19,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -29,6 +30,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempOkAqOk]"] .
 
@@ -40,6 +42,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg fairlyhot from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -50,6 +53,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempOkAqNotOk]"] .
 
@@ -61,6 +65,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg veryhot from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -71,6 +76,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempLowAqOk]"] .
 
@@ -82,6 +88,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg veryhot from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -92,6 +99,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempLowAqNotOk]"] .
 
@@ -103,6 +111,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -113,6 +122,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if hot?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempHighAqOk1]"] .
 
@@ -125,6 +135,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
+    < Scheduler: ContrChange >
     =>
     (msg hOff from WHEC to H)
     (msg whOff from WHEC to WH)
@@ -135,6 +146,7 @@ mod WATERHEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: yes >
+    < Scheduler: ContrChange >
     if hot?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempHighAqNotOk]"] .
 
