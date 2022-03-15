@@ -17,7 +17,10 @@ mod METACONTROL is
   sort Metacontroller .
   subsort Metacontroller < Configuration .
 
-  op < _ :Metacontroller > : Oid -> Metacontroller [format (ntr r r r o)] .
+  sort ControllersChanged .
+  ops yes no : -> ControllersChanged .
+
+  op < _ :Metacontroller | ControllersChanged: _ > : Oid ControllersChanged -> Metacontroller [format (ntr r r r r r r o)] .
 
   vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ : Oid .
   var HS : HeaterStatus .
@@ -38,13 +41,13 @@ mod METACONTROL is
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToHErr]"] .
 
@@ -53,13 +56,13 @@ mod METACONTROL is
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToWhErr]"] .
 
@@ -68,13 +71,13 @@ mod METACONTROL is
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < WEC :WindowErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToWErr]"] .
 
@@ -86,13 +89,13 @@ mod METACONTROL is
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToHErr]"] .
 
@@ -101,13 +104,13 @@ mod METACONTROL is
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToWhErr]"] .
 
@@ -116,13 +119,13 @@ mod METACONTROL is
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < WEC :WindowErrController | Selected: true, ConfigChanged: no >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToWErr]"] .
 
@@ -135,13 +138,13 @@ mod METACONTROL is
     < CC :ComfortController | Selected: false, ConfigChanged: CCH >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     if QAS < 6/10
     [print "rule: [MetaContrEcoToComf]"] .
@@ -151,16 +154,27 @@ mod METACONTROL is
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < EC :EcoController | Selected: false, ConfigChanged: CCH >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: no >
     < Scheduler: MCChange >
     =>
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < MC :Metacontroller >
+    < MC :Metacontroller | ControllersChanged: yes >
     < Scheduler: MCChange >
     if QAS < 6/10
     [print "rule: [MetaContrComfToEco]"] .
+
+
+
+  *************************** Dummy rule
+  *** TODO Has to be replaced by something else
+  rl [MetacontrollerDoesNothing] :
+    < MC :Metacontroller | ControllersChanged: no >
+    < Scheduler: MCChange >
+    =>
+    < MC :Metacontroller | ControllersChanged: yes >
+    < Scheduler: MCChange > .
 
 endm
 eof
