@@ -37,7 +37,7 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
-            ***< "homeMetacontroller" :Metacontroller >
+            ***< "homeMetacontroller" :Metacontroller | ControllersChanged: no >
              .
 
   op init3 : -> Configuration .
@@ -48,7 +48,7 @@ mod TEST is
             < "homeAirquality" :Airquality | Value: 1.0 > .
 
   op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: yes >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
@@ -59,7 +59,7 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
-            < "homeMetacontroller" :Metacontroller >
+            < "homeMetacontroller" :Metacontroller | ControllersChanged: no >
             < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
