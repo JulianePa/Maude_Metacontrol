@@ -1,0 +1,11 @@
+in metacontrol.maude
+
+mod MANAGER is
+  protecting METACONTROL .
+
+
+  var CONF : Configuration .
+  eq {< Scheduler: PhysicsChange > < TempAqChanged: yes > CONF}
+    = {< Scheduler: QAChange > < TempAqChanged: yes > CONF} .
+
+endm
