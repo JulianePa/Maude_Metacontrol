@@ -1,5 +1,4 @@
 in manager.maude
-in time.maude
 ***in break.maude
 in error_msg.maude
 
@@ -7,7 +6,6 @@ mod TEST is
   protecting MANAGER .
   protecting ERRORMSG .
   ***protecting BREAK .
-  protecting TIME .
 
   vars T C AQ : Oid .
   var DG : Temperature .
@@ -37,7 +35,7 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
-            ***< "homeMetacontroller" :Metacontroller | ControllersChanged: no >
+            < "homeMetacontroller" :Metacontroller | ControllersChanged: no >
              .
 
   op init3 : -> Configuration .
@@ -48,9 +46,9 @@ mod TEST is
             < "homeAirquality" :Airquality | Value: 1.0 > .
 
   op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: yes >
+  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
-            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: yes >
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
             < "homeAirquality" :Airquality | Value: 1.0 >
             < "homeClock" :Clock | Timesteps: 15, Time: 15 >
