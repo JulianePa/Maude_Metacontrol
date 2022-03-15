@@ -21,8 +21,8 @@ mod AIRQUALITY is
 
 
   op aqok? : AirqualityStatus -> Bool .
-  ceq aqok?(AQS) = true if AQS >= 0.0 .
-  ceq aqok?(AQS) = false if AQS < 0.0 .
+  ceq aqok?(AQS) = true if AQS >= 2.0 .
+  ceq aqok?(AQS) = false if AQS < 2.0 .
 
   op getAirquality : Configuration -> AirqualityStatus .
   eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
