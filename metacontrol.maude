@@ -180,7 +180,8 @@ mod METACONTROL is
     < Scheduler: MCChange >
     =>
     < MC :Metacontroller | ControllersChanged: yes >
-    < Scheduler: MCChange > .
+    < Scheduler: MCChange >
+    [print "rule: [MetacontrollerDoesNothing]"] .
 
 endm
 eof
