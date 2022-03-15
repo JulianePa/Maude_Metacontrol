@@ -97,5 +97,9 @@ mod ERRORMSG is
 endm
 eof
 
+op check : Configuration -> Msg .
+ceq check(CONF) = (msg "Everything ok") if checkControllers(CONF) == true .
+ceq check(CONF) = (msg "No or more than one controller selected") if checkControllers(CONF) == false .
+
 ceq {CONF} = {(msg "No or more than one controller selected")}
     if checkControllers(CONF) == false .
