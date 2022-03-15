@@ -1,8 +1,6 @@
-in metacontrol.maude
 in time.maude
 
 mod MANAGER is
-  protecting METACONTROL .
   protecting TIME .
 
 
@@ -21,5 +19,10 @@ mod MANAGER is
   ceq {< Scheduler: ContrChange > CONF}
     = {< Scheduler: TimeChange > CONF}
     if controllerReady(CONF) == true .
+
+  *** If the TempAqChanged object is on 'no' again, then the time has advanced
+  *** TODO Shall we really decide it like this?
+  eq {< Scheduler: TimeChange > < TempAqChanged: no > CONF}
+    = {< Scheduler: PhysicsChange > < TempAqChanged: no > CONF} .
 
 endm
