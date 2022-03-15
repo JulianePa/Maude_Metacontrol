@@ -1,0 +1,12 @@
+mod SCHEDULER is
+  protecting ACTUATORS .
+
+  sort Scheduler ScheduleComponents .
+  subsort Scheduler < Configuration .
+
+  ops PhysicsChange QAChange MCChange ContrChange TimeChange : -> ScheduleComponents .
+
+  *** The scheduler indicates which part of the system should apply rules at the moment
+  op < Scheduler: _ > : ScheduleComponents -> Scheduler .
+
+endm
