@@ -1,11 +1,25 @@
 in metacontrol.maude
+in time.maude
 
 mod MANAGER is
   protecting METACONTROL .
+  protecting TIME .
 
 
   var CONF : Configuration .
   eq {< Scheduler: PhysicsChange > < TempAqChanged: yes > CONF}
     = {< Scheduler: QAChange > < TempAqChanged: yes > CONF} .
+
+  ceq {< Scheduler: QAChange > CONF}
+    = {< Scheduler: MCChange > CONF}
+    if QAready(CONF) == true .
+
+  ceq {< Scheduler: MCChange > CONF}
+    = {< Scheduler: ContrChange > CONF}
+    if metacontrollerReady(CONF) == true .
+
+  ceq {< Scheduler: ContrChange > CONF}
+    = {< Scheduler: TimeChange > CONF}
+    if controllerReady(CONF) == true .
 
 endm
