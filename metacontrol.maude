@@ -32,6 +32,12 @@ mod METACONTROL is
   var QAS : QaStatus .
   var CCH : ConfigChanged .
   var QACOM : QAComputed .
+  var CONF : Configuration .
+
+  *** Determine if metacontroller changed configuration (to do tests without metacontroller)
+  op metacontrollerReady : Configuration -> Bool .
+  eq metacontrollerReady(< MC :Metacontroller | ControllersChanged: no > CONF) = false .
+  eq metacontrollerReady(CONF) = true [owise] .
 
 *** TODO Should the metacontroller also turn the actuators off?
 
