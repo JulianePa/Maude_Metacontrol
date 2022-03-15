@@ -1,11 +1,13 @@
 in temperature.maude
 in airquality.maude
 in clock.maude
+in scheduler.maude
 
 mod PHYSICS is
   protecting TEMPERATURE .
   protecting AIRQUALITY .
   protecting CLOCK .
+  protecting SCHEDULER .
 
   sort TempAqGuard TempAqChanged .
   subsort TempAqGuard < Configuration .
@@ -57,22 +59,26 @@ mod PHYSICS is
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < TempAqChanged: no > CONF}
+    < TempAqChanged: no >
+    < Scheduler: PhysicsChange > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
     < AQ :Airquality | Value: newAQS >
-    < TempAqChanged: yes > CONF}
+    < TempAqChanged: yes >
+    < Scheduler: PhysicsChange > CONF}
     if allOff(CONF) == false /\ newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
   crl [changeAllOff] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < TempAqChanged: no > CONF}
+    < TempAqChanged: no >
+    < Scheduler: PhysicsChange > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
     < AQ :Airquality | Value: newAQS >
-    < TempAqChanged: yes > CONF}
+    < TempAqChanged: yes >
+    < Scheduler: PhysicsChange > CONF}
     if allOff(CONF) == true /\ newDG := DG - 0.25 /\ newAQS := AQS - 0.25
     [print "rule: [changeAllOff], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 

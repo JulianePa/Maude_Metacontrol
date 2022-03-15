@@ -1,12 +1,12 @@
-in metacontrol.maude
+in manager.maude
 in time.maude
-in break.maude
+***in break.maude
 in error_msg.maude
 
 mod TEST is
-  protecting METACONTROL .
+  protecting MANAGER .
   protecting ERRORMSG .
-  protecting BREAK .
+  ***protecting BREAK .
   protecting TIME .
 
   vars T C AQ : Oid .
@@ -16,7 +16,7 @@ mod TEST is
   var HS : HeaterStatus .
   var WS : WindowStatus .
   var AQS : AirqualityStatus .
-  vars INIT CONF : Configuration .
+  vars CONF : Configuration .
   vars ET ET1 ET2 : EffectTemp .
 
 
@@ -51,54 +51,56 @@ mod TEST is
   eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 23.0 >
-            < "homeAirquality" :Airquality | Value: -1.0 >
-            < "homeClock" :Clock | Timesteps: 7, Time: 7 >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 1.0 >
+            < "homeClock" :Clock | Timesteps: 15, Time: 15 >
             < "homeComfortController" :ComfortController | Selected: false, ConfigChanged: no >
             < "homeEcoController" :EcoController | Selected: true, ConfigChanged: no >
             < "homeHeaterErrController" :HeaterErrController | Selected: false, ConfigChanged: no >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
-            ***< "homeMetacontroller" :Metacontroller >
+            < "homeMetacontroller" :Metacontroller >
             < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < TempAqChanged: no >} .
+            < TempAqChanged: no >
+            < Scheduler: PhysicsChange >} .
 
   op init5 : -> TimedConfiguration .
   eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 19.0 >
-            < "homeAirquality" :Airquality | Value: 7.0 >
+            < "homeAirquality" :Airquality | Value: 0.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0 >
-            < "homeComfortController" :ComfortController | Selected: false, ConfigChanged: no >
-            < "homeEcoController" :EcoController | Selected: true, ConfigChanged: no >
-            < TempAqChanged: no >} .
+            < "homeComfortController" :ComfortController | Selected: true, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: false, ConfigChanged: no >
+            < TempAqChanged: no >
+            < Scheduler: PhysicsChange >} .
 
 endm
 eof
 
-search [1, 100] init5 =>* {INIT:Configuration} such that getTemp(INIT) < 18.0 .
+search [1, 100] init5 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
 
-search [1, 100] init5 =>* {INIT:Configuration} such that getTemp(INIT) > 22.0 .
+search [1, 100] init5 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
 
-search [1, 100] init5 =>* {INIT:Configuration} such that getAirquality(INIT) < 0.0 .
+search [1, 100] init5 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
 
 
 
 *** Old searches
-search [1] init =>* INIT:Configuration such that getTemp(INIT) <= 0.0 .
+search [1] init =>* CONF:Configuration such that getTemp(CONF) <= 0.0 .
 
-search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 /\ getTime(INIT) <= 30 /\ getAirquality(INIT) <= 2.0 .
-
-
-search [1] init2 =>* INIT:Configuration such that getTemp(INIT) <= 17.0 /\ getTime(INIT) <= 50 .
+search [1] init2 =>* CONF:Configuration such that getTemp(CONF) <= 17.0 /\ getTime(CONF) <= 30 /\ getAirquality(CONF) <= 2.0 .
 
 
-search [1] init =>* INIT:Configuration such that getTime(INIT) == 10 .
+search [1] init2 =>* CONF:Configuration such that getTemp(CONF) <= 17.0 /\ getTime(CONF) <= 50 .
 
-search [1] init2 =>* INIT:Configuration such that getTime(INIT) == 10 .
+
+search [1] init =>* CONF:Configuration such that getTime(CONF) == 10 .
+
+search [1] init2 =>* CONF:Configuration such that getTime(CONF) == 10 .
 
 
 search [1] init2
@@ -111,7 +113,7 @@ search [1] init2
            < "homeClock" :Clock | Time: 10 > .
 
 
-search [1] init =>* INIT:Configuration such that INIT == init .
+search [1] init =>* CONF:Configuration such that CONF == init .
 
 search [1] < "homeHeater" :Heater | Status: veryhot, EffectTemp: 0.2 >
           < "homeWindow" :Window | Status: open, EffectTemp: -0.2 >

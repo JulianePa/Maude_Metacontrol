@@ -13,8 +13,6 @@ mod METACONTROL is
   protecting WINDOWERRCONTROLLER .
   protecting QUALITYATTRIBUTES .
 
-endm
-eof
 
   sort Metacontroller .
   subsort Metacontroller < Configuration .
@@ -41,11 +39,13 @@ eof
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToHErr]"] .
 
   *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
@@ -54,11 +54,13 @@ eof
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToWhErr]"] .
 
   *** If the comfort controller is active and the window is broken, then activate the window error controller
@@ -67,11 +69,13 @@ eof
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < WEC :WindowErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrComfortToWErr]"] .
 
 
@@ -83,11 +87,13 @@ eof
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < HEC :HeaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToHErr]"] .
 
   *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
@@ -96,11 +102,13 @@ eof
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToWhErr]"] .
 
   *** If the eco controller is active and the window is broken, then activate the window error controller
@@ -109,11 +117,13 @@ eof
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < WEC :WindowErrController | Selected: false, ConfigChanged: CCH >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < WEC :WindowErrController | Selected: true, ConfigChanged: no >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     [print "rule: [MetaContrEcoToWErr]"] .
 
 
@@ -126,11 +136,13 @@ eof
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < EC :EcoController | Selected: false, ConfigChanged: no >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     if QAS < 6/10
     [print "rule: [MetaContrEcoToComf]"] .
 
@@ -140,11 +152,13 @@ eof
     < EC :EcoController | Selected: false, ConfigChanged: CCH >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     =>
     < CC :ComfortController | Selected: false, ConfigChanged: no >
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
+    < Scheduler: MCChange >
     if QAS < 6/10
     [print "rule: [MetaContrComfToEco]"] .
 
