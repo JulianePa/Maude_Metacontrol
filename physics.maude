@@ -15,7 +15,7 @@ mod PHYSICS is
   ops yes no : -> TempAqChanged .
 
   *** Indicates whether rule changing temperature and air quality have been applied
-  op < TempAqChanged: _ > : TempAqChanged -> TempAqGuard .
+  op < TempAqChanged: _ > : TempAqChanged -> TempAqGuard [format(ntc c c c c)].
 
   vars H WH W T C AQ : Oid .
   vars DG newDG : Temperature .
