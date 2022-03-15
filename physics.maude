@@ -1,7 +1,11 @@
-in sensors.maude
+in temperature.maude
+in airquality.maude
+in clock.maude
 
 mod PHYSICS is
-  protecting SENSORS .
+  protecting TEMPERATURE .
+  protecting AIRQUALITY .
+  protecting CLOCK .
 
   sort TempAqGuard TempAqChanged .
   subsort TempAqGuard < Configuration .
