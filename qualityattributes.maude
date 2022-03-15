@@ -128,6 +128,14 @@ mod QUALITYATTRIBUTES is
   op < _ :QaEcology | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat EcoList QaStatus QAComputed -> Ecology [format (ntg g g g g g g g g g g g g g g g g)] .
 
 
+  ***************************************** For scheduler
+  op QAready : Configuration -> Bool .
+  eq QAready(< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
+  eq QAready(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
+  eq QAready(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
+  eq QAready(CONF) = true [owise] .
+
+
 
 
   ****************************************** Rules
