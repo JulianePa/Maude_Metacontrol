@@ -1,14 +1,11 @@
+in metacontrol.maude
+
 mod TIME is
-  protecting COMFORTCONTROLLER .
-  protecting ECOCONTROLLER .
-  protecting HEATERERRCONTROLLER .
-  protecting WATERHEATERERRCONTROLLER .
-  protecting WINDOWERRCONTROLLER .
-  protecting QUALITYATTRIBUTES .
+  protecting METACONTROL .
 
   var TS : Timesteps .
   var N : Nat .
-  vars H WH W T C CC EC AQ HEC WHEC WEC QA : Oid .
+  vars H WH W T C CC EC AQ HEC WHEC WEC QA MC : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -23,20 +20,8 @@ mod TIME is
   var QAL : QaList .
   var QAS : QaStatus .
   var TAQC : TempAqChanged .
+  var COC : ControllersChanged .
 
-  *** Determines whether the time can advance or not
-  op canAdvance : Configuration -> Bool .
-  *** We don't want to specify for each component in the system, that it has no effect on the time, so we only specify in which cases that time should NOT advance
-  eq canAdvance(< TempAqChanged: no > CONF) = false .
-  eq canAdvance(< HEC :HeaterErrController | Selected: true , ConfigChanged: no > CONF) = false .
-  eq canAdvance(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< WEC :WindowErrController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< CC :ComfortController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< EC :EcoController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq canAdvance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
-  eq canAdvance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
-  eq canAdvance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
-  eq canAdvance(CONF) = true [owise] .
 
   *** Advances the time by one step and sets the rule guards to 'no'
   op advance : Configuration -> Configuration .
@@ -59,14 +44,17 @@ mod TIME is
       = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
       = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
+  eq advance(< MC :Metacontroller | ControllersChanged: COC > CONF)
+      = < MC :Metacontroller | ControllersChanged: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
 
-  crl [timeAdvances] :
-    {< C :Clock | Timesteps: TS, Time: TI > CONF}
+  rl [timeAdvances] :
+    {< C :Clock | Timesteps: TS, Time: TI >
+    < Scheduler: TimeChange > CONF}
     =>
-    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) > advance(CONF)}
-    if canAdvance(CONF)
+    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
+    < Scheduler: TimeChange > advance(CONF)}
     [print "rule: [timeAdvances]"] .
 
 
