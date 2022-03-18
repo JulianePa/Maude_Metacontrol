@@ -13,7 +13,7 @@ mod COMFORTCONTROLLER is
 
   *** Not in the morning
   *** If T ok, AQ ok, T>20 -> H off, WH off, W closed
-  crl [CContrTempOkAqOkWhOff] :
+  crl [CContrTempOkAqOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
@@ -34,33 +34,8 @@ mod COMFORTCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < CC :ComfortController | Selected: true, ConfigChanged: yes >
     < Scheduler: ContrChange >
-    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG > 20.0
-    [print "rule: [CContrTempOkAqOkWhOff]"] .
-
-  *** If T ok, AQ ok, T<=20 -> H off, WH on, W closed
-  crl [CContrTempOkAqOkWhOn] :
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < CC :ComfortController | Selected: true, ConfigChanged: no >
-    < Scheduler: ContrChange >
-    =>
-    (msg hOff from CC to H)
-    (msg on from CC to WH)
-    (msg closed from CC to W)
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
-    < AQ :Airquality | Value: AQS >
-    < CC :ComfortController | Selected: true, ConfigChanged: yes >
-    < Scheduler: ContrChange >
-    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true /\ DG <= 20.0
-    [print "rule: [CContrTempOkAqOkWhOn]"] .
+    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
+    [print "rule: [CContrTempOkAqOkWh]"] .
 
   *** If T ok, AQ not ok, W not open -> H off, WH off, W half open
   crl [CContrTempOkAqNotOk1] :
