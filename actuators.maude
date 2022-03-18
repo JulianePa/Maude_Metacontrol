@@ -55,14 +55,6 @@ mod ACTUATORS is
   var CONF : Configuration .
 
 
-
-  ************************ Helpful functions
-  *** Get status of actuator
-  op getStatus : Actuator -> ActuatorStatus .
-  eq getStatus(< H :Heater | Status: HS, A >) = HS .
-  eq getStatus(< WH :Waterheater | Status: WHS, A >) = WHS .
-  eq getStatus(< W :Window | Status: WS, A >) = WS .
-
   *** Set status of actuator (if wrong type of actuator status is inserted, nothing happens)
   op setStatus : Actuator ActuatorStatus -> Actuator .
   ceq setStatus(< H :Heater | Status: HS, A >, AS)
