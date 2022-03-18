@@ -23,7 +23,6 @@ mod PHYSICS is
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
-  vars RA : RuleAppliedTemp .
   vars ET ET1 ET2 : EffectTemp .
   vars EAQ EAQ1 EAQ2 : EffectAQ .
   vars A A1 A2 : Attribute .

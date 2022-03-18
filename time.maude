@@ -10,8 +10,6 @@ mod TIME is
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var TI : Time .
-  var RA : RuleAppliedTemp .
-  var RAAQ : RuleAppliedAQ .
   var CCH : ConfigChanged .
   var QAC : QAComputed .
   vars CONF : Configuration .

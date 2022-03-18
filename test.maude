@@ -10,7 +10,6 @@ mod TEST is
   vars T C AQ : Oid .
   var DG : Temperature .
   var TI : Time .
-  vars RA1 RA2 : RuleAppliedTemp .
   var HS : HeaterStatus .
   var WS : WindowStatus .
   var AQS : AirqualityStatus .
@@ -49,9 +48,9 @@ mod TEST is
   eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: yes >
-            < "homeThermometer" :Thermometer | Degrees: 20.5 >
-            < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 15, Time: 15 >
+            < "homeThermometer" :Thermometer | Degrees: 19.0 >
+            < "homeAirquality" :Airquality | Value: 0.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 15 >
             < "homeComfortController" :ComfortController | Selected: false, ConfigChanged: no >
             < "homeEcoController" :EcoController | Selected: true, ConfigChanged: no >
             < "homeHeaterErrController" :HeaterErrController | Selected: false, ConfigChanged: no >
@@ -65,25 +64,25 @@ mod TEST is
             < Scheduler: PhysicsChange >} .
 
   op init5 : -> TimedConfiguration .
-  eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
+  eq init5 = {< "homeHeater" :Heater | Status: fairlyhot, EffectTemp: 1.0, EffectAQ: -0.5, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: on, EffectTemp: 0.5, EffectAQ: -0.25, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -0.5, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 19.0 >
+            < "homeThermometer" :Thermometer | Degrees: 18.0 >
             < "homeAirquality" :Airquality | Value: 0.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0 >
-            < "homeComfortController" :ComfortController | Selected: true, ConfigChanged: no >
-            < "homeEcoController" :EcoController | Selected: false, ConfigChanged: no >
+            < "homeComfortController" :ComfortController | Selected: false, ConfigChanged: no >
+            < "homeEcoController" :EcoController | Selected: true, ConfigChanged: no >
             < TempAqChanged: no >
             < Scheduler: PhysicsChange >} .
 
 endm
 eof
 
-search [1, 100] init5 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
+search [1, 1000] init5 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
 
-search [1, 100] init5 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
+search [1, 1000] init5 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
 
-search [1, 100] init5 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
+search [4, 1000] init5 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
 
 
 
