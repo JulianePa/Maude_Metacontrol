@@ -15,41 +15,22 @@ initial_world_state = {
 heater_config = {
     "name": "heater",
     "OFF": (0,0),
-    "FAIRLY HOT": (1, -0.5),
-    "VERY HOT": (2, -1)
+    "FAIRLY HOT": (0.615, -0.45),
+    "VERY HOT": (1.25, -0.9)
 }
 
 water_heater_config = {
     "name": "water_heater",
     "OFF": (0,0),
-    "ON": (0.5, -0.25),
+    "ON": (0.3, -0.125),
 }
 
 window_config = {
     "name": "window",
-    "OPEN": (-1, 2),
-    "HALF OPEN": (-0.5, 1),
-    "CLOSED": (0, 0)
+    "OPEN": (-2, 2),
+    "HALF OPEN": (-1, 1),
+    "CLOSED": (0, -0.125)
 }
-# heater_config = {
-#     "name": "heater",
-#     "OFF": (0,0),
-#     "FAIRLY HOT": (0.016, -0.008),
-#     "VERY HOT": (0.032, -0.016)
-# }
-#
-# water_heater_config = {
-#     "name": "water_heater",
-#     "OFF": (0,0),
-#     "ON": (0.008, -0.004),
-# }
-#
-# window_config = {
-#     "name": "window",
-#     "OPEN": (-0.016, 0.032),
-#     "HALF OPEN": (-0.008, 0.016),
-#     "CLOSED": (0, 0)
-# }
 
 actuators_config = {
     "heater": heater_config,
@@ -59,7 +40,7 @@ actuators_config = {
 
 temp_low = 18.5
 temp_high = 21.5
-aq_low = 0.5
+aq_low = 0.3
 
 smart_home_world_comfort = World(initial_world_state, actuators_config)
 comfort_controller = ComfortController(temp_low, temp_high, aq_low)
@@ -69,7 +50,7 @@ smart_home_world_eco = World(initial_world_state, actuators_config)
 eco_controller = EcoController(temp_low, temp_high, aq_low)
 smart_home_world_eco.controller = eco_controller
 
-time_steps = 100
+time_steps = 500
 
 for t in range(0,time_steps):
     smart_home_world_comfort.step_world()
