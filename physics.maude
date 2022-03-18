@@ -1,10 +1,10 @@
-in temperature.maude
+in thermometer.maude
 in airquality.maude
 in clock.maude
 in scheduler.maude
 
 mod PHYSICS is
-  protecting TEMPERATURE .
+  protecting THERMOMETER .
   protecting AIRQUALITY .
   protecting CLOCK .
   protecting SCHEDULER .
