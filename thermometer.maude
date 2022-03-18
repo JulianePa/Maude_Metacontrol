@@ -1,6 +1,6 @@
 in actuators.maude
 
-mod TEMPERATURE is
+mod THERMOMETER is
   protecting ACTUATORS .
   protecting FLOAT .
 
