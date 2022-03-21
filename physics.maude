@@ -28,6 +28,8 @@ mod PHYSICS is
   vars A A1 A2 : Attribute .
   var CONF : Configuration .
   var TAQC : TempAqChanged .
+  var TS : Timesteps .
+  var TI : Time .
 
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
@@ -35,6 +37,12 @@ mod PHYSICS is
   eq changeTempBy(< WH :Waterheater | Status: on, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: halfopen, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: open, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI > CONF) = -0.5 + changeTempBy(CONF)
+    if 0 <= TI and TI < 6 .
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI > CONF) = -0.25 + changeTempBy(CONF)
+    if 6 <= TI and TI < 12 .
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI > CONF) = -0.25 + changeTempBy(CONF)
+    if 18 <= TI .
   eq changeTempBy(CONF) = 0.0 [owise] .
 
   op changeAqBy : Configuration -> Float .
