@@ -41,17 +41,10 @@ mod PHYSICS is
   eq changeAqBy(< H :Heater | Status: fairlyhot, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< H :Heater | Status: veryhot, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
   eq changeAqBy(< WH :Waterheater | Status: on, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
+  eq changeAqBy(< W :Window | Status: closed, EffectAQ: EAQ, A > CONF) = -0.125 + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: halfopen, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: open, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
   eq changeAqBy(CONF) = 0.0 [owise] .
-
-  op allOff : Configuration -> Bool .
-  eq allOff(< H :Heater | Status: fairlyhot, A > CONF) = false .
-  eq allOff(< H :Heater | Status: veryhot, A > CONF) = false .
-  eq allOff(< H :Waterheater | Status: on, A > CONF) = false .
-  eq allOff(< H :Window | Status: halfopen, A > CONF) = false .
-  eq allOff(< H :Window | Status: open, A > CONF) = false .
-  eq allOff(CONF) = true [owise] .
 
 
   *** Rule for changing temperature and air quality in the room depending on the statuses of the actuators
@@ -65,21 +58,9 @@ mod PHYSICS is
     < AQ :Airquality | Value: newAQS >
     < TempAqChanged: yes >
     < Scheduler: PhysicsChange > CONF}
-    if allOff(CONF) == false /\ newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
+    if newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
-  crl [changeAllOff] :
-    {< T :Thermometer | Degrees: DG >
-    < AQ :Airquality | Value: AQS >
-    < TempAqChanged: no >
-    < Scheduler: PhysicsChange > CONF}
-    =>
-    {< T :Thermometer | Degrees: newDG >
-    < AQ :Airquality | Value: newAQS >
-    < TempAqChanged: yes >
-    < Scheduler: PhysicsChange > CONF}
-    if allOff(CONF) == true /\ newDG := DG - 0.25 /\ newAQS := AQS - 0.25
-    [print "rule: [changeAllOff], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
 
 endm
