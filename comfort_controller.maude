@@ -48,7 +48,7 @@ mod COMFORTCONTROLLER is
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg hOff from CC to H)
+    (msg veryhot from CC to H)
     (msg whOff from CC to WH)
     (msg halfopen from CC to W)
     < H :Heater | A >
@@ -73,7 +73,7 @@ mod COMFORTCONTROLLER is
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg hOff from CC to H)
+    (msg veryhot from CC to H)
     (msg whOff from CC to WH)
     (msg open from CC to W)
     < H :Heater | A >
@@ -173,7 +173,7 @@ mod COMFORTCONTROLLER is
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg hOff from CC to H)
+    (msg fairlyhot from CC to H)
     (msg on from CC to WH)
     (msg halfopen from CC to W)
     < H :Heater | A >
@@ -198,7 +198,7 @@ mod COMFORTCONTROLLER is
     < CC :ComfortController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg hOff from CC to H)
+    (msg veryhot from CC to H)
     (msg on from CC to WH)
     (msg open from CC to W)
     < H :Heater | A >

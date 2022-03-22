@@ -68,9 +68,9 @@ mod ECOCONTROLLER is
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg fairlyhot from EC to H)
+    (msg veryhot from EC to H)
     (msg on from EC to WH)
-    (msg closed from EC to W)
+    (msg halfopen from EC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
@@ -97,7 +97,7 @@ mod ECOCONTROLLER is
     < Scheduler: ContrChange >
     =>
     (msg hOff from EC to H)
-    (msg whOff from EC to WH)
+    (msg on from EC to WH)
     (msg closed from EC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -108,7 +108,7 @@ mod ECOCONTROLLER is
     < EC :EcoController | Selected: true, ConfigChanged: yes >
     < Scheduler: ContrChange >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [EContrTempOkAqOk]"] . 
+    [print "rule: [EContrTempOkAqOk]"] .
 
   *** If T low, AQ not ok -> H fairly hot, W half open, WH off
   crl [EContrTempLowAqNotOk] :
@@ -121,7 +121,7 @@ mod ECOCONTROLLER is
     < EC :EcoController | Selected: true, ConfigChanged: no >
     < Scheduler: ContrChange >
     =>
-    (msg fairlyhot from EC to H)
+    (msg veryhot from EC to H)
     (msg whOff from EC to WH)
     (msg halfopen from EC to W)
     < H :Heater | A >
