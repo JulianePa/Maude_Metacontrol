@@ -3,6 +3,7 @@ in physics.maude
 mod CONTROLLERS is
   protecting PHYSICS .
 
+  *** TODO: Do I need the Controller sort?
   sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController Controller .
   subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Controller .
   subsort Controller < Configuration .
@@ -11,25 +12,11 @@ mod CONTROLLERS is
   sort Selected .
   subsort Bool < Selected .
 
-  sort ConfigChanged .
-  ops yes no : -> ConfigChanged .
-
-  op < _ :HeaterErrController | Selected: _ , ConfigChanged: _ > : Oid Selected ConfigChanged -> HeaterErrController [format (nty y y y y y y y y y o)] .
-  op < _ :WaterheaterErrController | Selected: _, ConfigChanged: _ > : Oid Selected ConfigChanged -> WaterheaterErrController [format (nty y y y y y y y y y o)] .
-  op < _ :WindowErrController | Selected: _, ConfigChanged: _ > : Oid Selected ConfigChanged -> WindowErrController [format (nty y y y y y y y y y o)] .
-  op < _ :ComfortController | Selected: _, ConfigChanged: _ > : Oid Selected ConfigChanged -> ComfortController [format (nty y y y y y y y y y o)] .
-  op < _ :EcoController | Selected: _, ConfigChanged: _ > : Oid Selected ConfigChanged -> EcoController [format (nty y y y y y y y y y o)] .
-
-  var HEC WHEC WEC CC EC : Oid .
-  var CONF : Configuration .
-  *** Determine if active controller changed actuator configuration
-  op controllerReady : Configuration -> Bool .
-  eq controllerReady(< HEC :HeaterErrController | Selected: true , ConfigChanged: no > CONF) = false .
-  eq controllerReady(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq controllerReady(< WEC :WindowErrController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq controllerReady(< CC :ComfortController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq controllerReady(< EC :EcoController | Selected: true, ConfigChanged: no > CONF) = false .
-  eq controllerReady(CONF) = true [owise] .
+  op < _ :HeaterErrController | Selected: _ > : Oid Selected -> HeaterErrController [format (nty y y y y y y o)] .
+  op < _ :WaterheaterErrController | Selected: _ > : Oid Selected -> WaterheaterErrController [format (nty y y y y y y o)] .
+  op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
+  op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
+  op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
 
 endm
 eof
