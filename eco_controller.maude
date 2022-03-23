@@ -7,7 +7,7 @@ mod ECOCONTROLLER is
   var AQS : AirqualityStatus .
   var TI : Time .
   var TS : Timesteps .
-  vars B B1 B2 : Broken .
+  vars B B1 B2 B3 : Bool .
   vars A A1 A2 : Attribute .
 
   *** Rules that hold both in the morning and not in the morning

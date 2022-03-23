@@ -7,6 +7,7 @@ mod WINDOWERRCONTROLLER is
   var TI : Time .
   var TS : Timesteps .
   vars A A1 A2 : Attribute .
+  vars B B1 B2 B3 : Bool .
 
 
   *** Rules for both in the morning and not in the morning
