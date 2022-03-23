@@ -3,56 +3,30 @@ in metacontrol.maude
 mod TIME is
   protecting METACONTROL .
 
+  vars C QA : Oid .
   var TS : Timesteps .
-  var N : Nat .
-  vars H WH W T C CC EC AQ HEC WHEC WEC QA MC : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
   var TI : Time .
-  var CCH : ConfigChanged .
-  var QAC : QAComputed .
-  vars CONF : Configuration .
-  var A : Attribute .
+  var N : Nat .
   var EL : EcoList .
-  var QAL : QaList .
   var QAS : QaStatus .
-  var TAQC : TempAqChanged .
-  var COC : ControllersChanged .
+  var QAL : QaList .
+  vars CONF : Configuration .
 
-
-  *** Advances the time by one step and sets the rule guards to 'no'
   op advance : Configuration -> Configuration .
-  *** These equations can be applied independent of the rule applied statuses of the actuators (maybe we want to use it for something else too)
-  eq advance(< TempAqChanged: TAQC > CONF)
-      = < TempAqChanged: no > advance(CONF) .
-  eq advance(< HEC :HeaterErrController | Selected: true, ConfigChanged: CCH > CONF)
-      = < HEC :HeaterErrController | Selected: true, ConfigChanged: no > advance(CONF) .
-  eq advance(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: CCH > CONF)
-      = < WHEC :WaterheaterErrController | Selected: true, ConfigChanged: no > advance(CONF) .
-  eq advance(< WEC :WindowErrController | Selected: true, ConfigChanged: CCH > CONF)
-      = < WEC :WindowErrController | Selected: true, ConfigChanged: no > advance(CONF) .
-  eq advance(< CC :ComfortController | Selected: true, ConfigChanged: CCH > CONF)
-      = < CC :ComfortController | Selected: true, ConfigChanged: no > advance(CONF) .
-  eq advance(< EC :EcoController | Selected: true, ConfigChanged: CCH > CONF)
-      = < EC :EcoController | Selected: true, ConfigChanged: no > advance(CONF) .
-  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF)
+  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: yes > CONF)
       = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
+  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
       = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF)
+  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
       = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< MC :Metacontroller | ControllersChanged: COC > CONF)
-      = < MC :Metacontroller | ControllersChanged: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
-
 
   rl [timeAdvances] :
     {< C :Clock | Timesteps: TS, Time: TI >
-    < Scheduler: TimeChange > CONF}
+    < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true, TimeChange: true > CONF}
     =>
     {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
-    < Scheduler: TimeChange > advance(CONF)}
+    < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > advance(CONF)}
     [print "rule: [timeAdvances]"] .
 
 
