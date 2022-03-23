@@ -9,14 +9,6 @@ mod PHYSICS is
   protecting CLOCK .
   protecting SCHEDULER .
 
-  sort TempAqGuard TempAqChanged .
-  subsort TempAqGuard < Configuration .
-
-  ops yes no : -> TempAqChanged .
-
-  *** Indicates whether rule changing temperature and air quality have been applied
-  op < TempAqChanged: _ > : TempAqChanged -> TempAqGuard [format(ntc c c c c)].
-
   vars H WH W T C AQ : Oid .
   vars DG newDG : Temperature .
   vars AQS newAQS : AirqualityStatus .
@@ -27,9 +19,9 @@ mod PHYSICS is
   vars EAQ EAQ1 EAQ2 : EffectAQ .
   vars A A1 A2 : Attribute .
   var CONF : Configuration .
-  var TAQC : TempAqChanged .
   var TS : Timesteps .
   var TI : Time .
+  vars B B1 B2 B3 : Bool .
 
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
@@ -59,13 +51,11 @@ mod PHYSICS is
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < TempAqChanged: no >
-    < Scheduler: PhysicsChange > CONF}
+    < Scheduler | Status: PhysicsChange, TempAqChange: false, QaChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
     < AQ :Airquality | Value: newAQS >
-    < TempAqChanged: yes >
-    < Scheduler: PhysicsChange > CONF}
+    < Scheduler | Status: PhysicsChange, TempAqChange: true, QaChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
     if newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
