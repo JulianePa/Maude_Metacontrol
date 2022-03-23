@@ -5,24 +5,22 @@ mod MANAGER is
 
 
   var CONF : Configuration .
-  eq {< Scheduler: PhysicsChange > < TempAqChanged: yes > CONF}
-    = {< Scheduler: QAChange > < TempAqChanged: yes > CONF} .
+  var B B1 B2 B3 B4 : Bool .
+  eq {< Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: B, ContrChange: B1, TimeChange: B2 > CONF}
+    = {< Scheduler | Status: QAChange, TempAqChange: true, McChange: B, ContrChange: B1, TimeChange: B2 > CONF} .
 
-  ceq {< Scheduler: QAChange > CONF}
-    = {< Scheduler: MCChange > CONF}
+  ceq {< Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
+    = {< Scheduler | Status: MCChange, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
     if QAready(CONF) == true .
 
-  ceq {< Scheduler: MCChange > CONF}
-    = {< Scheduler: ContrChange > CONF}
-    if metacontrollerReady(CONF) == true .
+  eq {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 > CONF}
+    = {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 > CONF} .
 
-  ceq {< Scheduler: ContrChange > CONF}
-    = {< Scheduler: TimeChange > CONF}
-    if controllerReady(CONF) == true .
+  eq {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 > CONF}
+    = {< Scheduler | Status: TimeChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 > CONF} .
 
   *** If the TempAqChanged object is on 'no' again, then the time has advanced
-  *** TODO Shall we really decide it like this?
-  eq {< Scheduler: TimeChange > < TempAqChanged: no > CONF}
-    = {< Scheduler: PhysicsChange > < TempAqChanged: no > CONF} .
+  eq {< Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > CONF}
+    = {< Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > CONF} .
 
 endm
