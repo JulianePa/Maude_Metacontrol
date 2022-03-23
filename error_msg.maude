@@ -10,7 +10,6 @@ mod ERRORMSG is
   var A : Attribute .
   var CONF : Configuration .
   var S : Selected .
-  var CS : ConfigChanged .
 
   *************************************************** Check actuator specification
   *** Want to ensure that
@@ -77,11 +76,11 @@ mod ERRORMSG is
   *** If exactly one controller is selected, then give 'true'
   *** If more than one or no controller is selected, give 'false'
   op checkControllers : Configuration -> Bool .
-  eq checkControllers(< C :ComfortController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :EcoController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :HeaterErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :WaterheaterErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :WindowErrController | Selected: S, ConfigChanged: CS > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :ComfortController | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :EcoController | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :HeaterErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :WaterheaterErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :WindowErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(CONF) = false [owise] .
 
   ********************************************************** Error messages
