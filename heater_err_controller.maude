@@ -7,7 +7,7 @@ mod HEATERERRCONTROLLER is
   var TI : Time .
   var TS : Timesteps .
   vars A A1 A2 : Attribute .
-  vars B B1 B2 B3 : Bool .
+  vars B B1 B2 : Bool .
 
   *** Rules that hold for both the morning and not the morning
   *** If T ok, AQ not ok -> H off, WH on, W half open
@@ -18,7 +18,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -29,7 +29,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [HErrContrTempOkAqNotOk]"] .
 
@@ -40,7 +40,7 @@ mod HEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -50,7 +50,7 @@ mod HEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if cold?(DG) == true
     [print "rule: [HErrContrTempLow]"] .
 
@@ -67,7 +67,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg whOff from HEC to WH)
@@ -79,7 +79,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [HErrContrTempOkAqOk]"] .
 
@@ -91,7 +91,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg whOff from HEC to WH)
@@ -102,7 +102,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if morning?(TI) == false /\ hot?(DG) == true
     [print "rule: [HErrContrTempHigh]"] .
 
@@ -121,7 +121,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -133,7 +133,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [HErrContrTempOkAqOkM]"] .
 
@@ -146,7 +146,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: false, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false, TimeChange: B2 >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -158,7 +158,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, QaChange: B1, McChange: B2, ContrChange: true, TimeChange: B3 >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 >
     if morning?(TI) == true /\ hot?(DG) == true
     [print "rule: [HErrContrTempHighM]"] .
 

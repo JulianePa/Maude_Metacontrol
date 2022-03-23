@@ -7,6 +7,6 @@ mod SCHEDULER is
   ops PhysicsChange QAChange MCChange ContrChange TimeChange : -> ScheduleComponents .
 
   *** The scheduler indicates which part of the system should apply rules at the moment
-  op < Scheduler | Status: _, TempAqChange: _, QaChange: _, McChange: _, ContrChange: _, TimeChange: _ > : ScheduleComponents Bool Bool Bool Bool Bool  -> Scheduler [format(ntc c c c c c c c c c c c c c c c c c c c c c)].
+  op < Scheduler | Status: _, TempAqChange: _, McChange: _, ContrChange: _, TimeChange: _ > : ScheduleComponents Bool  Bool Bool Bool  -> Scheduler [format(ntc c c c c c c c c c c c c c c c c c c)].
 
 endm

@@ -21,7 +21,7 @@ mod PHYSICS is
   var CONF : Configuration .
   var TS : Timesteps .
   var TI : Time .
-  vars B B1 B2 B3 : Bool .
+  vars B B1 B2 : Bool .
 
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
@@ -51,11 +51,11 @@ mod PHYSICS is
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < Scheduler | Status: PhysicsChange, TempAqChange: false, QaChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
+    < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: B, ContrChange: B1, TimeChange: B2 > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
     < AQ :Airquality | Value: newAQS >
-    < Scheduler | Status: PhysicsChange, TempAqChange: true, QaChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
+    < Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: B, ContrChange: B1, TimeChange: B2 > CONF}
     if newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 
