@@ -8,10 +8,19 @@ mod CLOCK is
   subsort Nat < Timesteps .
   subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
 
+  sort TimeValuePair TVPList .
+  subsort TimeValuePair < TVPList .
+
+  op nil : -> TVPList [ctor] .
+  op __ : TVPList TVPList -> TVPList [ctor assoc id: nil] .
+
+  *** time, temperature or time, airquality pairs
+  op (_, _) : Timesteps Float -> TimeValuePair .
+
   *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
   op {_} : Configuration -> TimedConfiguration .
 
-  op < _ :Clock | Timesteps: _, Time: _ > : Oid Timesteps Time -> Clock [format (ntb b b b b b b b b b o)] .
+  op < _ :Clock | Timesteps: _, Time: _, TempLog: _, AqLog: _ > : Oid Timesteps Time TVPList TVPList -> Clock [format (ntb b b b b b b b b b b b b b b b o)] .
 
 
   var TS : Timesteps .

@@ -23,7 +23,7 @@ mod TEST is
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 2.0 >
-            < "homeClock" :Clock | Timesteps: 15, Time: 15 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
             < "homeComfortController" :ComfortController | Selected: false >
             < "homeEcoController" :EcoController | Selected: true >
             < "homeHeaterErrController" :HeaterErrController | Selected: false >
@@ -40,7 +40,7 @@ mod TEST is
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 15.0 >
             < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 48, Time: 23 > .
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil > .
 
   op init4 : -> TimedConfiguration .
   eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
@@ -48,7 +48,7 @@ mod TEST is
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 19.0 >
             < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 0, Time: 0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
             < "homeComfortController" :ComfortController | Selected: false >
             < "homeEcoController" :EcoController | Selected: true >
             < "homeHeaterErrController" :HeaterErrController | Selected: false >
@@ -66,7 +66,7 @@ mod TEST is
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 19.0 >
             < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 0, Time: 0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
             < "homeComfortController" :ComfortController | Selected: false >
             < "homeEcoController" :EcoController | Selected: true >
             < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .

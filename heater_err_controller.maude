@@ -8,6 +8,7 @@ mod HEATERERRCONTROLLER is
   var TS : Timesteps .
   vars A A1 A2 : Attribute .
   vars B B1 B2 : Bool .
+  vars TL AL : TVPList .
 
   *** Rules that hold for both the morning and not the morning
   *** If T ok, AQ not ok -> H off, WH on, W half open
@@ -64,7 +65,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -76,7 +77,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -89,7 +90,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
@@ -100,7 +101,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ hot?(DG) == true
@@ -118,7 +119,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -130,7 +131,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -143,7 +144,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -155,7 +156,7 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >

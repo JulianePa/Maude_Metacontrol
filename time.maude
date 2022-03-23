@@ -11,6 +11,9 @@ mod TIME is
   var QAS : QaStatus .
   var QAL : QaList .
   vars CONF : Configuration .
+  vars TL AL : TVPList .
+  var T : Temperature .
+  var AQ : AirqualityStatus .
 
   op advance : Configuration -> Configuration .
   eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: yes > CONF)
@@ -21,12 +24,13 @@ mod TIME is
       = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
-  rl [timeAdvances] :
-    {< C :Clock | Timesteps: TS, Time: TI >
+  crl [timeAdvances] :
+    {< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true > CONF}
     =>
-    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
+    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1), TempLog: TL (TI, T), AqLog: AL (TI, AQ) >
     < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > advance(CONF)}
+    if T := getTemp(CONF) /\ AQ := getAirquality(CONF)
     [print "rule: [timeAdvances]"] .
 
 

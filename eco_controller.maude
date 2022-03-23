@@ -9,6 +9,7 @@ mod ECOCONTROLLER is
   var TS : Timesteps .
   vars B B1 B2 : Bool .
   vars A A1 A2 : Attribute .
+  vars TL AL : TVPList .
 
   *** Rules that hold both in the morning and not in the morning
   *** If T ok, AQ not ok, W not open -> H off, W half open, WH on
@@ -63,7 +64,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -75,7 +76,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -91,7 +92,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -103,7 +104,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -116,7 +117,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -128,7 +129,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -141,7 +142,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -153,7 +154,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -166,7 +167,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -178,7 +179,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | Status: WS, A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -191,7 +192,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -203,7 +204,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -221,7 +222,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -233,7 +234,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -246,7 +247,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
@@ -258,7 +259,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
@@ -271,7 +272,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
@@ -282,7 +283,7 @@ mod ECOCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == true /\ hot?(DG) == true
