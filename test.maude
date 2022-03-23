@@ -35,7 +35,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
             < "homeMetacontroller" :Metacontroller | ControllersChanged: no >
-             .
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < Scheduler: MCChange > .
 
   op init3 : -> Configuration .
   eq init3 = < "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
@@ -58,9 +60,9 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, ConfigChanged: no >
             < "homeWindowErrController" :WindowErrController | Selected: false, ConfigChanged: no >
             < "homeMetacontroller" :Metacontroller | ControllersChanged: no >
-            < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
+            < "homeQaEcology" :QaEcology | Consider: 5, Past: 1 1 1 1 1, Status: 1, QAComputed: no >
+            < "homeQaComfort" :QaComfort | Consider: 5, Past: true true true true true, Status: 1, QAComputed: no >
+            < "homeQaAirquality" :QaAirquality | Consider: 5, Past: true true true true true, Status: 1, QAComputed: no >
             < TempAqChanged: no >
             < Scheduler: PhysicsChange >} .
 
