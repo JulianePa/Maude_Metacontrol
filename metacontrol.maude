@@ -33,14 +33,109 @@ mod METACONTROL is
   var CCH : ConfigChanged .
   var QACOM : QAComputed .
   var CONF : Configuration .
+  var SC : ScheduleComponents .
 
   *** Determine if metacontroller changed configuration (to do tests without metacontroller)
   op metacontrollerReady : Configuration -> Bool .
   eq metacontrollerReady(< MC :Metacontroller | ControllersChanged: no > CONF) = false .
   eq metacontrollerReady(CONF) = true [owise] .
 
-*** TODO Should the metacontroller also turn the actuators off?
 
+
+  ******** Checks from comfort to other controller
+  *** Check whether metacontroller should change from comfort to heater error controller
+  op metaComfToHErr : Configuration -> Bool .
+  eq metaComfToHErr(< H :Heater | Broken: no, A > CONF) = false and metaComfToHErr(CONF) .
+  eq metaComfToHErr(< CC :ComfortController | Selected: false, ConfigChanged: CCH > CONF) = false and metaComfToHErr(CONF) .
+  eq metaComfToHErr(< HEC :HeaterErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaComfToHErr(CONF) .
+  eq metaComfToHErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaComfToHErr(CONF) .
+  ceq metaComfToHErr(< Scheduler: SC > CONF) = false and metaComfToHErr(CONF)
+    if SC =/= MCChange .
+  eq metaComfToHErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from comfort to water heater error controller
+  op metaComfToWhErr : Configuration -> Bool .
+  eq metaComfToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false and metaComfToWhErr(CONF) .
+  eq metaComfToWhErr(< CC :ComfortController | Selected: false, ConfigChanged: CCH > CONF) = false and metaComfToWhErr(CONF) .
+  eq metaComfToWhErr(< WHEC :WaterheaterErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaComfToWhErr(CONF) .
+  eq metaComfToWhErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaComfToWhErr(CONF) .
+  ceq metaComfToWhErr(< Scheduler: SC > CONF) = false and metaComfToWhErr(CONF)
+    if SC =/= MCChange .
+  eq metaComfToWhErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from comfort to window error controller
+  op metaComfToWErr : Configuration -> Bool .
+  eq metaComfToWErr(< W :Window | Broken: no, A > CONF) = false and metaComfToWErr(CONF) .
+  eq metaComfToWErr(< CC :ComfortController | Selected: false, ConfigChanged: CCH > CONF) = false and metaComfToWErr(CONF) .
+  eq metaComfToWErr(< WEC :WindowErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaComfToWErr(CONF) .
+  eq metaComfToWErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaComfToWErr(CONF) .
+  ceq metaComfToWErr(< Scheduler: SC > CONF) = false and metaComfToWErr(CONF)
+    if SC =/= MCChange .
+  eq metaComfToWErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from comfort to eco controller
+  op metaComfToEco : Configuration -> Bool .
+  eq metaComfToEco(< CC :ComfortController | Selected: false, ConfigChanged: CCH > CONF) = false and metaComfToEco(CONF) .
+  eq metaComfToEco(< EC :EcoController | Selected: true, ConfigChanged: CCH > CONF) = false and metaComfToEco(CONF) .
+  ceq metaComfToEco(< QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM > CONF) = false and metaComfToEco(CONF)
+    if QAS >= 6/10 .
+  eq metaComfToEco(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaComfToEco(CONF) .
+  ceq metaComfToEco(< Scheduler: SC > CONF) = false and metaComfToEco(CONF)
+    if SC =/= MCChange .
+  eq metaComfToEco(CONF) = true [owise] .
+
+
+  ****** Check from eco to other controller
+  *** Check whether metacontroller should change from eco to window error controller
+  op metaEcoToHErr : Configuration -> Bool .
+  eq metaEcoToHErr(< H :Heater | Broken: no, A > CONF) = false and metaEcoToHErr(CONF) .
+  eq metaEcoToHErr(< EC :EcoController | Selected: false, ConfigChanged: CCH > CONF) = false and metaEcoToHErr(CONF) .
+  eq metaEcoToHErr(< HEC :HeaterErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaEcoToHErr(CONF) .
+  eq metaEcoToHErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaEcoToHErr(CONF) .
+  ceq metaEcoToHErr(< Scheduler: SC > CONF) = false and metaEcoToHErr(CONF)
+    if SC =/= MCChange .
+  eq metaEcoToHErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from eco to window error controller
+  op metaEcoToWhErr : Configuration -> Bool .
+  eq metaEcoToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false and metaEcoToWhErr(CONF) .
+  eq metaEcoToWhErr(< EC :EcoController | Selected: false, ConfigChanged: CCH > CONF) = false and metaEcoToWhErr(CONF) .
+  eq metaEcoToWhErr(< HEC :WaterheaterErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaEcoToWhErr(CONF) .
+  eq metaEcoToWhErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaEcoToWhErr(CONF) .
+  ceq metaEcoToWhErr(< Scheduler: SC > CONF) = false and metaEcoToWhErr(CONF)
+    if SC =/= MCChange .
+  eq metaEcoToWhErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from eco to window error controller
+  op metaEcoToWErr : Configuration -> Bool .
+  eq metaEcoToWErr(< W :Window | Broken: no, A > CONF) = false and metaEcoToWErr(CONF) .
+  eq metaEcoToWErr(< EC :EcoController | Selected: false, ConfigChanged: CCH > CONF) = false and metaEcoToWErr(CONF) .
+  eq metaEcoToWErr(< HEC :WindowErrController | Selected: true, ConfigChanged: CCH > CONF) = false and metaEcoToWErr(CONF) .
+  eq metaEcoToWErr(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaEcoToWErr(CONF) .
+  ceq metaEcoToWErr(< Scheduler: SC > CONF) = false and metaEcoToWErr(CONF)
+    if SC =/= MCChange .
+  eq metaEcoToWErr(CONF) = true [owise] .
+
+  *** Check whether metacontroller should change from eco to comfort controller
+  op metaEcoToComf : Configuration -> Bool .
+  eq metaEcoToComf(< EC :EcoController | Selected: false, ConfigChanged: CCH > CONF) = false and metaEcoToComf(CONF) .
+  eq metaEcoToComf(< CC :ComfortController | Selected: true, ConfigChanged: CCH > CONF) = false and metaEcoToComf(CONF) .
+  ceq metaEcoToComf(< QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM > CONF) = false and metaEcoToComf(CONF)
+    if QAS >= 6/10 .
+  eq metaEcoToComf(< MC :Metacontroller | ControllersChanged: yes > CONF) = false and metaEcoToComf(CONF) .
+  ceq metaEcoToComf(< Scheduler: SC > CONF) = false and metaEcoToComf(CONF)
+    if SC =/= MCChange .
+  eq metaEcoToComf(CONF) = true [owise] .
+
+  *** Check if at least one rule is applicable
+  op metaRuleApplicable : Configuration -> Bool .
+  eq metaRuleApplicable(CONF) = metaComfToHErr(CONF) or metaComfToWhErr(CONF) or metaComfToWErr(CONF) or metaComfToEco(CONF)
+                                or metaEcoToHErr(CONF) or metaEcoToWhErr(CONF) or metaEcoToWErr(CONF) or metaEcoToComf(CONF) .
+
+
+
+*** TODO Should the metacontroller also turn the actuators off?
+  ****************** Rules
   ****************************************** From comfort controller to error controller
   *** If the comfort controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrComfortToHErr] :
@@ -174,13 +269,14 @@ mod METACONTROL is
 
 
   *************************** Dummy rule
-  *** TODO Has to be replaced by something else
-  rl [MetacontrollerDoesNothing] :
-    < MC :Metacontroller | ControllersChanged: no >
-    < Scheduler: MCChange >
+  *** TODO How do we ensure that it isn't applied if any other rule can be applied?
+  crl [MetacontrollerDoesNothing] :
+    {< MC :Metacontroller | ControllersChanged: no >
+    < Scheduler: MCChange > CONF}
     =>
-    < MC :Metacontroller | ControllersChanged: yes >
-    < Scheduler: MCChange >
+    {< MC :Metacontroller | ControllersChanged: yes >
+    < Scheduler: MCChange > CONF}
+    if metaRuleApplicable(< MC :Metacontroller | ControllersChanged: no > < Scheduler: MCChange > CONF) == false
     [print "rule: [MetacontrollerDoesNothing]"] .
 
 endm
