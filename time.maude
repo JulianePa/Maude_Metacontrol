@@ -23,10 +23,10 @@ mod TIME is
 
   rl [timeAdvances] :
     {< C :Clock | Timesteps: TS, Time: TI >
-    < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true, TimeChange: true > CONF}
+    < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true > CONF}
     =>
     {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1) >
-    < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > advance(CONF)}
+    < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > advance(CONF)}
     [print "rule: [timeAdvances]"] .
 
 

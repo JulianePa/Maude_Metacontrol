@@ -32,7 +32,7 @@ mod TEST is
             < "homeMetacontroller" :Metacontroller >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: false, ContrChange: false, TimeChange: false > .
+            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false > .
 
   op init3 : -> Configuration .
   eq init3 = < "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
@@ -58,7 +58,7 @@ mod TEST is
             < "homeQaEcology" :QaEcology | Consider: 5, Past: 1 1 1 1 1, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: true true true true true, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: true true true true true, Status: 1, QAComputed: no >
-            < Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: false, ContrChange: false, TimeChange: false >} .
+            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .
 
   op init5 : -> TimedConfiguration .
   eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
@@ -69,7 +69,7 @@ mod TEST is
             < "homeClock" :Clock | Timesteps: 0, Time: 0 >
             < "homeComfortController" :ComfortController | Selected: false >
             < "homeEcoController" :EcoController | Selected: true >
-            < Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: false, ContrChange: false, TimeChange: false >} .
+            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .
 
 endm
 eof

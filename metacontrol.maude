@@ -39,7 +39,7 @@ mod METACONTROL is
   eq metaComfToHErr(< H :Heater | Broken: no, A > CONF) = false and metaComfToHErr(CONF) .
   eq metaComfToHErr(< CC :ComfortController | Selected: false > CONF) = false and metaComfToHErr(CONF) .
   eq metaComfToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false and metaComfToHErr(CONF) .
-  ceq metaComfToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaComfToHErr(CONF)
+  ceq metaComfToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaComfToHErr(CONF)
     if SC =/= MCChange .
   eq metaComfToHErr(CONF) = true [owise] .
 
@@ -48,7 +48,7 @@ mod METACONTROL is
   eq metaComfToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false and metaComfToWhErr(CONF) .
   eq metaComfToWhErr(< CC :ComfortController | Selected: false > CONF) = false and metaComfToWhErr(CONF) .
   eq metaComfToWhErr(< WHEC :WaterheaterErrController | Selected: true > CONF) = false and metaComfToWhErr(CONF) .
-  ceq metaComfToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaComfToWhErr(CONF)
+  ceq metaComfToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaComfToWhErr(CONF)
     if SC =/= MCChange .
   eq metaComfToWhErr(CONF) = true [owise] .
 
@@ -57,7 +57,7 @@ mod METACONTROL is
   eq metaComfToWErr(< W :Window | Broken: no, A > CONF) = false and metaComfToWErr(CONF) .
   eq metaComfToWErr(< CC :ComfortController | Selected: false > CONF) = false and metaComfToWErr(CONF) .
   eq metaComfToWErr(< WEC :WindowErrController | Selected: true > CONF) = false and metaComfToWErr(CONF) .
-  ceq metaComfToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaComfToWErr(CONF)
+  ceq metaComfToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaComfToWErr(CONF)
     if SC =/= MCChange .
   eq metaComfToWErr(CONF) = true [owise] .
 
@@ -67,7 +67,7 @@ mod METACONTROL is
   eq metaComfToEco(< EC :EcoController | Selected: true > CONF) = false and metaComfToEco(CONF) .
   ceq metaComfToEco(< QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM > CONF) = false and metaComfToEco(CONF)
     if QAS >= 6/10 .
-  ceq metaComfToEco(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaComfToEco(CONF)
+  ceq metaComfToEco(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaComfToEco(CONF)
     if SC =/= MCChange .
   eq metaComfToEco(CONF) = true [owise] .
 
@@ -78,7 +78,7 @@ mod METACONTROL is
   eq metaEcoToHErr(< H :Heater | Broken: no, A > CONF) = false and metaEcoToHErr(CONF) .
   eq metaEcoToHErr(< EC :EcoController | Selected: false > CONF) = false and metaEcoToHErr(CONF) .
   eq metaEcoToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false and metaEcoToHErr(CONF) .
-  ceq metaEcoToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaEcoToHErr(CONF)
+  ceq metaEcoToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaEcoToHErr(CONF)
     if SC =/= MCChange .
   eq metaEcoToHErr(CONF) = true [owise] .
 
@@ -87,7 +87,7 @@ mod METACONTROL is
   eq metaEcoToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false and metaEcoToWhErr(CONF) .
   eq metaEcoToWhErr(< EC :EcoController | Selected: false > CONF) = false and metaEcoToWhErr(CONF) .
   eq metaEcoToWhErr(< HEC :WaterheaterErrController | Selected: true > CONF) = false and metaEcoToWhErr(CONF) .
-  ceq metaEcoToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaEcoToWhErr(CONF)
+  ceq metaEcoToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaEcoToWhErr(CONF)
     if SC =/= MCChange .
   eq metaEcoToWhErr(CONF) = true [owise] .
 
@@ -96,7 +96,7 @@ mod METACONTROL is
   eq metaEcoToWErr(< W :Window | Broken: no, A > CONF) = false and metaEcoToWErr(CONF) .
   eq metaEcoToWErr(< EC :EcoController | Selected: false > CONF) = false and metaEcoToWErr(CONF) .
   eq metaEcoToWErr(< HEC :WindowErrController | Selected: true > CONF) = false and metaEcoToWErr(CONF) .
-  ceq metaEcoToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaEcoToWErr(CONF)
+  ceq metaEcoToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaEcoToWErr(CONF)
     if SC =/= MCChange .
   eq metaEcoToWErr(CONF) = true [owise] .
 
@@ -106,7 +106,7 @@ mod METACONTROL is
   eq metaEcoToComf(< CC :ComfortController | Selected: true > CONF) = false and metaEcoToComf(CONF) .
   ceq metaEcoToComf(< QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM > CONF) = false and metaEcoToComf(CONF)
     if QAS >= 6/10 .
-  ceq metaEcoToComf(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF) = false and metaEcoToComf(CONF)
+  ceq metaEcoToComf(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false and metaEcoToComf(CONF)
     if SC =/= MCChange .
   eq metaEcoToComf(CONF) = true [owise] .
 
@@ -126,13 +126,13 @@ mod METACONTROL is
     < CC :ComfortController | Selected: true >
     < HEC :HeaterErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < HEC :HeaterErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToHErr]"] .
 
   *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
@@ -141,13 +141,13 @@ mod METACONTROL is
     < CC :ComfortController | Selected: true >
     < WHEC :WaterheaterErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < WHEC :WaterheaterErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToWhErr]"] .
 
   *** If the comfort controller is active and the window is broken, then activate the window error controller
@@ -156,13 +156,13 @@ mod METACONTROL is
     < CC :ComfortController | Selected: true >
     < WEC :WindowErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < WEC :WindowErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToWErr]"] .
 
 
@@ -174,13 +174,13 @@ mod METACONTROL is
     < EC :EcoController | Selected: true >
     < HEC :HeaterErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < HEC :HeaterErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToHErr]"] .
 
   *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
@@ -189,13 +189,13 @@ mod METACONTROL is
     < EC :EcoController | Selected: true >
     < WHEC :WaterheaterErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < WHEC :WaterheaterErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToWhErr]"] .
 
   *** If the eco controller is active and the window is broken, then activate the window error controller
@@ -204,13 +204,13 @@ mod METACONTROL is
     < EC :EcoController | Selected: true >
     < WEC :WindowErrController | Selected: false >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < WEC :WindowErrController | Selected: true >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToWErr]"] .
 
 
@@ -223,13 +223,13 @@ mod METACONTROL is
     < EC :EcoController | Selected: true >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < CC :ComfortController | Selected: true >
     < EC :EcoController | Selected: false >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     if QAS < 6/10
     [print "rule: [MetaContrEcoToComf]"] .
 
@@ -239,13 +239,13 @@ mod METACONTROL is
     < EC :EcoController | Selected: false >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < CC :ComfortController | Selected: false >
     < EC :EcoController | Selected: true >
     < QAAQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     if QAS < 6/10
     [print "rule: [MetaContrComfToEco]"] .
 
@@ -254,11 +254,11 @@ mod METACONTROL is
   *************************** Dummy rule
   crl [MetacontrollerDoesNothing] :
     {< MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 > CONF}
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
     =>
     {< MC :Metacontroller >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 > CONF}
-    if metaRuleApplicable(< MC :Metacontroller > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1, TimeChange: B2 > CONF) == false
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
+    if metaRuleApplicable(< MC :Metacontroller > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false
     [print "rule: [MetacontrollerDoesNothing]"] .
 
 endm

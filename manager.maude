@@ -6,21 +6,21 @@ mod MANAGER is
 
   var CONF : Configuration .
   var B B1 B2 B3 B4 : Bool .
-  eq {< Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: B, ContrChange: B1, TimeChange: B2 > CONF}
-    = {< Scheduler | Status: QAChange, TempAqChange: true, McChange: B, ContrChange: B1, TimeChange: B2 > CONF} .
+  eq {< Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: B, ContrChange: B1 > CONF}
+    = {< Scheduler | Status: QAChange, TempAqChange: true, McChange: B, ContrChange: B1 > CONF} .
 
-  ceq {< Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
-    = {< Scheduler | Status: MCChange, TempAqChange: B, McChange: B1, ContrChange: B2, TimeChange: B3 > CONF}
+  ceq {< Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    = {< Scheduler | Status: MCChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
     if QAready(CONF) == true .
 
-  eq {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 > CONF}
-    = {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: true, ContrChange: B1, TimeChange: B2 > CONF} .
+  eq {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
+    = {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF} .
 
-  eq {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 > CONF}
-    = {< Scheduler | Status: TimeChange, TempAqChange: B, McChange: B1, ContrChange: true, TimeChange: B2 > CONF} .
+  eq {< Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true > CONF}
+    = {< Scheduler | Status: TimeChange, TempAqChange: B, McChange: B1, ContrChange: true > CONF} .
 
   *** If the TempAqChanged object is on 'no' again, then the time has advanced
-  eq {< Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > CONF}
-    = {< Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false, TimeChange: false > CONF} .
+  eq {< Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > CONF}
+    = {< Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false > CONF} .
 
 endm
