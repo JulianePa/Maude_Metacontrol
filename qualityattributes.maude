@@ -14,6 +14,7 @@ mod QUALITYATTRIBUTES is
   var AT : Attribute .
   var EL : EcoList .
   vars B B1 B2 B3 : Bool .
+  var QAC : QAComputed .
 
   sort QAComputed .
   ops yes no : -> QAComputed .
@@ -65,7 +66,9 @@ mod QUALITYATTRIBUTES is
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
   op < _ :QaComfort | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat QaList QaStatus QAComputed -> Comfort [format (ntg g g g g g g g g g g g g g g g g)] .
 
-
+  op getQaComfValue : Configuration -> QaStatus .
+  eq getQaComfValue(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaComfValue(CONF) = 0 [owise] .
 
 
   ****************************************** Air quality
@@ -86,6 +89,9 @@ mod QUALITYATTRIBUTES is
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
   op < _ :QaAirquality | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat QaList QaStatus QAComputed -> QaAirquality [format (ntg g g g g g g g g g g g g g g g g)] .
 
+  op getQaAqValue : Configuration -> QaStatus .
+  eq getQaAqValue(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaAqValue(CONF) = 0 [owise] .
 
 
   **************************************** Ecology
@@ -126,6 +132,11 @@ mod QUALITYATTRIBUTES is
   eq computeEcoQa(N, EL) = sum(getLastEco(N, EL)) / N .
 
   op < _ :QaEcology | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat EcoList QaStatus QAComputed -> Ecology [format (ntg g g g g g g g g g g g g g g g g)] .
+
+  op getQaEcoValue : Configuration -> QaStatus .
+  eq getQaEcoValue(< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaEcoValue(CONF) = 0 [owise] .
+
 
 
   ***************************************** For scheduler
