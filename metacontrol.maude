@@ -33,6 +33,12 @@ mod METACONTROL is
   vars B B1 B2 B3 : Bool .
 
 
+  *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
+  op noMetacontr : Configuration -> Bool .
+  eq noMetacontr(< MC :Metacontroller > CONF) = false .
+  eq noMetacontr(CONF) = true [owise] .
+
+
   ******** Checks from comfort to other controller
   *** Check whether metacontroller should change from comfort to heater error controller
   op metaComfToHErr : Configuration -> Bool .
@@ -251,7 +257,8 @@ mod METACONTROL is
 
 
 
-  *************************** Dummy rule
+  *************************** Dummy rules
+  *** If the metacontroller no other rule can be applied, this will be applied
   crl [MetacontrollerDoesNothing] :
     {< MC :Metacontroller >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
@@ -260,6 +267,14 @@ mod METACONTROL is
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
     if metaRuleApplicable(< MC :Metacontroller > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false
     [print "rule: [MetacontrollerDoesNothing]"] .
+
+  *** If there is no metacontroller, this rules ensures that we can run tests anyway
+  crl [noMetacontroller] :
+    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
+    =>
+    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
+    if noMetacontr(CONF) == true
+    [print "rule: [noMetacontr]"] .
 
 endm
 eof
