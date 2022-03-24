@@ -28,7 +28,7 @@ mod TIME is
     {< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true > CONF}
     =>
-    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1), TempLog: TL (TI, T), AqLog: AL (TI, AQ) >
+    {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1), TempLog: TL (TS, T), AqLog: AL (TS, AQ) >
     < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > advance(CONF)}
     if T := getTemp(CONF) /\ AQ := getAirquality(CONF)
     [print "rule: [timeAdvances]"] .
