@@ -20,7 +20,7 @@ mod CLOCK is
   *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
   op {_} : Configuration -> TimedConfiguration .
 
-  op < _ :Clock | Timesteps: _, Time: _, TempLog: _, AqLog: _ > : Oid Timesteps Time TVPList TVPList -> Clock [format (ntb b b b b b b b b b b b b b b b o)] .
+  op < _ :Clock | Timesteps: _, Time: _, TempLog: _, AqLog: _ > : Oid Timesteps Time TVPList TVPList -> Clock [format (ntm m m m m m m m m m ntm m m ntm m m o)] .
 
 
   var TS : Timesteps .
