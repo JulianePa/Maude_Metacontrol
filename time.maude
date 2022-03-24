@@ -7,9 +7,9 @@ mod TIME is
   var TS : Timesteps .
   var TI : Time .
   var N : Nat .
-  var EL : EcoList .
+  var EL : List{Nat} .
   var QAS : QaStatus .
-  var QAL : QaList .
+  var QAL : List{Bool} .
   vars CONF : Configuration .
   vars TL AL : TVPList .
   var T : Temperature .

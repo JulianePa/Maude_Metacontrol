@@ -25,7 +25,7 @@ mod METACONTROL is
   var WS : WindowStatus .
   var A : Attribute .
   var N : Nat .
-  var QAL : QaList .
+  var QAL : List{Bool} .
   var QAS : QaStatus .
   var QACOM : QAComputed .
   var CONF : Configuration .
