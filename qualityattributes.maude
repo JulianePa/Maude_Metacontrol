@@ -28,7 +28,7 @@ mod QUALITYATTRIBUTES is
 
   *** Get the n last added elements of a list (we suppose that List{Bool} has at least n elements)
   *** TODO ensure that List{Bool} has at least n elements?
-  op getLast(_, _) : Nat List{Bool} -> List{Bool} .
+  op getLast : Nat List{Bool} -> List{Bool} .
   eq getLast(0, QAL) = nil .
   eq getLast(1, BL) = BL .
   eq getLast(s(N), QAL BL) = getLast(N, QAL) BL .
@@ -42,7 +42,7 @@ mod QUALITYATTRIBUTES is
   eq computeTrue(QAL false) = computeTrue(QAL) .
 
   *** Compute the value of the quality attribute comfort or ecology as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
-  op computeQA(_, _) : Nat List{Bool} -> QaStatus .
+  op computeQA : Nat List{Bool} -> QaStatus .
   ceq computeQA(N, QAL) = computeTrue(getLast(N,QAL)) / N
     if N <= size(QAL) .
   ceq computeQA(N, QAL) = computeTrue(QAL) / M
@@ -97,7 +97,7 @@ mod QUALITYATTRIBUTES is
   eq getEnergyconsumption(CONF) = 0 [owise] .
 
   *** Gets the last N entries
-  op getLastEco(_,_) : Nat List{Nat} -> List{Nat} .
+  op getLastEco : Nat List{Nat} -> List{Nat} .
   eq getLastEco(0, EL) = nil .
   eq getLastEco(1, M) = M .
   eq getLastEco(s(N), EL M) = getLastEco(N, EL) M .
@@ -108,11 +108,12 @@ mod QUALITYATTRIBUTES is
   eq sum(N EL) = N + sum(EL) .
 
   *** Computes the quality attribute value as the average of the last N time steps
-  op computeEcoQa(_,_) : Nat List{Nat} -> QaStatus .
-  ceq computeEcoQa(N, EL) = sum(getLastEco(N, EL)) / N
+  op computeEcoQa : Nat List{Nat} -> QaStatus .
+  ceq computeEcoQa(N, EL) = 1 + (- (sum(getLastEco(N, EL)) / N) / 5)
     if N <= size(EL) .
-  ceq computeEcoQa(N, EL) = sum(EL) / M
+  ceq computeEcoQa(N, EL) = 1 + (- (sum(EL) / M) / 5)
     if M := size(EL) /\ N > M .
+
 
   op < _ :QaEcology | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Nat} QaStatus QAComputed -> Ecology [format (ntg g g g g g g g g g g g g g g g g)] .
 
