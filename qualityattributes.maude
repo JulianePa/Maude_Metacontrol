@@ -56,7 +56,7 @@ mod QUALITYATTRIBUTES is
   *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
   op comfortable? : Configuration -> Bool .
   ceq comfortable?(< T :Thermometer | Degrees: DG > CONF) = true
-    if 19.0 <= DG and DG <= 21.0 .
+    if 18.5 <= DG and DG <= 21.5 .
   eq comfortable?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
