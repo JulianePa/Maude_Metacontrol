@@ -37,7 +37,7 @@ mod COMFORTCONTROLLER is
     < CC :ComfortController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [CContrTempOkAqOkWh]"] .
+    [print "rule: [CContrTempOkAqOk]"] .
 
   *** If T ok, AQ not ok, W not open -> H off, WH off, W half open
   crl [CContrTempOkAqNotOk1] :
