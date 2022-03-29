@@ -44,18 +44,18 @@ mod TEST is
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil > .
 
   op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
-            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: (scale * 0.615), EffectAQ: (scale * -0.45), Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: (scale * 0.3), EffectAQ: (scale * -0.125), Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: (scale * -1.0), EffectAQ: (scale * 1.0), Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
-            < "homeComfortController" :ComfortController | Selected: false >
-            < "homeEcoController" :EcoController | Selected: true >
+            < "homeComfortController" :ComfortController | Selected: true >
+            < "homeEcoController" :EcoController | Selected: false >
             < "homeHeaterErrController" :HeaterErrController | Selected: false >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
             < "homeWindowErrController" :WindowErrController | Selected: false >
-            < "homeMetacontroller" :Metacontroller >
+            ***< "homeMetacontroller" :Metacontroller >
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
@@ -83,11 +83,11 @@ search [1, 1000] init5 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
 search [1, 1000] init5 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
 
 *** With metacontroller
-search [1, 1000] init4 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
+search [1, 5000] init4 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
 
-search [1, 1000] init4 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
+search [1, 5000] init4 =>* {CONF:Configuration} such that getTemp(CONF) > 22.0 .
 
-search [1, 1000] init4 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
+search [1, 5000] init4 =>* {CONF:Configuration} such that getAirquality(CONF) < 0.0 .
 
 
 
