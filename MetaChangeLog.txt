@@ -1,0 +1,6 @@
+(0,Eco) (76,Comf) (85,
+    Eco) (106,Comf) (108,Eco) (126,Comf) (135,Eco) (154,Comf) (161,Eco) (172,Comf)
+    (182,Eco) (202,Comf) (204,Eco) (249,Comf) (255,Eco) (266,Comf) (275,Eco) (298,
+    Comf) (300,Eco) (318,Comf) (321,Eco) (366,Comf) (375,Eco) (391,Comf) (400,Eco)
+    (414,Comf) (417,Eco) (460,Comf) (469,Eco) (509,Comf) (518,Eco) (556,Comf) (565,
+    Eco) (605,Comf) (614,Eco) (677,Comf) 686,Eco
