@@ -17,9 +17,16 @@ mod METACONTROL is
   sort Metacontroller .
   subsort Metacontroller < Configuration .
 
-  op < _ :Metacontroller > : Oid -> Metacontroller [format (ntr r r r o)] .
+  sorts ContrSelected MetaPair MetaLog .
+  subsort MetaPair < MetaLog .
+  ops Eco Comf HErr WhErr WErr : -> ContrSelected [ctor] .
+  op (_, _) : Timesteps ContrSelected -> MetaPair [ctor] .
+  op nil : -> MetaLog [ctor] .
+  op __ : MetaLog MetaLog -> MetaLog [ctor assoc id: nil] .
 
-  vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ : Oid .
+  op < _ :Metacontroller | MetaLog: _ > : Oid MetaLog -> Metacontroller [format (ntr r r r r r r o)] .
+
+  vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -31,7 +38,11 @@ mod METACONTROL is
   var CONF : Configuration .
   var SC : ScheduleComponents .
   vars B B1 B2 B3 : Bool .
-  var C : Rat .
+  var R : Rat .
+  var ML : MetaLog .
+  var TS : Timesteps .
+  var TI : Time .
+  vars TL AL : TVPList .
 
 
   ********** Cost function qualtiy attributes
@@ -40,7 +51,7 @@ mod METACONTROL is
 
   *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
   op noMetacontr : Configuration -> Bool .
-  eq noMetacontr(< MC :Metacontroller > CONF) = false .
+  eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
   eq noMetacontr(CONF) = true [owise] .
 
 
@@ -136,13 +147,15 @@ mod METACONTROL is
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: true >
     < HEC :HeaterErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < HEC :HeaterErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToHErr]"] .
 
@@ -151,13 +164,15 @@ mod METACONTROL is
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: true >
     < WHEC :WaterheaterErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < WHEC :WaterheaterErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToWhErr]"] .
 
@@ -166,13 +181,15 @@ mod METACONTROL is
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: true >
     < WEC :WindowErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: false >
     < WEC :WindowErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrComfortToWErr]"] .
 
@@ -184,13 +201,15 @@ mod METACONTROL is
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: true >
     < HEC :HeaterErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < H :Heater | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < HEC :HeaterErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToHErr]"] .
 
@@ -199,13 +218,15 @@ mod METACONTROL is
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: true >
     < WHEC :WaterheaterErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < WH :Waterheater | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < WHEC :WaterheaterErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToWhErr]"] .
 
@@ -214,13 +235,15 @@ mod METACONTROL is
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: true >
     < WEC :WindowErrController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < WEC :WindowErrController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     [print "rule: [MetaContrEcoToWErr]"] .
 
@@ -232,13 +255,15 @@ mod METACONTROL is
   crl [MetaContrEcoToComf] :
     {< CC :ComfortController | Selected: false >
     < EC :EcoController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
     {< CC :ComfortController | Selected: true >
     < EC :EcoController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, Comf) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     CONF}
     if cost(CONF) <= 7/10
@@ -248,13 +273,15 @@ mod METACONTROL is
   crl [MetaContrComfToEco] :
     {< CC :ComfortController | Selected: true >
     < EC :EcoController | Selected: false >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
     {< CC :ComfortController | Selected: false >
     < EC :EcoController | Selected: true >
-    < MC :Metacontroller >
+    < MC :Metacontroller | MetaLog: ML (TS, Eco) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     CONF}
     if cost(CONF) > 7/10
@@ -265,13 +292,15 @@ mod METACONTROL is
   *************************** Dummy rules
   *** If the metacontroller no other rule can be applied, this will be applied
   crl [MetacontrollerDoesNothing] :
-    {< MC :Metacontroller >
+    {< MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
     =>
-    {< MC :Metacontroller >
+    {< MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
-    if metaRuleApplicable(< MC :Metacontroller > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false /\ C := cost(CONF)
-    [print "rule: [MetacontrollerDoesNothing], Cost = " C] .
+    if metaRuleApplicable(< MC :Metacontroller | MetaLog: ML > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false /\ R := cost(CONF)
+    [print "rule: [MetacontrollerDoesNothing], Cost = " R] .
 
   *** If there is no metacontroller, this rules ensures that we can run tests anyway
   crl [noMetacontroller] :

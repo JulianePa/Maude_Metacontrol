@@ -29,7 +29,7 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
             < "homeWindowErrController" :WindowErrController | Selected: false >
-            < "homeMetacontroller" :Metacontroller >
+            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
@@ -55,7 +55,7 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
             < "homeWindowErrController" :WindowErrController | Selected: false >
-            ***< "homeMetacontroller" :Metacontroller >
+            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
