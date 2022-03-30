@@ -8,7 +8,7 @@ mod CLOCK is
   subsort Nat < Timesteps .
   subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
 
-  sort TimeValuePair TVPList .
+  sorts TimeValuePair TVPList .
   subsort TimeValuePair < TVPList .
 
   op nil : -> TVPList [ctor] .
