@@ -46,12 +46,17 @@ def main():
     eco_temp_path = 'EcoTempLog.txt'
     eco_aq_path = 'EcoAirqualityLog.txt'
 
+    meta_temp_path = 'MetaTempLog.txt'
+    meta_aq_path = 'MetaAirqualityLog.txt'
+
     comfort_temp_data = get_data_from_path(comfort_temp_path)
     comfort_aq_data = get_data_from_path(comfort_aq_path)
     eco_temp_data = get_data_from_path(eco_temp_path)
     eco_aq_data = get_data_from_path(eco_aq_path)
+    meta_temp_data = get_data_from_path(meta_temp_path)
+    meta_aq_data = get_data_from_path(meta_aq_path)
 
-    fig, axs = plt.subplots(2, 2)
+    fig, axs = plt.subplots(3, 2)
     fig.suptitle('Smart Home World')
 
     axs[0, 0].set_title("Comfort controller temperature")
@@ -75,6 +80,17 @@ def main():
     axs[1, 1].plot(eco_aq_data, 'r')
     axs[1, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[1, 1].axhline(y = 0, color = 'k', linestyle = '--')
+
+    axs[2, 0].set_title("Meta controller temperature")
+    axs[2, 0].plot(meta_temp_data)
+    axs[2, 0].set(xlabel='Time step', ylabel='Temperature')
+    axs[2, 0].axhline(y = 18, color = 'k', linestyle = '--')
+    axs[2, 0].axhline(y = 22, color = 'k', linestyle = '--')
+
+    axs[2, 1].set_title("Meta controller air quality")
+    axs[2, 1].plot(meta_aq_data, 'r')
+    axs[2, 1].set(xlabel='Time step', ylabel='Air quality')
+    axs[2, 1].axhline(y = 0, color = 'k', linestyle = '--')
 
     plt.show()
 
