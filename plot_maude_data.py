@@ -38,6 +38,19 @@ def get_data_from_path(path):
     splitted_data = get_data_from_string(raw_data)
     return splitted_data
 
+def calculate_violations(data, qa):
+    violation_count = 0
+    violation_expression = None
+    if qa == 'aq':
+        violation_expression = lambda d : d < 0
+    elif qa== 'temp':
+        violation_expression = lambda d : d < 18 or d >22
+
+    for d in data:
+        if violation_expression(d):
+            violation_count += 1
+
+    return violation_count
 
 def main():
     comfort_temp_path = 'ComfortTempLog.txt'
@@ -51,10 +64,22 @@ def main():
 
     comfort_temp_data = get_data_from_path(comfort_temp_path)
     comfort_aq_data = get_data_from_path(comfort_aq_path)
+    comfort_temp_violation = calculate_violations(comfort_temp_data, 'temp')
+    comfort_aq_violation = calculate_violations(comfort_aq_data, 'aq')
+    print('Comfort temp violation: ',comfort_temp_violation, ' AQ violation ',comfort_aq_violation)
+
     eco_temp_data = get_data_from_path(eco_temp_path)
     eco_aq_data = get_data_from_path(eco_aq_path)
+    eco_temp_violation = calculate_violations(eco_temp_data, 'temp')
+    eco_aq_violation = calculate_violations(eco_aq_data, 'aq')
+    print('Eco temp violation: ',eco_temp_violation, ' AQ violation ',eco_aq_violation)
+
     meta_temp_data = get_data_from_path(meta_temp_path)
     meta_aq_data = get_data_from_path(meta_aq_path)
+    meta_temp_violation = calculate_violations(meta_temp_data, 'temp')
+    meta_aq_violation = calculate_violations(meta_aq_data, 'aq')
+    print('Metacontrol temp violation: ',meta_temp_violation, ' AQ violation ',meta_aq_violation)
+
 
     fig, axs = plt.subplots(3, 2)
     fig.suptitle('Smart Home World')
