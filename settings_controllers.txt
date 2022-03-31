@@ -1,0 +1,31 @@
+Settings for controllers to work
+op init4 : -> TimedConfiguration .
+eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+          < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+          < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+          < "homeThermometer" :Thermometer | Degrees: 20.5 >
+          < "homeAirquality" :Airquality | Value: 2.0 >
+          < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+          < "homeComfortController" :ComfortController | Selected: true >
+          < "homeEcoController" :EcoController | Selected: false >
+          < "homeHeaterErrController" :HeaterErrController | Selected: false >
+          < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
+          < "homeWindowErrController" :WindowErrController | Selected: false >
+          < "homeMetacontroller" :Metacontroller | MetaLog: nil >
+          < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
+          < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
+          < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
+          < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >}
+
+
+Good metacontrol Settings (with frew[5000], i.e. 713 time steps)
+eq cost(CONF) = 5/10 * getQaComfValue(CONF) + 4/10 * getQaAqValue(CONF) + 1/10 * getQaEcoValue(CONF) .
+cost<= 7/10
+AQS >= 0.7
+1. 19.1 <= DG and DG <= 21.5 --> temp 35, AQ 36
+2. 19.2 <= DG and DG <= 21.5 --> temp 38, AQ 35
+-------------------------------
+cost<= 7/10
+AQS >= 0.7
+19.1 <= DG and DG <= 21.5 --> temp 35, AQ 36
+cost(CONF) = 5/10 * getQaComfValue(CONF) + 38/100 * getQaAqValue(CONF) + 12/100 * getQaEcoValue(CONF) --> temp 40, AQ 17
