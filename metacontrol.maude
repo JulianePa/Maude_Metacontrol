@@ -47,7 +47,7 @@ mod METACONTROL is
 
   ********** Cost function qualtiy attributes
   op cost : Configuration -> Rat .
-  eq cost(CONF) = 5/10 * getQaComfValue(CONF) + 3/10 * getQaAqValue(CONF) + 2/10 * getQaEcoValue(CONF) .
+  eq cost(CONF) = 5/10 * getQaComfValue(CONF) + 4/10 * getQaAqValue(CONF) + 1/10 * getQaEcoValue(CONF) .
 
   *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
   op noMetacontr : Configuration -> Bool .

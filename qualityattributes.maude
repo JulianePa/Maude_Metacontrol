@@ -56,7 +56,7 @@ mod QUALITYATTRIBUTES is
   *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
   op comfortable? : Configuration -> Bool .
   ceq comfortable?(< T :Thermometer | Degrees: DG > CONF) = true
-    if 18.5 <= DG and DG <= 21.5 .
+    if 19.1 <= DG and DG <= 21.5 .
   eq comfortable?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
@@ -74,7 +74,7 @@ mod QUALITYATTRIBUTES is
   *** Determine whether current configuration is in good air quality status or not (above 2)
   op aqGood? : Configuration -> Bool .
   ceq aqGood?(< AQ :Airquality | Value: AQS > CONF) = true
-    if AQS >= 0.5  .
+    if AQS >= 0.7  .
   eq aqGood?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
