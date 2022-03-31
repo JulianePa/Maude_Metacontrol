@@ -53,10 +53,10 @@ def calculate_violations(data, qa):
 
 def metacontrol_plot_background(axs, switch_points, data_lenght):
     for i in range(len(switch_points)):
-        axs.axvline(x = switch_points[i][0], color = 'k', linestyle = '--')
+        # axs.axvline(x = switch_points[i][0], color = 'k', linestyle = '--')
 
         end_block = switch_points[i+1][0] if i != len(switch_points) - 1 else data_lenght-1
-        color = 'silver' if switch_points[i][1] == "Eco" else 'white'
+        color = 'lightgoldenrodyellow' if switch_points[i][1] == "Eco" else 'lavender'
         axs.axvspan(switch_points[i][0], end_block, facecolor=color, alpha=1)
 
 
