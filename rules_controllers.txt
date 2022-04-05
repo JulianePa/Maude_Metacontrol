@@ -29,3 +29,10 @@
   It T ok, AQ not OK & W open ->  H veryhot, W open, WH on    % This violates R-MD and R-ES
   If T low -> H fairly hot, W closed, WH on
   If T high -> H off, W open, WH on
+
+
+# Heater error controller
+  If T ok, AQ ok -> H off, W closed, WH on
+  If T ok, AQ not ok -> H off, W half open, WH on
+  If T low -> H off, W closed, WH on
+  If T high -> H off, W half open, WH on

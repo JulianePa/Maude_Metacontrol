@@ -10,8 +10,34 @@ mod HEATERERRCONTROLLER is
   vars B B1 B2 : Bool .
   vars TL AL : TVPList .
 
+
   *** Rules that hold for both the morning and not the morning
-  *** If T ok, AQ not ok -> H off, WH on, W half open
+  *** If T ok, AQ ok -> H off, W closed, WH on
+  crl [HErrContrTempOkAqOk] :
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < HEC :HeaterErrController | Selected: true >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    =>
+    (msg hOff from HEC to H)
+    (msg on from HEC to WH)
+    (msg closed from HEC to W)
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < HEC :HeaterErrController | Selected: true >
+    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
+    if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
+    [print "rule: [HErrContrTempOkAqOk]"] .
+
+  *** If T ok, AQ not ok -> H off, W half open, WH on
   crl [HErrContrTempOkAqNotOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -34,7 +60,7 @@ mod HEATERERRCONTROLLER is
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [HErrContrTempOkAqNotOk]"] .
 
-  *** If T low -> H off, WH on, W closed
+  *** If T low -> H off, W closed, WH on
   crl [HErrContrTempLow] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -55,36 +81,7 @@ mod HEATERERRCONTROLLER is
     if cold?(DG) == true
     [print "rule: [HErrContrTempLow]"] .
 
-
-
-
-  *** Not in the morning
-  *** If T ok, AQ ok -> H off, WH off, W closed
-  crl [HErrContrTempOkAqOk] :
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
-    =>
-    (msg hOff from HEC to H)
-    (msg whOff from HEC to WH)
-    (msg closed from HEC to W)
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [HErrContrTempOkAqOk]"] .
-
-  ***  If T high -> H off, WH off, W half open
+  ***  If T high -> H off, W half open, WH off
   crl [HErrContrTempHigh] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -104,63 +101,6 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < HEC :HeaterErrController | Selected: true >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == false /\ hot?(DG) == true
+    if hot?(DG) == true
     [print "rule: [HErrContrTempHigh]"] .
-
-
-
-
-
-
-  *** In the morning
-  *** If T ok, AQ ok -> H off, WH on, W closed
-  crl [HErrContrTempOkAqOkM] :
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
-    =>
-    (msg hOff from HEC to H)
-    (msg on from HEC to WH)
-    (msg closed from HEC to W)
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
-    [print "rule: [HErrContrTempOkAqOkM]"] .
-
-  *** If T high -> H off, WH on, W open
-  crl [HErrContrTempHighM] :
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
-    =>
-    (msg hOff from HEC to H)
-    (msg on from HEC to WH)
-    (msg open from HEC to W)
-    < H :Heater | A >
-    < WH :Waterheater | A1 >
-    < W :Window | A2 >
-    < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < AQ :Airquality | Value: AQS >
-    < HEC :HeaterErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == true /\ hot?(DG) == true
-    [print "rule: [HErrContrTempHighM]"] .
-
 endm
