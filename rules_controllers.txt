@@ -1,17 +1,16 @@
 # Eco controller
   Morning and not morning
-  If T ok, AQ not ok, W open -> H off, W open, WH on
-  If T low, AQ ok -> H very hot, W halfopen, WH on
+  If T ok, AQ not ok -> H off, W open, WH on
+  If T ok, AQ ok -> H off, W closed, WH on
+  If T low, AQ ok -> H very hot, W halfopen, WH on      % This violates R-ES in the morning!
 
   Not in the morning
-  If T ok, AQ ok -> H off, W closed, WH on
   If T low, AQ not ok -> H very hot, W half open, WH off
   If T high, AQ ok, W not open -> H off, W half open, WH off
   If T high, AQ ok, W open -> H off, W open, WH off
   If T high, AQ not ok -> H off, W open, WH off
 
   In the morning
-  If T ok, AQ ok -> H off, W closed, WH on
   If T low, AQ not ok -> H off, W half open, WH on
   if T high -> H off, W open, WH on
 
@@ -20,13 +19,13 @@
   Not in the morning
   If T ok, AQ ok -> H off, WH off, W closed
   If T ok, AQ not ok, W not open -> H veryhot, WH off, W half open
-  If T ok, AQ not ok, W open -> H veryhot, WH off, W open
+  If T ok, AQ not ok, W open -> H veryhot, WH off, W open     % This violates R-MD
   If T low -> H veryhot, WH on, W closed
   If T high -> H off, WH off, W open
 
   In the morning
   If T ok, AQ ok -> H off, W closed, WH on
   It T ok, AQ not OK & W not open ->  H fairlyhot, W half open, WH on
-  It T ok, AQ not OK & W open ->  H veryhot, W open, WH on
+  It T ok, AQ not OK & W open ->  H veryhot, W open, WH on    % This violates R-MD and R-ES
   If T low -> H fairly hot, W closed, WH on
   If T high -> H off, W open, WH on
