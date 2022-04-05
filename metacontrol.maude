@@ -43,6 +43,7 @@ mod METACONTROL is
   var TS : Timesteps .
   var TI : Time .
   vars TL AL : TVPList .
+  vars S S1 : Selected .
 
 
   ********** Cost function qualtiy attributes
@@ -53,89 +54,6 @@ mod METACONTROL is
   op noMetacontr : Configuration -> Bool .
   eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
   eq noMetacontr(CONF) = true [owise] .
-
-
-  ******** Checks from comfort to other controller
-  *** Check whether metacontroller should change from comfort to heater error controller
-  op metaComfToHErr : Configuration -> Bool .
-  eq metaComfToHErr(< H :Heater | Broken: no, A > CONF) = false .
-  eq metaComfToHErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false .
-  ceq metaComfToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToHErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to water heater error controller
-  op metaComfToWhErr : Configuration -> Bool .
-  eq metaComfToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false .
-  eq metaComfToWhErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToWhErr(< WHEC :WaterheaterErrController | Selected: true > CONF) = false .
-  ceq metaComfToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToWhErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to window error controller
-  op metaComfToWErr : Configuration -> Bool .
-  eq metaComfToWErr(< W :Window | Broken: no, A > CONF) = false .
-  eq metaComfToWErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToWErr(< WEC :WindowErrController | Selected: true > CONF) = false .
-  ceq metaComfToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToWErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to eco controller
-  op metaComfToEco : Configuration -> Bool .
-  eq metaComfToEco(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToEco(< EC :EcoController | Selected: true > CONF) = false .
-  ceq metaComfToEco(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  ceq metaComfToEco(CONF) = false
-    if cost(CONF) <= 7/10 .
-  eq metaComfToEco(CONF) = true [owise] .
-
-
-  ****** Check from eco to other controller
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToHErr : Configuration -> Bool .
-  eq metaEcoToHErr(< H :Heater | Broken: no, A > CONF) = false .
-  eq metaEcoToHErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false .
-  ceq metaEcoToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToHErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToWhErr : Configuration -> Bool .
-  eq metaEcoToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false .
-  eq metaEcoToWhErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToWhErr(< HEC :WaterheaterErrController | Selected: true > CONF) = false .
-  ceq metaEcoToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToWhErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToWErr : Configuration -> Bool .
-  eq metaEcoToWErr(< W :Window | Broken: no, A > CONF) = false .
-  eq metaEcoToWErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToWErr(< HEC :WindowErrController | Selected: true > CONF) = false .
-  ceq metaEcoToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToWErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from eco to comfort controller
-  op metaEcoToComf : Configuration -> Bool .
-  eq metaEcoToComf(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToComf(< CC :ComfortController | Selected: true > CONF) = false .
-  ceq metaEcoToComf(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  ceq metaEcoToComf(CONF) = false
-    if cost(CONF) > 7/10 .
-  eq metaEcoToComf(CONF) = true [owise] .
-
-  *** Check if at least one rule is applicable
-  op metaRuleApplicable : Configuration -> Bool .
-  eq metaRuleApplicable(CONF) = metaComfToHErr(CONF) or metaComfToWhErr(CONF) or metaComfToWErr(CONF) or metaComfToEco(CONF)
-                                or metaEcoToHErr(CONF) or metaEcoToWhErr(CONF) or metaEcoToWErr(CONF) or metaEcoToComf(CONF) .
 
 
 
@@ -251,10 +169,10 @@ mod METACONTROL is
 
 
   ************************************** Change between comfort and eco controller
-  *** If QA comfort is below 0.6 and eco controller is active, then change to comfort controller
-  crl [MetaContrEcoToComf] :
-    {< CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: true >
+  *** If QA air purity >= 0.7 and QA comf < 7/10, then choose comfort controller
+  crl [MetaContrChooseComf] :
+    {< CC :ComfortController | Selected: S >
+    < EC :EcoController | Selected: S1 >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
@@ -266,42 +184,66 @@ mod METACONTROL is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     CONF}
-    if cost(CONF) <= 7/10
-    [print "rule: [MetaContrEcoToComf]"] .
+    if getQaAqValue(CONF) >= 5/10 /\ getQaComfValue(CONF) < 5/10
+    [print "rule: [MetaContrChooseComf]"] .
 
-  *** If QA air quality is below 0.6 and comfort controller is active, then change to eco controller
-  crl [MetaContrComfToEco] :
-    {< CC :ComfortController | Selected: true >
-    < EC :EcoController | Selected: false >
+  *** If QA comfort >= 0.7 and QA air purity < 0.7, then choose eco controller
+  crl [MetaContrChooseEco] :
+    {< EC :EcoController | Selected: S1 >
+    < CC :ComfortController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
-    {< CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: true >
+    {< EC :EcoController | Selected: true >
+    < CC :ComfortController | Selected: false >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
     CONF}
-    if cost(CONF) > 7/10
-    [print "rule: [MetaContrComfToEco]"] .
+    if getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) < 5/10
+    [print "rule: [MetaContrChooseEco]"] .
 
+  ************** If QA comfort >= 0.7 and QA air purity >= 0.7, then decide with cost function
+  *** If cost < 0.7, then choose the comfort controller
+  crl [MetaContrCostComf] :
+    {< CC :ComfortController | Selected: S >
+    < EC :EcoController | Selected: S1 >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    CONF}
+    =>
+    {< CC :ComfortController | Selected: true >
+    < EC :EcoController | Selected: false >
+    < MC :Metacontroller | MetaLog: ML (TS, Eco) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    CONF}
+    if getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) >= 5/10 /\ cost(CONF) < 7/10
+    [print "rule: [MetaContrChooseCost]"] .
+
+  *** If cost > 0.7, then choose the eco controller
+  crl [MetaContrCostEco] :
+    {< EC :EcoController | Selected: S1 >
+    < CC :ComfortController | Selected: S >
+    < MC :Metacontroller | MetaLog: ML >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    CONF}
+    =>
+    {< EC :EcoController | Selected: true >
+    < CC :ComfortController | Selected: false >
+    < MC :Metacontroller | MetaLog: ML (TS, Eco) >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    CONF}
+    if getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) >= 5/10 /\ cost(CONF) >= 7/10
+    [print "rule: [MetaContrCostEco]"] .
 
 
   *************************** Dummy rules
-  *** If the metacontroller no other rule can be applied, this will be applied
-  crl [MetacontrollerDoesNothing] :
-    {< MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
-    =>
-    {< MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
-    if metaRuleApplicable(< MC :Metacontroller | MetaLog: ML > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false /\ R := cost(CONF)
-    [print "rule: [MetacontrollerDoesNothing], Cost = " R] .
-
   *** If there is no metacontroller, this rules ensures that we can run tests anyway
   crl [noMetacontroller] :
     {< Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
