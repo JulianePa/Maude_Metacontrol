@@ -14,7 +14,7 @@ mod COMFORTCONTROLLER is
   vars TL AL : TVPList .
 
   *** Not in the morning
-  *** If T ok, AQ ok, T>20 -> H off, WH off, W closed
+  *** If T ok, AQ ok -> H off, WH off, W closed
   crl [CContrTempOkAqOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -39,7 +39,7 @@ mod COMFORTCONTROLLER is
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [CContrTempOkAqOk]"] .
 
-  *** If T ok, AQ not ok, W not open -> H off, WH off, W half open
+  *** If T ok, AQ not ok, W not open -> H veryhot, WH off, W half open
   crl [CContrTempOkAqNotOk1] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -64,7 +64,7 @@ mod COMFORTCONTROLLER is
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS =/= open
     [print "rule: [CContrTempOkAqNotOk1]"] .
 
-  *** If T ok, AQ not ok, W open -> H off, WH off, W open
+  *** If T ok, AQ not ok, W open -> H veryhot, WH off, W open
   crl [CContrTempOkAqNotOk2] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -164,7 +164,7 @@ mod COMFORTCONTROLLER is
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [CContrTempOkAqOkM]"] .
 
-  *** It T ok, AQ not OK & W not open ->  H off, W half open, WH on
+  *** It T ok, AQ not OK & W not open ->  H fairlyhot, W half open, WH on
   crl [CContrTempOkAqNotOkM1] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -189,7 +189,7 @@ mod COMFORTCONTROLLER is
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS =/= open
     [print "rule: [CContrTempOkAqNotOkM1]"] .
 
-  *** It T ok, AQ not OK & W open ->  H off, W open, WH on
+  *** It T ok, AQ not OK & W open ->  H veryhot, W open, WH on
   crl [CContrTempOkAqNotOkM2] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -214,7 +214,7 @@ mod COMFORTCONTROLLER is
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false /\ WS == open
     [print "rule: [CContrTempOkAqNotOkM2]"] .
 
-  *** If T low -> H fairly hot, W closed, WH on (can't put the heater to very hot because of system requirements in the morning)
+  *** If T low -> H fairly hot, W closed, WH on
   crl [CContrTempLowM] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
