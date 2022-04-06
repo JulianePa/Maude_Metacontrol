@@ -38,18 +38,22 @@ def get_data_from_path(path, retrieve_function = retrieve_float):
     return splitted_data
 
 def calculate_violations(data, qa):
-    violation_count = 0
+    violation_times_count = 0
+    violation_amount = 0
     violation_expression = None
     if qa == 'aq':
         violation_expression = lambda d : d < 0
+        amount_violation_expression = lambda d : abs(d)
     elif qa== 'temp':
         violation_expression = lambda d : d < 18 or d >22
+        amount_violation_expression = lambda d: (18 - d) if d < 18 else ((d-22) if d > 22 else 0)
 
     for d in data:
         if violation_expression(d):
-            violation_count += 1
+            violation_times_count += 1
+            violation_amount += amount_violation_expression(d)
 
-    return violation_count
+    return (violation_times_count, round(violation_amount,3))
 
 def metacontrol_plot_background(axs, switch_points, data_lenght):
     for i in range(len(switch_points)):
@@ -76,19 +80,24 @@ def main():
     comfort_aq_data = get_data_from_path(comfort_aq_path)
     comfort_temp_violation = calculate_violations(comfort_temp_data, 'temp')
     comfort_aq_violation = calculate_violations(comfort_aq_data, 'aq')
-    print('Comfort temp violation: ',comfort_temp_violation, ' AQ violation ',comfort_aq_violation)
+    print('Comfort number temp violation: ',comfort_temp_violation[0], ' mumber AQ violation ',comfort_aq_violation[0], ' total number of violation: ', comfort_temp_violation[0]+comfort_aq_violation[0])
+    print('Comfort amount temp violation: ',comfort_temp_violation[1], ' amount AQ violation ',comfort_aq_violation[1], ' total amount of violation: ', comfort_temp_violation[1]+comfort_aq_violation[1])
+    print('-------------')
 
     eco_temp_data = get_data_from_path(eco_temp_path)
     eco_aq_data = get_data_from_path(eco_aq_path)
     eco_temp_violation = calculate_violations(eco_temp_data, 'temp')
     eco_aq_violation = calculate_violations(eco_aq_data, 'aq')
-    print('Eco temp violation: ',eco_temp_violation, ' AQ violation ',eco_aq_violation)
+    print('Eco temp number violation: ',eco_temp_violation[0], ' number AQ violation ',eco_aq_violation[0], ' total number of violation: ', eco_temp_violation[0]+eco_aq_violation[0])
+    print('Eco temp amount violation: ',eco_temp_violation[1], ' amount AQ violation ',eco_aq_violation[1], ' total amount of violation: ', eco_temp_violation[1]+eco_aq_violation[1])
+    print('-------------')
 
     meta_temp_data = get_data_from_path(meta_temp_path)
     meta_aq_data = get_data_from_path(meta_aq_path)
     meta_temp_violation = calculate_violations(meta_temp_data, 'temp')
     meta_aq_violation = calculate_violations(meta_aq_data, 'aq')
-    print('Metacontrol temp violation: ',meta_temp_violation, ' AQ violation ',meta_aq_violation)
+    print('Metacontrol number temp violation: ',meta_temp_violation[0], ' number AQ violation ',meta_aq_violation[0], ' total number of violation: ', meta_temp_violation[0]+meta_aq_violation[0])
+    print('Metacontrol amount temp violation: ',meta_temp_violation[1], ' amount AQ violation ',meta_aq_violation[1], ' total amount of violation: ', meta_temp_violation[1]+meta_aq_violation[1])
 
     switch_points = get_data_from_path(meta_controllers_path, retrieve_string)
     # print(meta_controllers_switch)
