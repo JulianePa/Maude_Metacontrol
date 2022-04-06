@@ -36,3 +36,25 @@
   If T ok, AQ not ok -> H off, W half open, WH on
   If T low -> H off, W closed, WH on
   If T high -> H off, W half open, WH on
+
+
+# Waterheater error controller
+  If T ok, AQ ok -> H off, W closed, WH off
+  If T ok, AQ not ok -> H fairlyhot, W halfopen, WH off
+  If T low, AQ ok -> H veryhot, W closed, WH off
+  If T low, AQ not ok -> H veryhot, W halfopen, WH off
+  If T high -> H fairlyhot, W halfopen, WH off
+
+
+# Window error controller
+  Not in the morning
+  If T ok -> H veryhot, W halfopen, WH off
+  If T low, AQ ok -> H veryhot, W halfopen, WH on
+  If T low, AQ not ok ->H veryhot, W halfopen, WH off
+  If T high -> H fairlyhot, W halfopen, WH off
+
+  In the morning
+  If T ok, AQ ok -> H veryhot, W halfopen, WH on
+  If T ok, AQ not ok -> H fairlyhot, W halfopen, WH on
+  If T low -> H veryhot, W halfopen, WH on
+  If T high -> H fairlyhot, W halfopen, WH on
