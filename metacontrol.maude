@@ -60,10 +60,11 @@ mod METACONTROL is
 *** TODO Should the metacontroller also turn the actuators off?
   ****************** Rules
   ****************************************** From comfort controller to error controller
-  *** If the comfort controller is active and the heater is broken, then activate the heater error controller
-  rl [MetaContrComfortToHErr] :
+  *** If the comfort or eco controller is active and the heater is broken, then activate the heater error controller
+  rl [MetaContrToHErr] :
     < H :Heater | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
+    < CC :ComfortController | Selected: S >
+    < EC :EcoController | Selected: S1 >
     < HEC :HeaterErrController | Selected: false >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
@@ -71,16 +72,18 @@ mod METACONTROL is
     =>
     < H :Heater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
+    < EC :EcoController | Selected: false >
     < HEC :HeaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, HErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToHErr]"] .
+    [print "rule: [MetaContrToHErr]"] .
 
-  *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
-  rl [MetaContrComfortToWhErr] :
+  *** If the comfort or eco controller is active and the water heater is broken, then activate the water heater error controller
+  rl [MetaContrToWhErr] :
     < WH :Waterheater | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
+    < CC :ComfortController | Selected: S >
+    < EC :EcoController | Selected: S1 >
     < WHEC :WaterheaterErrController | Selected: false >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
@@ -88,16 +91,18 @@ mod METACONTROL is
     =>
     < WH :Waterheater | Broken: yes, A >
     < CC :ComfortController | Selected: false >
+    < EC :EcoController | Selected: false >
     < WHEC :WaterheaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToWhErr]"] .
+    [print "rule: [MetaContrToWhErr]"] .
 
-  *** If the comfort controller is active and the window is broken, then activate the window error controller
-  rl [MetaContrComfortToWErr] :
+  *** If the comfort or eco controller is active and the window is broken, then activate the window error controller
+  rl [MetaContrToWErr] :
     < W :Window | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
+    < CC :ComfortController | Selected: S >
+    < EC :EcoController | Selected: S1 >
     < WEC :WindowErrController | Selected: false >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
@@ -105,67 +110,12 @@ mod METACONTROL is
     =>
     < W :Window | Broken: yes, A >
     < CC :ComfortController | Selected: false >
-    < WEC :WindowErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToWErr]"] .
-
-
-
-  ******************************************* From eco controller to error controller
-  *** If the eco controller is active and the heater is broken, then activate the heater error controller
-  rl [MetaContrEcoToHErr] :
-    < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < HEC :HeaterErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: false >
-    < HEC :HeaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToHErr]"] .
-
-  *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
-  rl [MetaContrEcoToWhErr] :
-    < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < WHEC :WaterheaterErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: false >
-    < WHEC :WaterheaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToWhErr]"] .
-
-  *** If the eco controller is active and the window is broken, then activate the window error controller
-  rl [MetaContrEcoToWErr] :
-    < W :Window | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < WEC :WindowErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < W :Window | Broken: yes, A >
     < EC :EcoController | Selected: false >
     < WEC :WindowErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToWErr]"] .
-
-
+    [print "rule: [MetaContrToWErr]"] .
 
 
   ************************************** Change between comfort and eco controller
