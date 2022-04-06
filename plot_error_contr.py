@@ -38,84 +38,93 @@ def get_data_from_path(path, retrieve_function = retrieve_float):
     return splitted_data
 
 def calculate_violations(data, qa):
-    violation_count = 0
+    violation_times_count = 0
+    violation_amount = 0
     violation_expression = None
     if qa == 'aq':
         violation_expression = lambda d : d < 0
+        amount_violation_expression = lambda d : abs(d)
     elif qa== 'temp':
         violation_expression = lambda d : d < 18 or d >22
+        amount_violation_expression = lambda d: (18 - d) if d < 18 else ((d-22) if d > 22 else 0)
 
     for d in data:
         if violation_expression(d):
-            violation_count += 1
+            violation_times_count += 1
+            violation_amount += amount_violation_expression(d)
 
-    return violation_count
+    return (violation_times_count, round(violation_amount,3))
 
 def main():
-    comfort_temp_path = 'HErrTempLog.txt'
-    comfort_aq_path = 'HErrAirqualityLog.txt'
+    hHerr_temp_path = 'HErrTempLog.txt'
+    hHerr_aq_path = 'HErrAirqualityLog.txt'
 
-    eco_temp_path = 'WhErrTempLog.txt'
-    eco_aq_path = 'WhErrAirqualityLog.txt'
+    whErr_temp_path = 'WhErrTempLog.txt'
+    whErr_aq_path = 'WhErrAirqualityLog.txt'
 
-    meta_temp_path = 'WErrTempLog.txt'
-    meta_aq_path = 'WErrAirqualityLog.txt'
+    wErr_temp_path = 'WErrTempLog.txt'
+    wErr_aq_path = 'WErrAirqualityLog.txt'
 
 
-    comfort_temp_data = get_data_from_path(comfort_temp_path)
-    comfort_aq_data = get_data_from_path(comfort_aq_path)
-    comfort_temp_violation = calculate_violations(comfort_temp_data, 'temp')
-    comfort_aq_violation = calculate_violations(comfort_aq_data, 'aq')
-    print('HErr temp violation: ',comfort_temp_violation, ' AQ violation ',comfort_aq_violation)
+    hHerr_temp_data = get_data_from_path(hHerr_temp_path)
+    hHerr_aq_data = get_data_from_path(hHerr_aq_path)
+    hHerr_temp_violation = calculate_violations(hHerr_temp_data, 'temp')
+    hHerr_aq_violation = calculate_violations(hHerr_aq_data, 'aq')
+    print('HeaterErr number temp violation: ',hHerr_temp_violation[0], ' mumber AQ violation ',hHerr_aq_violation[0], ' total number of violation: ', hHerr_temp_violation[0]+hHerr_aq_violation[0])
+    print('HeaterErr amount temp violation: ',hHerr_temp_violation[1], ' amount AQ violation ',hHerr_aq_violation[1], ' total amount of violation: ', hHerr_temp_violation[1]+hHerr_aq_violation[1])
+    print('-------------')
 
-    eco_temp_data = get_data_from_path(eco_temp_path)
-    eco_aq_data = get_data_from_path(eco_aq_path)
-    eco_temp_violation = calculate_violations(eco_temp_data, 'temp')
-    eco_aq_violation = calculate_violations(eco_aq_data, 'aq')
-    print('WhErr temp violation: ',eco_temp_violation, ' AQ violation ',eco_aq_violation)
+    whErr_temp_data = get_data_from_path(whErr_temp_path)
+    whErr_aq_data = get_data_from_path(whErr_aq_path)
+    whErr_temp_violation = calculate_violations(whErr_temp_data, 'temp')
+    whErr_aq_violation = calculate_violations(whErr_aq_data, 'aq')
+    print('WaterheaterErr temp number violation: ',whErr_temp_violation[0], ' number AQ violation ',whErr_aq_violation[0], ' total number of violation: ', whErr_temp_violation[0]+whErr_aq_violation[0])
+    print('WaterheaterErr temp amount violation: ',whErr_temp_violation[1], ' amount AQ violation ',whErr_aq_violation[1], ' total amount of violation: ', whErr_temp_violation[1]+whErr_aq_violation[1])
+    print('-------------')
 
-    meta_temp_data = get_data_from_path(meta_temp_path)
-    meta_aq_data = get_data_from_path(meta_aq_path)
-    meta_temp_violation = calculate_violations(meta_temp_data, 'temp')
-    meta_aq_violation = calculate_violations(meta_aq_data, 'aq')
-    print('WErr temp violation: ',meta_temp_violation, ' AQ violation ',meta_aq_violation)
+    wErr_temp_data = get_data_from_path(wErr_temp_path)
+    wErr_aq_data = get_data_from_path(wErr_aq_path)
+    wErr_temp_violation = calculate_violations(wErr_temp_data, 'temp')
+    wErr_aq_violation = calculate_violations(wErr_aq_data, 'aq')
+    print('WindowErr number temp violation: ',wErr_temp_violation[0], ' number AQ violation ',wErr_aq_violation[0], ' total number of violation: ', wErr_temp_violation[0]+wErr_aq_violation[0])
+    print('WindowErr amount temp violation: ',wErr_temp_violation[1], ' amount AQ violation ',wErr_aq_violation[1], ' total amount of violation: ', wErr_temp_violation[1]+wErr_aq_violation[1])
 
-    # switch_points = get_data_from_path(meta_controllers_path, retrieve_string)
-    # print(meta_controllers_switch)
+    # switch_points = get_data_from_path(wErr_controllers_path, retrieve_string)
+    # print(wErr_controllers_switch)
 
     fig, axs = plt.subplots(3, 2)
     fig.suptitle('Smart Home World')
 
     axs[0, 0].set_title("Heater error controller temperature")
-    axs[0, 0].plot(comfort_temp_data)
+    axs[0, 0].plot(hHerr_temp_data)
     axs[0, 0].set(xlabel='Time step', ylabel='Temperature')
     axs[0, 0].axhline(y = 18, color = 'k', linestyle = '--')
     axs[0, 0].axhline(y = 22, color = 'k', linestyle = '--')
 
     axs[0, 1].set_title("Heater error controller air quality")
-    axs[0, 1].plot(comfort_aq_data, 'r')
+    axs[0, 1].plot(hHerr_aq_data, 'r')
     axs[0, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[0, 1].axhline(y = 0, color = 'k', linestyle = '--')
 
     axs[1, 0].set_title("Waterheater error controller temperature")
-    axs[1, 0].plot(eco_temp_data)
+    axs[1, 0].plot(whErr_temp_data)
     axs[1, 0].set(xlabel='Time step', ylabel='Temperature')
     axs[1, 0].axhline(y = 18, color = 'k', linestyle = '--')
     axs[1, 0].axhline(y = 22, color = 'k', linestyle = '--')
 
     axs[1, 1].set_title("Waterheater error controller air quality")
-    axs[1, 1].plot(eco_aq_data, 'r')
+    axs[1, 1].plot(whErr_aq_data, 'r')
     axs[1, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[1, 1].axhline(y = 0, color = 'k', linestyle = '--')
 
     axs[2, 0].set_title("Window error controller temperature")
-    axs[2, 0].plot(meta_temp_data)
+    axs[2, 0].plot(wErr_temp_data)
     axs[2, 0].set(xlabel='Time step', ylabel='Temperature')
     axs[2, 0].axhline(y = 18, color = 'k', linestyle = '--')
     axs[2, 0].axhline(y = 22, color = 'k', linestyle = '--')
 
     axs[2, 1].set_title("Window error controller air quality")
-    axs[2, 1].plot(meta_aq_data, 'r')
+    axs[2, 1].plot(wErr_aq_data, 'r')
     axs[2, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[2, 1].axhline(y = 0, color = 'k', linestyle = '--')
 
