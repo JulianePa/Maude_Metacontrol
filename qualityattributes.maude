@@ -22,6 +22,18 @@ mod QUALITYATTRIBUTES is
   sort QAComputed .
   ops yes no : -> QAComputed .
 
+  *** The required QA values
+  *** TODO Do we really want to name the object "Objective"?
+  sort RequQAs Objective .
+  subsort Objective < Configuration .
+  op requQaCT: _ : Float -> RequQAs [ctor] .
+  op requQaAQ: _ : Float -> RequQAs [ctor] .
+  op requQaEC: _ : Float -> RequQAs [ctor] .
+  op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
+
+  op < RequiredQAs | _ > : RequQAs -> Objective .
+
+
   ******************************** Relevant for quality attributes comfort and air quality
   sort QaStatus .
   subsort Rat < QaStatus .

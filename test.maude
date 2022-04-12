@@ -59,7 +59,8 @@ mod TEST is
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
-            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .
+            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >
+            < RequiredQAs | requQaCT: 0.3, requQaAQ: 0.2 >} .
 
   op init5 : -> TimedConfiguration .
   eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.4, Broken: no >
