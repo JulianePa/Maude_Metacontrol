@@ -9,6 +9,7 @@ mod WINDOWERRCONTROLLER is
   vars A A1 A2 : Attribute .
   vars B B1 B2 : Bool .
   vars TL AL : TVPList .
+  var EQA : ExpectedQAs .
 
   *** Rules for not in the morning
   *** If T ok -> H veryhot, W halfopen, WH off
@@ -18,7 +19,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WEC to H)
@@ -29,7 +30,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ hot?(DG) == false /\ cold?(DG) == false
     [print "rule: [WinErrContrTempOk]"] .
@@ -42,7 +43,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WEC to H)
@@ -54,7 +55,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [WinErrContrTempLowAqOk]"] .
@@ -67,7 +68,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WEC to H)
@@ -79,7 +80,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WinErrContrTempLowAqNotOk]"] .
@@ -91,7 +92,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg fairlyhot from WEC to H)
@@ -102,7 +103,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == false /\ hot?(DG) == true
     [print "rule: [WinErrContrTempHigh]"] .
@@ -118,7 +119,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WEC to H)
@@ -130,7 +131,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [WinErrContrTempOkAqOkM]"] .
@@ -143,7 +144,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg fairlyhot from WEC to H)
@@ -155,7 +156,7 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == true /\ hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [WinErrContrTempOkAqOkM]"] .
@@ -167,7 +168,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WEC to H)
@@ -178,7 +179,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == true /\ cold?(DG) == true
     [print "rule: [WinErrContrTempLowM]"] .
@@ -190,7 +191,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg fairlyhot from WEC to H)
@@ -201,7 +202,7 @@ mod WINDOWERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
+    < WEC :WindowErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if morning?(TI) == true /\ hot?(DG) == true
     [print "rule: [WinErrContrTempHighM]"] .

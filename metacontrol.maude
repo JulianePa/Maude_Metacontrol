@@ -44,6 +44,7 @@ mod METACONTROL is
   var TI : Time .
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
+  var EQA : ExpectedQAs .
 
 
   ********** Cost function qualtiy attributes
@@ -63,17 +64,17 @@ mod METACONTROL is
   *** If the comfort or eco controller is active and the heater is broken, then activate the heater error controller
   rl [MetaContrHErr] :
     < H :Heater | Broken: yes, Status: HS, A >
-    < CC :ComfortController | Selected: S >
-    < EC :EcoController | Selected: S1 >
-    < HEC :HeaterErrController | Selected: S2 >
+    < CC :ComfortController | Selected: S, EQA >
+    < EC :EcoController | Selected: S1, EQA >
+    < HEC :HeaterErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < H :Heater | Broken: yes, Status: hOff, A >
-    < CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: false >
-    < HEC :HeaterErrController | Selected: true >
+    < CC :ComfortController | Selected: false, EQA >
+    < EC :EcoController | Selected: false, EQA >
+    < HEC :HeaterErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, HErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -82,17 +83,17 @@ mod METACONTROL is
   *** If the comfort or eco controller is active and the water heater is broken, then activate the water heater error controller
   rl [MetaContrWhErr] :
     < WH :Waterheater | Broken: yes, Status: WHS, A >
-    < CC :ComfortController | Selected: S >
-    < EC :EcoController | Selected: S1 >
-    < WHEC :WaterheaterErrController | Selected: S2 >
+    < CC :ComfortController | Selected: S, EQA >
+    < EC :EcoController | Selected: S1, EQA >
+    < WHEC :WaterheaterErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < WH :Waterheater | Broken: yes, Status: whOff, A >
-    < CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: false >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < CC :ComfortController | Selected: false, EQA >
+    < EC :EcoController | Selected: false, EQA >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -101,17 +102,17 @@ mod METACONTROL is
   *** If the comfort or eco controller is active and the window is broken, then activate the window error controller
   rl [MetaContrWErr] :
     < W :Window | Broken: yes, Status: WS, A >
-    < CC :ComfortController | Selected: S >
-    < EC :EcoController | Selected: S1 >
-    < WEC :WindowErrController | Selected: S2 >
+    < CC :ComfortController | Selected: S, EQA >
+    < EC :EcoController | Selected: S1, EQA >
+    < WEC :WindowErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     =>
     < W :Window | Broken: yes, Status: halfopen, A >
-    < CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: false >
-    < WEC :WindowErrController | Selected: true >
+    < CC :ComfortController | Selected: false, EQA >
+    < EC :EcoController | Selected: false, EQA >
+    < WEC :WindowErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, WErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -121,15 +122,15 @@ mod METACONTROL is
   ************************************** Change to comfort or eco controller
   *** If QA air purity >= 0.7 and QA comf < 7/10, then choose comfort controller
   crl [MetaContrChooseComf] :
-    {< CC :ComfortController | Selected: S >
-    < EC :EcoController | Selected: S1 >
+    {< CC :ComfortController | Selected: S, EQA >
+    < EC :EcoController | Selected: S1, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
-    {< CC :ComfortController | Selected: true >
-    < EC :EcoController | Selected: false >
+    {< CC :ComfortController | Selected: true, EQA >
+    < EC :EcoController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Comf) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -139,15 +140,15 @@ mod METACONTROL is
 
   *** If QA comfort >= 0.7 and QA air purity < 0.7, then choose eco controller
   crl [MetaContrChooseEco] :
-    {< EC :EcoController | Selected: S1 >
-    < CC :ComfortController | Selected: S >
+    {< EC :EcoController | Selected: S1, EQA >
+    < CC :ComfortController | Selected: S, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
-    {< EC :EcoController | Selected: true >
-    < CC :ComfortController | Selected: false >
+    {< EC :EcoController | Selected: true, EQA >
+    < CC :ComfortController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -158,15 +159,15 @@ mod METACONTROL is
   ************** If QA comfort >= 0.7 and QA air purity >= 0.7, then decide with cost function
   *** If cost < 0.7, then choose the comfort controller
   crl [MetaContrCostComf] :
-    {< CC :ComfortController | Selected: S >
-    < EC :EcoController | Selected: S1 >
+    {< CC :ComfortController | Selected: S, EQA >
+    < EC :EcoController | Selected: S1, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
-    {< CC :ComfortController | Selected: true >
-    < EC :EcoController | Selected: false >
+    {< CC :ComfortController | Selected: true, EQA >
+    < EC :EcoController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
@@ -176,15 +177,15 @@ mod METACONTROL is
 
   *** If cost > 0.7, then choose the eco controller
   crl [MetaContrCostEco] :
-    {< EC :EcoController | Selected: S1 >
-    < CC :ComfortController | Selected: S >
+    {< EC :EcoController | Selected: S1, EQA >
+    < CC :ComfortController | Selected: S, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
     CONF}
     =>
-    {< EC :EcoController | Selected: true >
-    < CC :ComfortController | Selected: false >
+    {< EC :EcoController | Selected: true, EQA >
+    < CC :ComfortController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >

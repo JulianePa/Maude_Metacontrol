@@ -24,11 +24,11 @@ mod TEST is
             < "homeThermometer" :Thermometer | Degrees: 21.0 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
-            < "homeComfortController" :ComfortController | Selected: false >
-            < "homeEcoController" :EcoController | Selected: true >
-            < "homeHeaterErrController" :HeaterErrController | Selected: false >
-            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
-            < "homeWindowErrController" :WindowErrController | Selected: false >
+            < "homeComfortController" :ComfortController | Selected: false, QaCT: 0.7, QaAQ: 0.5 >
+            < "homeEcoController" :EcoController | Selected: true, QaCT: 0.5, QaAQ: 0.7 >
+            < "homeHeaterErrController" :HeaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
+            < "homeWindowErrController" :WindowErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
@@ -50,12 +50,12 @@ mod TEST is
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
-            < "homeComfortController" :ComfortController | Selected: true >
-            < "homeEcoController" :EcoController | Selected: false >
-            < "homeHeaterErrController" :HeaterErrController | Selected: false >
-            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
-            < "homeWindowErrController" :WindowErrController | Selected: false >
-            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
+            < "homeComfortController" :ComfortController | Selected: false, QaCT: 0.7, QaAQ: 0.5 >
+            < "homeEcoController" :EcoController | Selected: true, QaCT: 0.5, QaAQ: 0.7 >
+            < "homeHeaterErrController" :HeaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
+            < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
+            < "homeWindowErrController" :WindowErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
+            ***< "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
@@ -68,8 +68,8 @@ mod TEST is
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
-            < "homeComfortController" :ComfortController | Selected: true >
-            < "homeEcoController" :EcoController | Selected: false >
+            < "homeComfortController" :ComfortController | Selected: true, QaCT: 0.7, QaAQ: 0.5 >
+            < "homeEcoController" :EcoController | Selected: true, QaCT: 0.5, QaAQ: 0.7 >
             < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .
 
 

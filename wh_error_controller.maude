@@ -8,6 +8,7 @@ mod WATERHEATERERRCONTROLLER is
   var TS : Timesteps .
   vars A A1 A2 : Attribute .
   vars B B1 B2 : Bool .
+  var EQA : ExpectedQAs .
 
 
   *** Rules
@@ -18,7 +19,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg hOff from WHEC to H)
@@ -29,7 +30,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempOkAqOk]"] .
@@ -41,7 +42,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg fairlyhot from WHEC to H)
@@ -52,7 +53,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempOkAqNotOk]"] .
@@ -64,7 +65,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WHEC to H)
@@ -75,7 +76,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if cold?(DG) == true /\ aqok?(AQS) == true
     [print "rule: [WhErrContrTempLowAqOk]"] .
@@ -87,7 +88,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg veryhot from WHEC to H)
@@ -98,7 +99,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if cold?(DG) == true /\ aqok?(AQS) == false
     [print "rule: [WhErrContrTempLowAqNotOk]"] .
@@ -110,7 +111,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
     =>
     (msg fairlyhot from WHEC to H)
@@ -121,7 +122,7 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
     < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
     if hot?(DG) == true
     [print "rule: [WhErrContrTempHigh]"] .
