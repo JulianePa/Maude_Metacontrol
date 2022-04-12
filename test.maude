@@ -33,7 +33,7 @@ mod TEST is
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < Scheduler | Status: MCChange, TempAqChange: false, McChange: false, ContrChange: false > .
+            < Scheduler | Status: PhysicsChange, RuleApplied: false > .
 
   op init3 : -> Configuration .
   eq init3 = < "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
@@ -59,7 +59,7 @@ mod TEST is
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
-            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >
             < RequiredQAs | requQaCT: 0.3, requQaAQ: 0.2 >} .
 
   op init5 : -> TimedConfiguration .
@@ -71,7 +71,7 @@ mod TEST is
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
             < "homeComfortController" :ComfortController | Selected: true, QaCT: 0.7, QaAQ: 0.5 >
             < "homeEcoController" :EcoController | Selected: true, QaCT: 0.5, QaAQ: 0.7 >
-            < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: false, ContrChange: false >} .
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
 
 
 endm

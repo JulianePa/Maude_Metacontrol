@@ -22,7 +22,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -34,7 +34,7 @@ mod HEATERERRCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
     [print "rule: [HErrContrTempOkAqOk]"] .
 
@@ -46,7 +46,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -57,7 +57,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
     [print "rule: [HErrContrTempOkAqNotOk]"] .
 
@@ -68,7 +68,7 @@ mod HEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
     (msg hOff from HEC to H)
     (msg on from HEC to WH)
@@ -78,7 +78,7 @@ mod HEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
     if cold?(DG) == true
     [print "rule: [HErrContrTempLow]"] .
 
@@ -90,7 +90,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
     (msg hOff from HEC to H)
     (msg whOff from HEC to WH)
@@ -101,7 +101,7 @@ mod HEATERERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < HEC :HeaterErrController | Selected: true, EQA >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot?(DG) == true
     [print "rule: [HErrContrTempHigh]"] .
 endm

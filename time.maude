@@ -26,10 +26,10 @@ mod TIME is
 
   crl [timeAdvances] :
     {< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true > CONF}
+    < Scheduler | Status: TimeChange, RuleApplied: false > CONF}
     =>
     {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1), TempLog: TL (TS, T), AqLog: AL (TS, AQ) >
-    < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > advance(CONF)}
+    < Scheduler | Status: TimeChange, RuleApplied: true > advance(CONF)}
     if T := getTemp(CONF) /\ AQ := getAirquality(CONF)
     [print "rule: [timeAdvances]"] .
 

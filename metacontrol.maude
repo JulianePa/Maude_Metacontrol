@@ -69,7 +69,7 @@ mod METACONTROL is
     < HEC :HeaterErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     =>
     < H :Heater | Broken: yes, Status: hOff, A >
     < CC :ComfortController | Selected: false, EQA >
@@ -77,7 +77,7 @@ mod METACONTROL is
     < HEC :HeaterErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, HErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     [print "rule: [MetaContrHErr]"] .
 
   *** If the comfort or eco controller is active and the water heater is broken, then activate the water heater error controller
@@ -88,7 +88,7 @@ mod METACONTROL is
     < WHEC :WaterheaterErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     =>
     < WH :Waterheater | Broken: yes, Status: whOff, A >
     < CC :ComfortController | Selected: false, EQA >
@@ -96,7 +96,7 @@ mod METACONTROL is
     < WHEC :WaterheaterErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     [print "rule: [MetaContrWhErr]"] .
 
   *** If the comfort or eco controller is active and the window is broken, then activate the window error controller
@@ -107,7 +107,7 @@ mod METACONTROL is
     < WEC :WindowErrController | Selected: S2, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     =>
     < W :Window | Broken: yes, Status: halfopen, A >
     < CC :ComfortController | Selected: false, EQA >
@@ -115,7 +115,7 @@ mod METACONTROL is
     < WEC :WindowErrController | Selected: true, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, WErr) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     [print "rule: [MetaContrWErr]"] .
 
 
@@ -126,14 +126,14 @@ mod METACONTROL is
     < EC :EcoController | Selected: S1, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     CONF}
     =>
     {< CC :ComfortController | Selected: true, EQA >
     < EC :EcoController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Comf) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     CONF}
     if oneBroken(CONF) == false /\ getQaAqValue(CONF) >= 5/10 /\ getQaComfValue(CONF) < 5/10
     [print "rule: [MetaContrChooseComf]"] .
@@ -144,14 +144,14 @@ mod METACONTROL is
     < CC :ComfortController | Selected: S, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     CONF}
     =>
     {< EC :EcoController | Selected: true, EQA >
     < CC :ComfortController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     CONF}
     if oneBroken(CONF) == false /\ getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) < 5/10
     [print "rule: [MetaContrChooseEco]"] .
@@ -163,14 +163,14 @@ mod METACONTROL is
     < EC :EcoController | Selected: S1, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     CONF}
     =>
     {< CC :ComfortController | Selected: true, EQA >
     < EC :EcoController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     CONF}
     if oneBroken(CONF) == false /\ getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) >= 5/10 /\ cost(CONF) < 7/10
     [print "rule: [MetaContrChooseCost]"] .
@@ -181,14 +181,14 @@ mod METACONTROL is
     < CC :ComfortController | Selected: S, EQA >
     < MC :Metacontroller | MetaLog: ML >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: false >
     CONF}
     =>
     {< EC :EcoController | Selected: true, EQA >
     < CC :ComfortController | Selected: false, EQA >
     < MC :Metacontroller | MetaLog: ML (TS, Eco) >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    < Scheduler | Status: MCChange, RuleApplied: true >
     CONF}
     if oneBroken(CONF) == false /\ getQaComfValue(CONF) >= 5/10 /\ getQaAqValue(CONF) >= 5/10 /\ cost(CONF) >= 7/10
     [print "rule: [MetaContrCostEco]"] .
@@ -197,9 +197,9 @@ mod METACONTROL is
   *************************** Dummy rules
   *** If there is no metacontroller, this rules ensures that we can run tests anyway
   crl [noMetacontroller] :
-    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
+    {< Scheduler | Status: MCChange, RuleApplied: false > CONF}
     =>
-    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
+    {< Scheduler | Status: MCChange, RuleApplied: true > CONF}
     if noMetacontr(CONF) == true
     [print "rule: [noMetacontr]"] .
 

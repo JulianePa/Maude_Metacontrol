@@ -150,32 +150,32 @@ mod QUALITYATTRIBUTES is
   *** The value of the QAs should be computed every time step
   crl [QaComfort] :
     {< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     =>
     {< C :QaComfort | Consider: N, Past: newQAL, Status: newQAS, QAComputed: yes >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     if newQAL := append(QAL, comfortable?(CONF)) /\ newQAS := computeQA(N, newQAL)
     [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
 
   crl [QaAirquality] :
     {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     =>
     {< AQ :QaAirquality | Consider: N, Past: newQAL, Status: newQAS, QAComputed: yes >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     if newQAL := append(QAL, aqGood?(CONF)) /\ newQAS := computeQA(N, newQAL)
     [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 
   crl [QaEcology] :
     {< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     =>
     {< E :QaEcology | Consider: N, Past: newEL, Status: newQAS, QAComputed: yes >
-    < Scheduler | Status: QAChange, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF}
+    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     if newEL := append(EL, getEnergyconsumption(CONF)) /\ newQAS := computeEcoQa(N, newEL)
     [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
 
-
+    
 
 
 
