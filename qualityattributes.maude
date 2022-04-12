@@ -31,7 +31,7 @@ mod QUALITYATTRIBUTES is
   op requQaEC: _ : Float -> RequQAs [ctor] .
   op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
 
-  op < RequiredQAs | _ > : RequQAs -> Objective .
+  op < RequiredQAs | _ > : RequQAs -> Objective [format(ntc c c c c c)].
 
 
   ******************************** Relevant for quality attributes comfort and air quality
