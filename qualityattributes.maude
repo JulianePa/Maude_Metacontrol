@@ -26,9 +26,8 @@ mod QUALITYATTRIBUTES is
   *** TODO Do we really want to name the object "Objective"?
   sort RequQAs Objective .
   subsort Objective < Configuration .
-  op requQaCT: _ : Float -> RequQAs [ctor] .
-  op requQaAQ: _ : Float -> RequQAs [ctor] .
-  op requQaEC: _ : Float -> RequQAs [ctor] .
+  op requQaCT: _ : Rat -> RequQAs [ctor] .
+  op requQaAQ: _ : Rat -> RequQAs [ctor] .
   op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
 
   op < RequiredQAs | _ > : RequQAs -> Objective [format(ntc c c c c c)].
@@ -74,9 +73,9 @@ mod QUALITYATTRIBUTES is
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
   op < _ :QaComfort | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Bool} QaStatus QAComputed -> Comfort [format (ntg g g g g g g g g g g g g g g g g)] .
 
-  op getQaComfValue : Configuration -> QaStatus .
-  eq getQaComfValue(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
-  eq getQaComfValue(CONF) = 0 [owise] .
+  op getQaCtMeas : Configuration -> QaStatus .
+  eq getQaCtMeas(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaCtMeas(CONF) = 0 [owise] .
 
 
   ****************************************** Air quality
@@ -92,52 +91,14 @@ mod QUALITYATTRIBUTES is
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
   op < _ :QaAirquality | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Bool} QaStatus QAComputed -> QaAirquality [format (ntg g g g g g g g g g g g g g g g g)] .
 
-  op getQaAqValue : Configuration -> QaStatus .
-  eq getQaAqValue(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
-  eq getQaAqValue(CONF) = 0 [owise] .
-
-
-  **************************************** Ecology
-  sort Ecology .
-  subsort Ecology < Configuration .
-
-  *** The current energy consumption is computed in every time step as the sum of energy consumption by all actuators
-  op getEnergyconsumption : Configuration -> Nat .
-  eq getEnergyconsumption(< H :Heater | Status: fairlyhot, AT > CONF) = 2 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< H :Heater | Status: veryhot, AT > CONF) = 4 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(< WH :Waterheater | Status: on, AT > CONF) = 1 + getEnergyconsumption(CONF) .
-  eq getEnergyconsumption(CONF) = 0 [owise] .
-
-  *** Gets the last N entries
-  op getLastEco : Nat List{Nat} -> List{Nat} .
-  eq getLastEco(0, EL) = nil .
-  eq getLastEco(1, M) = M .
-  eq getLastEco(s(N), EL M) = getLastEco(N, EL) M .
-
-  *** Sums entries
-  op sum : List{Nat} -> Nat .
-  eq sum(nil) = 0 .
-  eq sum(N EL) = N + sum(EL) .
-
-  *** Computes the quality attribute value as the average of the last N time steps
-  op computeEcoQa : Nat List{Nat} -> QaStatus .
-  ceq computeEcoQa(N, EL) = 1 + (- (sum(getLastEco(N, EL)) / N) / 5)
-    if N <= size(EL) .
-  ceq computeEcoQa(N, EL) = 1 + (- (sum(EL) / M) / 5)
-    if M := size(EL) /\ N > M .
-
-
-  op < _ :QaEcology | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Nat} QaStatus QAComputed -> Ecology [format (ntg g g g g g g g g g g g g g g g g)] .
-
-  op getQaEcoValue : Configuration -> QaStatus .
-  eq getQaEcoValue(< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: QAC > CONF) = QAS .
-  eq getQaEcoValue(CONF) = 0 [owise] .
+  op getQaAqMeas : Configuration -> QaStatus .
+  eq getQaAqMeas(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaAqMeas(CONF) = 0 [owise] .
 
 
 
   ***************************************** For scheduler
   op QAready : Configuration -> Bool .
-  eq QAready(< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > CONF) = false .
   eq QAready(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
   eq QAready(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
   eq QAready(CONF) = true [owise] .
@@ -166,17 +127,5 @@ mod QUALITYATTRIBUTES is
     if newQAL := append(QAL, aqGood?(CONF)) /\ newQAS := computeQA(N, newQAL)
     [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
 
-  crl [QaEcology] :
-    {< E :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no >
-    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
-    =>
-    {< E :QaEcology | Consider: N, Past: newEL, Status: newQAS, QAComputed: yes >
-    < Scheduler | Status: QAChange, RuleApplied: B > CONF}
-    if newEL := append(EL, getEnergyconsumption(CONF)) /\ newQAS := computeEcoQa(N, newEL)
-    [print "rule: [QaEcology], QA Ecology before: " QAS ", QA Ecology after: " newQAS] .
-
-    
-
-
-
 endm
+eof
