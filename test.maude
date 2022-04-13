@@ -32,7 +32,6 @@ mod TEST is
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaComfort" :QaComfort | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 5, Past: nil, Status: 1, QAComputed: no >
-            < "homeQaEcology" :QaEcology | Consider: 5, Past: nil, Status: 1, QAComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false > .
 
   op init3 : -> Configuration .
@@ -56,7 +55,6 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
             < "homeWindowErrController" :WindowErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
-            < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >

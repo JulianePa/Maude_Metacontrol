@@ -16,8 +16,6 @@ mod TIME is
   var AQ : AirqualityStatus .
 
   op advance : Configuration -> Configuration .
-  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
       = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
   eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
