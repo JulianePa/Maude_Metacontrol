@@ -48,11 +48,11 @@ mod METACONTROL is
 
   *** Deselect Function Grounding
   op deselect : Configuration -> Configuration .
-  eq deselect(< HEC :HeaterErrController | Selected: S > CONF) = < HEC :HeaterErrController | Selected: S > deselect(CONF) .
-  eq deselect(< WHEC :WaterheaterErrController | Selected: S > CONF) = < WHEC :WaterheaterErrController | Selected: S > deselect(CONF) .
-  eq deselect(< WEC :WindowErrController | Selected: S > CONF) = < WEC :WindowErrController | Selected: S > deselect(CONF) .
-  eq deselect(< CC :ComfortController | Selected: S > CONF) = < CC :ComfortController | Selected: S > deselect(CONF) .
-  eq deselect(< EC :EcoController | Selected: S > CONF) = < EC :EcoController | Selected: S > deselect(CONF) .
+  eq deselect(< HEC :HeaterErrController | Selected: S > CONF) = < HEC :HeaterErrController | Selected: false > deselect(CONF) .
+  eq deselect(< WHEC :WaterheaterErrController | Selected: S > CONF) = < WHEC :WaterheaterErrController | Selected: false > deselect(CONF) .
+  eq deselect(< WEC :WindowErrController | Selected: S > CONF) = < WEC :WindowErrController | Selected: false > deselect(CONF) .
+  eq deselect(< CC :ComfortController | Selected: S > CONF) = < CC :ComfortController | Selected: false > deselect(CONF) .
+  eq deselect(< EC :EcoController | Selected: S > CONF) = < EC :EcoController | Selected: false  > deselect(CONF) .
   eq deselect(CONF) = CONF [owise] .
 
   vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C : Oid .
@@ -60,10 +60,10 @@ mod METACONTROL is
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var A : Attribute .
-  var N : Nat .
-  var QAL : List{Bool} .
-  var QAS : QaStatus .
-  var QACOM : QAComputed .
+  var N N1 : Nat .
+  var QAL QAL1 : List{Bool} .
+  var QAS QAS1 : QaStatus .
+  var QACOM QACOM1 : QAComputed .
   var CONF : Configuration .
   var SC : ScheduleComponents .
   vars B B1 B2 B3 newB newB1 : Bool .
@@ -121,6 +121,9 @@ mod METACONTROL is
     < FGinError: true, QaCTinError: false, QaAQinError: false >
     deselect(CONF)}
     [print "rule: [AnalyseWindowError]"] .
+
+
+  
 
 
 
@@ -182,38 +185,6 @@ mod METACONTROL is
 
 endm
 eof
-************* QA in error
-crl [AnalyseQaInError] :
-  {< MC :Metacontroller | MetaLog: ML >
-  < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
-  < Scheduler | Status: MCAnalyse, RuleApplied: false >
-  < FGinError: false, QaCTinError: B, QaAQinError: B1 >
-  CONF}
-  =>
-  {< MC :Metacontroller | MetaLog: ML >
-  < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
-  < Scheduler | Status: MCAnalyse, RuleApplied: true >
-  < FGinError: true, QaCTinError: newB, QaAQinError: newB1 >
-  CONF}
-  if newB := (getQaCtMeas(CONF) < RCT) /\ newB1 := (getQaAqMeas < RAQ) /\ newB or newB1
-  [print "rule: [AnalyseQaInError]"] .
-
-************* QA not in error
-crl [AnalyseQaGood] :
-  {< MC :Metacontroller | MetaLog: ML >
-  < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
-  < Scheduler | Status: MCAnalyse, RuleApplied: false >
-  < FGinError: false, QaCTinError: B, QaAQinError: B1 >
-  CONF}
-  =>
-  {< MC :Metacontroller | MetaLog: ML >
-  < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
-  < Scheduler | Status: MCAnalyse, RuleApplied: true >
-  < FGinError: false, QaCTinError: false, QaAQinError: false >
-  CONF}
-  if (getQaCtMeas(CONF) >= RCT) /\ (getQaAqMeas >= RAQ)
-  [print "rule: [AnalyseQaGood]"] .
-
 
 
 
