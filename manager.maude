@@ -16,9 +16,12 @@ mod MANAGER is
     if QAready(CONF) == true .
 
   eq {< Scheduler | Status: QAChange, RuleApplied: true > CONF}
-    = {< Scheduler | Status: MCChange, RuleApplied: false > CONF} .
+    = {< Scheduler | Status: MCAnalyse, RuleApplied: false > CONF} .
 
-  eq {< Scheduler | Status: MCChange, RuleApplied: true > CONF}
+  eq {< Scheduler | Status: MCAnalyse, RuleApplied: true > CONF}
+    = {< Scheduler | Status: MCPlan, RuleApplied: false > CONF} .
+
+  eq {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
     = {< Scheduler | Status: ContrChange, RuleApplied: false > CONF} .
 
   eq {< Scheduler | Status: ContrChange, RuleApplied: true > CONF}

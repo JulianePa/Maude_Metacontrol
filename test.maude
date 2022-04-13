@@ -55,12 +55,13 @@ mod TEST is
             < "homeHeaterErrController" :HeaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
             < "homeWindowErrController" :WindowErrController | Selected: false, QaCT: 0.3, QaAQ: 0.2 >
-            ***< "homeMetacontroller" :Metacontroller | MetaLog: nil >
+            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaEcology" :QaEcology | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >
-            < RequiredQAs | requQaCT: 0.3, requQaAQ: 0.2 >} .
+            < RequiredQAs | requQaCT: 3/10, requQaAQ: 2/10 >
+            < FGinError: false, QaCTinError: false, QaAQinError: false >} .
 
   op init5 : -> TimedConfiguration .
   eq init5 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.4, Broken: no >

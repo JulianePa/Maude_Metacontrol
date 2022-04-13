@@ -26,6 +26,21 @@ mod METACONTROL is
 
   op < _ :Metacontroller | MetaLog: _ > : Oid MetaLog -> Metacontroller [format (ntr r r r r r r o)] .
 
+  *** Object that indicates whether FG and QAs are in error.
+  sort InError .
+  subsort InError < Configuration .
+  *** TODO maybe we have to include QaEC here if we want to keep it
+  op < FGinError: _, QaCTinError: _, QaAQinError: _ > : Bool Bool Bool -> InError [format(ntc c c c c c c c c c c)].
+
+  *** Deselect Function Grounding
+  op deselect : Configuration -> Configuration .
+  eq deselect(< HEC :HeaterErrController | Selected: S, EQA > CONF) = < HEC :HeaterErrController | Selected: false, EQA > deselect(CONF) .
+  eq deselect(< WHEC :WaterheaterErrController | Selected: S, EQA > CONF) = < WHEC :WaterheaterErrController | Selected: false, EQA > deselect(CONF) .
+  eq deselect(< WEC :WindowErrController | Selected: S, EQA > CONF) = < WEC :WindowErrController | Selected: false, EQA > deselect(CONF) .
+  eq deselect(< CC :ComfortController | Selected: S, EQA > CONF) = < CC :ComfortController | Selected: false, EQA > deselect(CONF) .
+  eq deselect(< EC :EcoController | Selected: S, EQA > CONF) = < EC :EcoController | Selected: false, EQA > deselect(CONF) .
+  eq deselect(CONF) = CONF [owise] .
+
   vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -37,7 +52,7 @@ mod METACONTROL is
   var QACOM : QAComputed .
   var CONF : Configuration .
   var SC : ScheduleComponents .
-  vars B B1 B2 B3 : Bool .
+  vars B B1 B2 B3 newB newB1 : Bool .
   var R : Rat .
   var ML : MetaLog .
   var TS : Timesteps .
@@ -45,6 +60,118 @@ mod METACONTROL is
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
   var EQA : ExpectedQAs .
+  vars RCT RAQ : Rat .
+
+  **************************** ANALYSE
+  ************ Actuators in error
+  *** If an actuator is broken, turn it off, set FG to be in error and QAs to be not in error
+  *** (because we don't want to use the rules that include QAs)
+  *** Put all controllers to 'not selected'
+  rl [AnalyseHeaterError] :
+    {< H :Heater | Broken: yes, Status: HS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    CONF}
+    =>
+    {< H :Heater | Broken: yes, Status: hOff, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    deselect(CONF)}
+    [print "rule: [AnalyseHeaterError]"] .
+
+  rl [AnalyseWaterheaterError] :
+    {< WH :Waterheater | Broken: yes, Status: WHS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    CONF}
+    =>
+    {< WH :Waterheater | Broken: yes, Status: whOff, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    deselect(CONF)}
+    [print "rule: [AnalyseWaterheaterError]"] .
+
+  rl [AnalyseWindowError] :
+    {< H :Window | Broken: yes, Status: WS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    CONF}
+    =>
+    {< H :Window | Broken: yes, Status: halfopen, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    deselect(CONF)}
+    [print "rule: [AnalyseWindowError]"] .
+
+
+
+  ******************************* PLAN and EXECUTE
+  ************ Actuators in error
+  *** If an actuator is broken and the FG is in error, then activate the actuator in error controller
+  rl [PlanHeaterError] :
+    < H :Heater | Broken: yes, Status: HS, A >
+    < HEC :HeaterErrController | Selected: S, EQA >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    =>
+    < H :Heater | Broken: yes, Status: hOff, A >
+    < HEC :HeaterErrController | Selected: true, EQA >
+    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    [print "rule: [PlanHeaterError]"] .
+
+  rl [PlanWaterheaterError] :
+    < WH :Waterheater | Broken: yes, Status: WHS, A >
+    < WHEC :WaterheaterErrController | Selected: S, EQA >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    =>
+    < WH :Waterheater | Broken: yes, Status: whOff, A >
+    < WHEC :WaterheaterErrController | Selected: true, EQA >
+    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    [print "rule: [PlanWaterheaterError]"] .
+
+  rl [PlanWindowError] :
+    < W :Window | Broken: yes, Status: WS, A >
+    < WEC :WindowErrController | Selected: S, EQA >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    =>
+    < W :Window | Broken: yes, Status: halfopen, A >
+    < WEC :WindowErrController | Selected: true, EQA >
+    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    [print "rule: [PlanWindowError]"] .
+
+
+
+
+
+
+endm
+eof
+
+
+
 
 
   ********** Cost function qualtiy attributes

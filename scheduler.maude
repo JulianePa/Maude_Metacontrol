@@ -4,7 +4,7 @@ mod SCHEDULER is
   sort Scheduler ScheduleComponents .
   subsort Scheduler < Configuration .
 
-  ops PhysicsChange QAChange MCChange ContrChange TimeChange : -> ScheduleComponents .
+  ops PhysicsChange QAChange MCAnalyse MCPlan ContrChange TimeChange : -> ScheduleComponents .
 
   *** The scheduler indicates which part of the system should apply rules at the moment
   op < Scheduler | Status: _, RuleApplied: _ > : ScheduleComponents Bool  -> Scheduler [format(ntc c c c c c c c c c)].
