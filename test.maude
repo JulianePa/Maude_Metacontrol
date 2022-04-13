@@ -55,6 +55,11 @@ mod TEST is
             < "homeWaterheaterErrController" :WaterheaterErrController | Selected: false >
             < "homeWindowErrController" :WindowErrController | Selected: false >
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
+            < "homeFDComfortController" :FDComfortController | ExpQaCT: 7/10, ExpQaAQ: 4/10, RequComponents: (heater, waterheater, window) >
+            < "homeFDEcoController" :FDEcoController | ExpQaCT: 5/10, ExpQaAQ: 7/10, RequComponents: heater, waterheater, window >
+            < "homeFDDeg1Controller" :FDDeg1Controller | ExpQaCT: 3/10, ExpQaAQ: 2/10, RequComponents: waterheater, window >
+            < "homeFDComfortController" :FDDeg2Controller | ExpQaCT: 3/10, ExpQaAQ: 2/10, RequComponents: heater, window >
+            < "homeFDComfortController" :FDDeg3Controller | ExpQaCT: 3/10, ExpQaAQ: 2/10, RequComponents: heater, waterheater >
             < "homeQaComfort" :QaComfort | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < "homeQaAirquality" :QaAirquality | Consider: 10, Past: nil, Status: 1, QAComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >
