@@ -12,19 +12,11 @@ mod CONTROLLERS is
   sort Selected .
   subsort Bool < Selected .
 
-  *** For the expected QA values
-  *** TODO Do we have to ensure that they are all defined in a configuration?
-  sort ExpectedQAs .
-  op QaCT: _ : Float -> ExpectedQAs [ctor] .
-  op QaAQ: _ : Float -> ExpectedQAs [ctor] .
-  op QaEC: _ : Float -> ExpectedQAs [ctor] .
-  op _, _ : ExpectedQAs ExpectedQAs -> ExpectedQAs [ctor comm assoc] .
-
-  op < _ :HeaterErrController | Selected: _, _ > : Oid Selected ExpectedQAs -> HeaterErrController [format (nty y y y y y y y y o)] .
-  op < _ :WaterheaterErrController | Selected: _, _ > : Oid Selected ExpectedQAs -> WaterheaterErrController [format (nty y y y y y y y y o)] .
-  op < _ :WindowErrController | Selected: _, _ > : Oid Selected ExpectedQAs -> WindowErrController [format (nty y y y y y y y y o)] .
-  op < _ :ComfortController | Selected: _, _ > : Oid Selected ExpectedQAs -> ComfortController [format (nty y y y y y y y y o)] .
-  op < _ :EcoController | Selected: _, _ > : Oid Selected ExpectedQAs -> EcoController [format (nty y y y y y y y y o)] .
+  op < _ :HeaterErrController | Selected: _ > : Oid Selected -> HeaterErrController [format (nty y y y y y y o)] .
+  op < _ :WaterheaterErrController | Selected: _ > : Oid Selected -> WaterheaterErrController [format (nty y y y y y y o)] .
+  op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
+  op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
+  op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
 
 endm
 eof
