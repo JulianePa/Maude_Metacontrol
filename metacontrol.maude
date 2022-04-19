@@ -135,6 +135,11 @@ mod METACONTROL is
   eq deselect(< EC :EcoController | Selected: S > CONF) = < EC :EcoController | Selected: false  > deselect(CONF) .
   eq deselect(CONF) = CONF [owise] .
 
+  *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
+ op noMetacontr : Configuration -> Bool .
+ eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
+ eq noMetacontr(CONF) = true [owise] .
+
   vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C FD COid : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -346,5 +351,14 @@ mod METACONTROL is
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     [print "rule: [PlanQaGood]"] .
+
+
+  *** Dummy rules for no metacontroller
+  crl [NoMetacontroller] :
+    {< Scheduler | Status: MCAnalyse, RuleApplied: false > CONF}
+    =>
+    {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
+    if noMetacontr(CONF) == true
+    [print "rule: [NoMetacontroller]"] .
 endm
 eof
