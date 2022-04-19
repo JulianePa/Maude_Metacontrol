@@ -44,7 +44,7 @@ mod METACONTROL is
   ******** Object that indicates whether FG and QAs are in error.
   sort InError .
   subsort InError < Configuration .
-  op < FGinError: _, QaCTinError: _, QaAQinError: _ > : Bool Bool Bool -> InError [format(ntc c c c c c c c c c c)].
+  op < FGinError: _, QaCTinError: _, QaAQinError: _ > : Bool Bool Bool -> InError [format(ntc c c c c c c c c c c)] .
 
   *** Get Oid of connected controller of a FD
   op getConContrOid : FunctionDesign -> Oid .
@@ -302,7 +302,7 @@ mod METACONTROL is
 
   *** TODO Metacontrol log
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
-  crl [PlanQaCtInError] :
+  rl [PlanQaCtInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < FGinError: true, QaCTinError: true, QaAQinError: B >
@@ -313,8 +313,7 @@ mod METACONTROL is
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < FGinError: false, QaCTinError: false, QaAQinError: false >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    newCONF}
-    if newCONF := selectFDhighestQaCT(CONF)
+    selectFDhighestQaCT(CONF)}
     [print "rule: [PlanQaCtInError]"] .
 
   *** QA AP and not QA CT in error
