@@ -28,94 +28,94 @@ mod METACONTROL is
 
 
   ********** Objects for Function Designs
-  sorts RequComponents FunctionDesign .
+  sorts ActuatorList FunctionDesign .
   subsort FunctionDesign < Configuration .
 
-  ops heater waterheater window : -> RequComponents [ctor] .
-  op _, _ : RequComponents RequComponents -> RequComponents [ctor assoc comm] .
+  ops heater waterheater window nil : -> ActuatorList [ctor] .
+  op _, _ : ActuatorList ActuatorList -> ActuatorList [ctor assoc comm id: nil] .
 
   *** The FDs contain the Oid of the controller they are connected to
-  op < _ :FDComfortController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequComponents: _ > : Oid Oid Rat Rat RequComponents -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDEcoController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequComponents: _ > : Oid Oid Rat Rat RequComponents -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegAController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequComponents: _ > : Oid Oid Rat Rat RequComponents -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegBController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequComponents: _ > : Oid Oid Rat Rat RequComponents -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegCController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequComponents: _ > : Oid Oid Rat Rat RequComponents -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDComfortController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDEcoController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDDegAController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDDegBController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDDegCController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
 
   ******** Object that indicates whether FG and QAs are in error.
   sort InError .
   subsort InError < Configuration .
-  op < FGinError: _, QaCTinError: _, QaAQinError: _ > : Bool Bool Bool -> InError [format(ntc c c c c c c c c c c)] .
+  op < ErrorPropagation | FGinError: _, QaCTinError: _, QaAQinError: _, ActuatorsInError: _ > : Bool Bool Bool ActuatorList -> InError [format(ntc c c c c c c c c c c c c c c c)] .
 
   *** Get Oid of connected controller of a FD
   op getConContrOid : FunctionDesign -> Oid .
-  eq getConContrOid(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >) = COid .
-  eq getConContrOid(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >) = COid .
-  eq getConContrOid(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >) = COid .
-  eq getConContrOid(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >) = COid .
-  eq getConContrOid(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >) = COid .
+  eq getConContrOid(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
+  eq getConContrOid(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
+  eq getConContrOid(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
+  eq getConContrOid(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
+  eq getConContrOid(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
 
   *** Determine which FD has the highest QA CT value
   op highestQaCT : Configuration -> Rat .
-  ceq highestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
   eq highestQaCT(CONF) = 0 [owise] .
 
   *** Determine which FD has the highest QA AP value
   op highestQaAP : Configuration -> Rat .
-  ceq highestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
+  ceq highestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
   eq highestQaAP(CONF) = 0 [owise] .
 
   *** Determine FD with highest QA CT value
   op FDhighestQaCT : Configuration -> FunctionDesign .
-  ceq FDhighestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaCT(CONF) < ECT .
 
   *** Determine FD with highest QA AP value
   op FDhighestQaAP : Configuration -> FunctionDesign .
-  ceq FDhighestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC > CONF)
-    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequComponents: RC >
+  ceq FDhighestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
     if highestQaAP(CONF) < EAP .
 
   *** Select controller whose Function Design has the highest QA CT value
@@ -154,24 +154,25 @@ mod METACONTROL is
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
   vars RCT RAQ ECT EAP : Rat .
-  var RC : RequComponents .
+  var RA AIE : ActuatorList .
 
   **************************** ANALYSE
   ************ Actuators in error
   *** If an actuator is broken, turn it off, set FG to be in error and QAs to be not in error
   *** (because we don't want to use the rules that include QAs)
   *** Put all controllers to 'not selected'
+  *** We assume that only one actuator can be in error at a each time step
   rl [AnalyseHeaterError] :
     {< H :Heater | Broken: yes, Status: HS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< H :Heater | Broken: yes, Status: hOff, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: heater >
     deselect(CONF)}
     [print "rule: [AnalyseHeaterError]"] .
 
@@ -179,13 +180,13 @@ mod METACONTROL is
     {< WH :Waterheater | Broken: yes, Status: WHS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< WH :Waterheater | Broken: yes, Status: whOff, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: waterheater >
     deselect(CONF)}
     [print "rule: [AnalyseWaterheaterError]"] .
 
@@ -193,13 +194,13 @@ mod METACONTROL is
     {< H :Window | Broken: yes, Status: WS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< H :Window | Broken: yes, Status: halfopen, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: window >
     deselect(CONF)}
     [print "rule: [AnalyseWindowError]"] .
 
@@ -210,7 +211,7 @@ mod METACONTROL is
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
@@ -218,7 +219,7 @@ mod METACONTROL is
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < FGinError: true, QaCTinError: newB, QaAQinError: newB1 >
+    < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAQinError: newB1, ActuatorsInError: AIE >
     deselect(CONF)}
     if newB := (QAS < RCT) /\ newB1 := (QAS1 < RAQ) /\ newB or newB1
     [print "rule: [AnalyseQaInError]"] .
@@ -230,7 +231,7 @@ mod METACONTROL is
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < FGinError: false, QaCTinError: B, QaAQinError: B1 >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
@@ -238,7 +239,7 @@ mod METACONTROL is
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
     < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false , ActuatorsInError: AIE >
     CONF}
     if (QAS >= RCT) /\ (QAS1 >= RAQ)
     [print "rule: [AnalyseQaGood]"] .
@@ -254,14 +255,14 @@ mod METACONTROL is
     < HEC :HeaterErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < H :Heater | Broken: yes, Status: hOff, A >
     < HEC :HeaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, HErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanHeaterError]"] .
 
@@ -270,14 +271,14 @@ mod METACONTROL is
     < WHEC :WaterheaterErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < WH :Waterheater | Broken: yes, Status: whOff, A >
     < WHEC :WaterheaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanWaterheaterError]"] .
 
@@ -286,14 +287,14 @@ mod METACONTROL is
     < WEC :WindowErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: true, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < W :Window | Broken: yes, Status: halfopen, A >
     < WEC :WindowErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanWindowError]"] .
 
@@ -305,13 +306,13 @@ mod METACONTROL is
   rl [PlanQaCtInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: true, QaCTinError: true, QaAQinError: B >
+    < ErrorPropagation | FGinError: true, QaCTinError: true, QaAQinError: B, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML (TS, Arb1) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     selectFDhighestQaCT(CONF)}
     [print "rule: [PlanQaCtInError]"] .
@@ -320,13 +321,13 @@ mod METACONTROL is
   rl [PlanQaApInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: true, QaCTinError: false, QaAQinError: true >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: true, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML (TS, Arb2) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     selectFDhighestQaAP(CONF)}
     [print "rule: [PlanQaApInError]"] .
@@ -335,11 +336,11 @@ mod METACONTROL is
   rl [PlanQaGood] :
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     =>
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < FGinError: false, QaCTinError: false, QaAQinError: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     [print "rule: [PlanQaGood]"] .
 endm
 eof
