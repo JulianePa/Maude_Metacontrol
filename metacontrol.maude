@@ -205,6 +205,8 @@ mod METACONTROL is
     [print "rule: [AnalyseWindowError]"] .
 
   ************* QA in error
+  *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
+  *** Only do this if no actuator is in error
   crl [AnalyseQaInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
@@ -222,9 +224,11 @@ mod METACONTROL is
     < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAQinError: newB1, ActuatorsInError: AIE >
     deselect(CONF)}
     if newB := (QAS < RCT) /\ newB1 := (QAS1 < RAQ) /\ newB or newB1
+        /\ oneBroken(CONF) == false
     [print "rule: [AnalyseQaInError]"] .
 
   ************* QA not in error
+  *** If requiered QA values are >= measured ones and no actuator is broken, then do nothing
   crl [AnalyseQaGood] :
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
@@ -241,7 +245,7 @@ mod METACONTROL is
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false , ActuatorsInError: AIE >
     CONF}
-    if (QAS >= RCT) /\ (QAS1 >= RAQ)
+    if (QAS >= RCT) /\ (QAS1 >= RAQ) /\ oneBroken(CONF) == false
     [print "rule: [AnalyseQaGood]"] .
 
 
