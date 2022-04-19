@@ -19,7 +19,7 @@ mod METACONTROL is
 
   sorts ContrSelected MetaPair MetaLog .
   subsort MetaPair < MetaLog .
-  ops Eco Comf HErr WhErr WErr Arb1 Arb2 : -> ContrSelected [ctor] .
+  ops Eco Comf HErr WhErr WErr : -> ContrSelected [ctor] .
   op (_, _) : Timesteps ContrSelected -> MetaPair [ctor] .
   op nil : -> MetaLog [ctor] .
   op __ : MetaLog MetaLog -> MetaLog [ctor assoc id: nil] .
@@ -136,9 +136,17 @@ mod METACONTROL is
   eq deselect(CONF) = CONF [owise] .
 
   *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
- op noMetacontr : Configuration -> Bool .
- eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
- eq noMetacontr(CONF) = true [owise] .
+  op noMetacontr : Configuration -> Bool .
+  eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
+  eq noMetacontr(CONF) = true [owise] .
+
+  *** Determine which 'ContrSelected' constant should be used in metacontrol log
+  op determineContrSelected : Configuration -> ContrSelected .
+  eq determineContrSelected(< HEC :HeaterErrController | Selected: true > CONF) = HErr .
+  eq determineContrSelected(< WHEC :WaterheaterErrController | Selected: true > CONF) = WhErr .
+  eq determineContrSelected(< WEC :WindowErrController | Selected: true > CONF) = WErr .
+  eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
+  eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
   vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C FD COid : Oid .
   var HS : HeaterStatus .
@@ -149,7 +157,7 @@ mod METACONTROL is
   var QAL QAL1 : List{Bool} .
   var QAS QAS1 : QaStatus .
   var QACOM QACOM1 : QAComputed .
-  var CONF : Configuration .
+  var CONF newCONF : Configuration .
   var SC : ScheduleComponents .
   vars B B1 B2 B3 newB newB1 : Bool .
   var R : Rat .
@@ -312,33 +320,35 @@ mod METACONTROL is
 
   *** TODO Metacontrol log
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
-  rl [PlanQaCtInError] :
+  crl [PlanQaCtInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < ErrorPropagation | FGinError: true, QaCTinError: true, QaAQinError: B, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
-    {< MC :Metacontroller | MetaLog: ML (TS, Arb1) >
+    {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    selectFDhighestQaCT(CONF)}
+    newCONF}
+    if newCONF := selectFDhighestQaCT(CONF)
     [print "rule: [PlanQaCtInError]"] .
 
   *** QA AP and not QA CT in error
-  rl [PlanQaApInError] :
+  crl [PlanQaApInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: true, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
-    {< MC :Metacontroller | MetaLog: ML (TS, Arb2) >
+    {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    selectFDhighestQaAP(CONF)}
+    newCONF}
+    if newCONF := selectFDhighestQaAP(CONF)
     [print "rule: [PlanQaApInError]"] .
 
   *** Nothing new is planned if FG is not in error
