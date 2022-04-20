@@ -44,7 +44,7 @@ mod METACONTROL is
   ******** Object that indicates whether FG and QAs are in error.
   sort InError .
   subsort InError < Configuration .
-  op < ErrorPropagation | FGinError: _, QaCTinError: _, QaAQinError: _, ActuatorsInError: _ > : Bool Bool Bool ActuatorList -> InError [format(ntc c c c c c c c c c c c c c c c)] .
+  op < ErrorPropagation | FGinError: _, QaCTinError: _, QaAPinError: _, ActuatorsInError: _ > : Bool Bool Bool ActuatorList -> InError [format(ntc c c c c c c c c c c c c c c c)] .
 
   *** Get Oid of connected controller of a FD
   op getConContrOid : FunctionDesign -> Oid .
@@ -148,7 +148,7 @@ mod METACONTROL is
   eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
   eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
-  vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C FD COid : Oid .
+  vars H WH W CC EC HEC WHEC WEC MC QAC QAAP C FD COid : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
@@ -166,7 +166,7 @@ mod METACONTROL is
   var TI : Time .
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
-  vars RCT RAQ ECT EAP : Rat .
+  vars RCT RAP ECT EAP : Rat .
   var RA AIE : ActuatorList .
 
   **************************** ANALYSE
@@ -179,13 +179,13 @@ mod METACONTROL is
     {< H :Heater | Broken: yes, Status: HS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< H :Heater | Broken: yes, Status: hOff, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: heater >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: heater >
     deselect(CONF)}
     [print "rule: [AnalyseHeaterError]"] .
 
@@ -193,13 +193,13 @@ mod METACONTROL is
     {< WH :Waterheater | Broken: yes, Status: WHS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< WH :Waterheater | Broken: yes, Status: whOff, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: waterheater >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: waterheater >
     deselect(CONF)}
     [print "rule: [AnalyseWaterheaterError]"] .
 
@@ -207,36 +207,36 @@ mod METACONTROL is
     {< H :Window | Broken: yes, Status: WS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< H :Window | Broken: yes, Status: halfopen, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: window >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: window >
     deselect(CONF)}
     [print "rule: [AnalyseWindowError]"] .
 
   ************* QA in error
   *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
-  *** Only do this if no actuator is in error
+  *** Only do this if no actuator is not in error
   crl [AnalyseQaInError] :
     {< MC :Metacontroller | MetaLog: ML >
-    < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
+    < QAAP :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
-    < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
+    < QAAP :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAQinError: newB1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAPinError: newB1, ActuatorsInError: AIE >
     deselect(CONF)}
-    if newB := (QAS < RCT) /\ newB1 := (QAS1 < RAQ) /\ newB or newB1
+    if newB := (QAS < RCT) /\ newB1 := (QAS1 < RAP) /\ newB or newB1
         /\ oneBroken(CONF) == false
     [print "rule: [AnalyseQaInError]"] .
 
@@ -244,21 +244,21 @@ mod METACONTROL is
   *** If requiered QA values are >= measured ones and no actuator is broken, then do nothing
   crl [AnalyseQaGood] :
     {< MC :Metacontroller | MetaLog: ML >
-    < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
+    < QAAP :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAQinError: B1, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
-    < RequiredQAs | requQaCT: RCT, requQaAQ: RAQ >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
     < QAC :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QACOM >
-    < QAAQ :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
+    < QAAP :QaAirquality | Consider: N1, Past: QAL1, Status: QAS1, QAComputed: QACOM1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false , ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false , ActuatorsInError: AIE >
     CONF}
-    if (QAS >= RCT) /\ (QAS1 >= RAQ) /\ oneBroken(CONF) == false
+    if (QAS >= RCT) /\ (QAS1 >= RAP) /\ oneBroken(CONF) == false
     [print "rule: [AnalyseQaGood]"] .
 
 
@@ -272,14 +272,14 @@ mod METACONTROL is
     < HEC :HeaterErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < H :Heater | Broken: yes, Status: hOff, A >
     < HEC :HeaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, HErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanHeaterError]"] .
 
@@ -288,14 +288,14 @@ mod METACONTROL is
     < WHEC :WaterheaterErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < WH :Waterheater | Broken: yes, Status: whOff, A >
     < WHEC :WaterheaterErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanWaterheaterError]"] .
 
@@ -304,32 +304,31 @@ mod METACONTROL is
     < WEC :WindowErrController | Selected: S >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < W :Window | Broken: yes, Status: halfopen, A >
     < WEC :WindowErrController | Selected: true >
     < MC :Metacontroller | MetaLog: ML (TS, WErr) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     [print "rule: [PlanWindowError]"] .
 
 
   *** TODO Maybe make a function that returns all available FDs
 
-  *** TODO Metacontrol log
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
   crl [PlanQaCtInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: true, QaAQinError: B, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: true, QaAPinError: B, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
     if newCONF := selectFDhighestQaCT(CONF)
@@ -339,13 +338,13 @@ mod METACONTROL is
   crl [PlanQaApInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAQinError: true, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: true, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
     if newCONF := selectFDhighestQaAP(CONF)
@@ -355,11 +354,11 @@ mod METACONTROL is
   rl [PlanQaGood] :
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     =>
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAQinError: false, ActuatorsInError: AIE >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     [print "rule: [PlanQaGood]"] .
 
 

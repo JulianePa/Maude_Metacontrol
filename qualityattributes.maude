@@ -27,7 +27,7 @@ mod QUALITYATTRIBUTES is
   sort RequQAs Objective .
   subsort Objective < Configuration .
   op requQaCT: _ : Rat -> RequQAs [ctor] .
-  op requQaAQ: _ : Rat -> RequQAs [ctor] .
+  op requQaAP: _ : Rat -> RequQAs [ctor] .
   op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
 
   op < RequiredQAs | _ > : RequQAs -> Objective [format(ntc c c c c c)].
