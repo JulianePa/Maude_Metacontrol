@@ -32,8 +32,8 @@ mod CLOCK is
 
   *** For the controllers it's important to know whether it's morning or not
   *** Define morning to be between 6 and 12 o'clock.
-  op morning? : Time -> Bool .
-  ceq morning?(N) = true if 6 <= N /\ N <= 12 .
-  eq morning?(N) = false [owise] .
+  op morning : Time -> Bool .
+  ceq morning(N) = true if 6 <= N /\ N <= 12 .
+  eq morning(N) = false [owise] .
 
 endm

@@ -32,7 +32,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == false
+    if hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == false
     [print "rule: [EContrTempOkAqNotOk]"] .
 
   *** If T low, AQ ok -> H very hot, W half open, WH on
@@ -57,7 +57,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if cold?(DG) == true /\ aqok?(AQS) == true
+    if cold(DG) == true /\ aqok(AQS) == true
     [print "rule: [EContrTempLowAqOk]"] .
 
   *** If T ok, AQ ok -> H off, W closed, WH on
@@ -82,7 +82,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if hot?(DG) == false /\ cold?(DG) == false /\ aqok?(AQS) == true
+    if hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == true
     [print "rule: [EContrTempOkAqOk]"] .
 
 
@@ -109,7 +109,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == false
+    if morning(TI) == false /\ cold(DG) == true /\ aqok(AQS) == false
     [print "rule: [EContrTempLowAqNotOk]"] .
 
   *** If T high, AQ ok, W not open -> H off, W half open, WH off
@@ -134,7 +134,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == false /\ hot?(DG) == true /\ aqok?(AQS) == true /\ WS =/= open
+    if morning(TI) == false /\ hot(DG) == true /\ aqok(AQS) == true /\ WS =/= open
     [print "rule: [EContrTempHighAqOk1]"] .
 
   *** If T high, AQ ok, W open -> H off, W open, WH off
@@ -159,7 +159,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == false /\ hot?(DG) == true /\ aqok?(AQS) == true /\ WS == open
+    if morning(TI) == false /\ hot(DG) == true /\ aqok(AQS) == true /\ WS == open
     [print "rule: [EContrTempHighAqOk2]"] .
 
   *** If T high, AQ not ok -> H off, W open, WH off
@@ -184,7 +184,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == false /\ hot?(DG) == true /\ aqok?(AQS) == false
+    if morning(TI) == false /\ hot(DG) == true /\ aqok(AQS) == false
     [print "rule: [EContrTempHighAqNotOk]"] .
 
 
@@ -214,7 +214,7 @@ mod ECOCONTROLLER is
     < AQ :Airquality | Value: AQS >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == true /\ cold?(DG) == true /\ aqok?(AQS) == false
+    if morning(TI) == true /\ cold(DG) == true /\ aqok(AQS) == false
     [print "rule: [EContrTempLowAqNotOkM]"] .
 
   *** if T high -> H off, W open, WH on
@@ -237,7 +237,7 @@ mod ECOCONTROLLER is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < EC :EcoController | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
-    if morning?(TI) == true /\ hot?(DG) == true
+    if morning(TI) == true /\ hot(DG) == true
     [print "rule: [EContrTempHighM]"] .
 
 endm

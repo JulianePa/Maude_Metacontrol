@@ -23,13 +23,13 @@ mod THERMOMETER is
   op getTemp : Configuration -> Temperature .
   eq getTemp(< T :Thermometer | Degrees: DG > CONF) = DG .
 
-  op cold? : Temperature -> Bool .
-  ceq cold?(DG) = true if DG <= 19.0 .
-  ceq cold?(DG) = false if DG > 19.0 .
+  op cold : Temperature -> Bool .
+  ceq cold(DG) = true if DG <= 19.0 .
+  ceq cold(DG) = false if DG > 19.0 .
 
-  op hot? : Temperature -> Bool .
-  ceq hot?(DG) = true if DG > 21.0 .
-  ceq hot?(DG) = false if DG <= 21.0 .
+  op hot : Temperature -> Bool .
+  ceq hot(DG) = true if DG > 21.0 .
+  ceq hot(DG) = false if DG <= 21.0 .
 
 
 endm
