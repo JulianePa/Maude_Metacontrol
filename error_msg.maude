@@ -78,9 +78,9 @@ mod ERRORMSG is
   op checkControllers : Configuration -> Bool .
   eq checkControllers(< C :ComfortController | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(< C :EcoController | Selected: S > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :HeaterErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :WaterheaterErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :WindowErrController | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :DegradedContrA | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :DegradedContrB | Selected: S > CONF) = S xor checkControllers(CONF) .
+  eq checkControllers(< C :DegradedContrC | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(CONF) = false [owise] .
 
   ********************************************************** Error messages

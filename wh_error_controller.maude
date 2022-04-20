@@ -1,7 +1,7 @@
 mod WATERHEATERERRCONTROLLER is
   protecting CONTROLLERS .
 
-  vars H W WH T C WHEC AQ : Oid .
+  vars H W WH T C DCB AQ : Oid .
   var DG : Temperature .
   var AQS : AirqualityStatus .
   var TI : Time .
@@ -18,18 +18,18 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg hOff from WHEC to H)
-    (msg whOff from WHEC to WH)
-    (msg closed from WHEC to W)
+    (msg hOff from DCB to H)
+    (msg whOff from DCB to WH)
+    (msg closed from DCB to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == true
     [print "rule: [WhErrContrTempOkAqOk]"] .
@@ -41,18 +41,18 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg fairlyhot from WHEC to H)
-    (msg whOff from WHEC to WH)
-    (msg halfopen from WHEC to W)
+    (msg fairlyhot from DCB to H)
+    (msg whOff from DCB to WH)
+    (msg halfopen from DCB to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == false
     [print "rule: [WhErrContrTempOkAqNotOk]"] .
@@ -64,18 +64,18 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg veryhot from WHEC to H)
-    (msg whOff from WHEC to WH)
-    (msg closed from WHEC to W)
+    (msg veryhot from DCB to H)
+    (msg whOff from DCB to WH)
+    (msg closed from DCB to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if cold(DG) == true /\ aqok(AQS) == true
     [print "rule: [WhErrContrTempLowAqOk]"] .
@@ -87,18 +87,18 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg veryhot from WHEC to H)
-    (msg whOff from WHEC to WH)
-    (msg halfopen from WHEC to W)
+    (msg veryhot from DCB to H)
+    (msg whOff from DCB to WH)
+    (msg halfopen from DCB to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if cold(DG) == true /\ aqok(AQS) == false
     [print "rule: [WhErrContrTempLowAqNotOk]"] .
@@ -110,18 +110,18 @@ mod WATERHEATERERRCONTROLLER is
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg fairlyhot from WHEC to H)
-    (msg whOff from WHEC to WH)
-    (msg halfopen from WHEC to W)
+    (msg fairlyhot from DCB to H)
+    (msg whOff from DCB to WH)
+    (msg halfopen from DCB to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < WHEC :WaterheaterErrController | Selected: true >
+    < DCB :DegradedContrB | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot(DG) == true
     [print "rule: [WhErrContrTempHigh]"] .
