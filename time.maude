@@ -16,10 +16,10 @@ mod TIME is
   var AQ : AirqualityStatus .
 
   op advance : Configuration -> Configuration .
-  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
+  eq advance(< QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: yes > CONF)
+      = < QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
+  eq advance(< QA :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: yes > CONF)
+      = < QA :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
   crl [timeAdvances] :

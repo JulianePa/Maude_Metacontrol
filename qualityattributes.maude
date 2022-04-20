@@ -15,12 +15,12 @@ mod QUALITYATTRIBUTES is
   var BL : Bool .
   var AT : Attribute .
   vars B B1 B2 B3 : Bool .
-  var QAC : QAComputed .
+  var QAC : QaComputed .
   var QAL newQAL : List{Bool} .
   var EL newEL : List{Nat} .
 
-  sort QAComputed .
-  ops yes no : -> QAComputed .
+  sort QaComputed .
+  ops yes no : -> QaComputed .
 
   *** The required QA values
   *** TODO Do we really want to name the object "Objective"?
@@ -38,7 +38,6 @@ mod QUALITYATTRIBUTES is
   subsort Rat < QaStatus .
 
   *** Get the n last added elements of a list (we suppose that List{Bool} has at least n elements)
-  *** TODO ensure that List{Bool} has at least n elements?
   op getLast : Nat List{Bool} -> List{Bool} .
   eq getLast(0, QAL) = nil .
   eq getLast(1, BL) = BL .
@@ -52,7 +51,7 @@ mod QUALITYATTRIBUTES is
   eq computeTrue(QAL true) = 1 + computeTrue(QAL) .
   eq computeTrue(QAL false) = computeTrue(QAL) .
 
-  *** Compute the value of the quality attribute comfort or ecology as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
+  *** Compute the value of the quality attribute comfortable temperature or air puritz as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
   op computeQA : Nat List{Bool} -> QaStatus .
   ceq computeQA(N, QAL) = computeTrue(getLast(N,QAL)) / N
     if N <= size(QAL) .
@@ -60,9 +59,9 @@ mod QUALITYATTRIBUTES is
     if M := size(QAL) /\ N > M .
 
 
-  ********************************* Comfort
-  sort Comfort .
-  subsort Comfort < Configuration .
+  ********************************* Comfortable temperature
+  sort QaComfTemp .
+  subsort QaComfTemp < Configuration .
 
   *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
   op comfortable? : Configuration -> Bool .
@@ -71,16 +70,16 @@ mod QUALITYATTRIBUTES is
   eq comfortable?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
-  op < _ :QaComfort | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Bool} QaStatus QAComputed -> Comfort [format (ntg g g g g g g g g g g g g g g g g)] .
+  op < _ :QaComfTemp | Consider: _, Past: _, Status: _, QaComputed: _ > : Oid Nat List{Bool} QaStatus QaComputed -> QaComfTemp [format (ntg g g g g g g g g g g g g g g g g)] .
 
   op getQaCtMeas : Configuration -> QaStatus .
-  eq getQaCtMeas(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaCtMeas(< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QAC > CONF) = QAS .
   eq getQaCtMeas(CONF) = 0 [owise] .
 
 
-  ****************************************** Air quality
-  sort QaAirquality .
-  subsort QaAirquality < Configuration .
+  ****************************************** Air purity
+  sort QaAirPurity .
+  subsort QaAirPurity < Configuration .
 
   *** Determine whether current configuration is in good air quality status or not (above 2)
   op aqGood? : Configuration -> Bool .
@@ -89,18 +88,18 @@ mod QUALITYATTRIBUTES is
   eq aqGood?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
-  op < _ :QaAirquality | Consider: _, Past: _, Status: _, QAComputed: _ > : Oid Nat List{Bool} QaStatus QAComputed -> QaAirquality [format (ntg g g g g g g g g g g g g g g g g)] .
+  op < _ :QaAirPurity | Consider: _, Past: _, Status: _, QaComputed: _ > : Oid Nat List{Bool} QaStatus QaComputed -> QaAirPurity [format (ntg g g g g g g g g g g g g g g g g)] .
 
   op getQaAqMeas : Configuration -> QaStatus .
-  eq getQaAqMeas(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: QAC > CONF) = QAS .
+  eq getQaAqMeas(< AQ :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: QAC > CONF) = QAS .
   eq getQaAqMeas(CONF) = 0 [owise] .
 
 
 
   ***************************************** For scheduler
   op QAready : Configuration -> Bool .
-  eq QAready(< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
-  eq QAready(< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > CONF) = false .
+  eq QAready(< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no > CONF) = false .
+  eq QAready(< AQ :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no > CONF) = false .
   eq QAready(CONF) = true [owise] .
 
 
@@ -109,23 +108,23 @@ mod QUALITYATTRIBUTES is
   ****************************************** Rules
 
   *** The value of the QAs should be computed every time step
-  crl [QaComfort] :
-    {< C :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
+  crl [QaComfTemp] :
+    {< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     =>
-    {< C :QaComfort | Consider: N, Past: newQAL, Status: newQAS, QAComputed: yes >
+    {< C :QaComfTemp | Consider: N, Past: newQAL, Status: newQAS, QaComputed: yes >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     if newQAL := append(QAL, comfortable?(CONF)) /\ newQAS := computeQA(N, newQAL)
-    [print "rule: [QaComfort], QA Comfort before: " QAS ", QA Comfort after: " newQAS] .
+    [print "rule: [QaComfTemp], QA ComfTemp before: " QAS ", QA ComfTemp after: " newQAS] .
 
-  crl [QaAirquality] :
-    {< AQ :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no >
+  crl [QaAirPurity] :
+    {< AQ :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     =>
-    {< AQ :QaAirquality | Consider: N, Past: newQAL, Status: newQAS, QAComputed: yes >
+    {< AQ :QaAirPurity | Consider: N, Past: newQAL, Status: newQAS, QaComputed: yes >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
     if newQAL := append(QAL, aqGood?(CONF)) /\ newQAS := computeQA(N, newQAL)
-    [print "rule: [QaAirquality], QA Airquality before: " QAS ", QA Airquality after: " newQAS] .
+    [print "rule: [QaAirPurity], QA AirPurity before: " QAS ", QA AirPurity after: " newQAS] .
 
 endm
 eof
