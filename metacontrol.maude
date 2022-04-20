@@ -153,13 +153,10 @@ mod METACONTROL is
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var A : Attribute .
-  var N N1 : Nat .
-  var QAL QAL1 : List{Bool} .
-  var QAS QAS1 : QaStatus .
-  var QACOM QACOM1 : QaComputed .
-  var CONF newCONF : Configuration .
+  vars QAS QAS1 : QaStatus .
+  vars CONF newCONF : Configuration .
   var SC : ScheduleComponents .
-  vars B B1 B2 B3 newB newB1 : Bool .
+  vars B B1 newB newB1 : Bool .
   var R : Rat .
   var ML : MetaLog .
   var TS : Timesteps .
@@ -167,7 +164,8 @@ mod METACONTROL is
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
   vars RCT RAP ECT EAP : Rat .
-  var RA AIE : ActuatorList .
+  vars RA AIE : ActuatorList .
+  vars QAA QAA1 : QaAttributes .
 
   **************************** ANALYSE
   ************ Actuators in error
@@ -223,16 +221,16 @@ mod METACONTROL is
   crl [AnalyseQaInError] :
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
-    < QAC :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QACOM >
-    < QAAP :QaAirPurity | Consider: N1, Past: QAL1, Status: QAS1, QaComputed: QACOM1 >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
     < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
-    < QAC :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QACOM >
-    < QAAP :QaAirPurity | Consider: N1, Past: QAL1, Status: QAS1, QaComputed: QACOM1 >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAPinError: newB1, ActuatorsInError: AIE >
     deselect(CONF)}
@@ -245,16 +243,16 @@ mod METACONTROL is
   crl [AnalyseQaGood] :
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
-    < QAC :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QACOM >
-    < QAAP :QaAirPurity | Consider: N1, Past: QAL1, Status: QAS1, QaComputed: QACOM1 >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
     < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
     < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
-    < QAC :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QACOM >
-    < QAAP :QaAirPurity | Consider: N1, Past: QAL1, Status: QAS1, QaComputed: QACOM1 >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false , ActuatorsInError: AIE >
     CONF}

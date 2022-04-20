@@ -16,14 +16,11 @@ mod QUALITYATTRIBUTES is
   var AT : Attribute .
   vars B B1 B2 B3 : Bool .
   var QAC : QaComputed .
-  var QAL newQAL : List{Bool} .
-  var EL newEL : List{Nat} .
-
-  sort QaComputed .
-  ops yes no : -> QaComputed .
+  vars QAL newQAL : List{Bool} .
+  vars EL newEL : List{Nat} .
+  var QAA : QaAttributes .
 
   *** The required QA values
-  *** TODO Do we really want to name the object "Objective"?
   sort RequQAs Objective .
   subsort Objective < Configuration .
   op requQaCT: _ : Rat -> RequQAs [ctor] .
@@ -34,8 +31,15 @@ mod QUALITYATTRIBUTES is
 
 
   ******************************** Relevant for quality attributes comfort and air quality
-  sort QaStatus .
+  sorts QaStatus QaComputed QaAttributes .
   subsort Rat < QaStatus .
+  ops yes no : -> QaComputed .
+
+  op Consider: _ : Nat -> QaAttributes [ctor] .
+  op Past: _ : List{Bool} -> QaAttributes [ctor] .
+  op Status: _ : QaStatus -> QaAttributes [ctor] .
+  op QaComputed: _ : QaComputed -> QaAttributes [ctor] .
+  op _, _ : QaAttributes QaAttributes -> QaAttributes [ctor comm assoc] .
 
   *** Get the n last added elements of a list (we suppose that List{Bool} has at least n elements)
   op getLast : Nat List{Bool} -> List{Bool} .
@@ -63,18 +67,14 @@ mod QUALITYATTRIBUTES is
   sort QaComfTemp .
   subsort QaComfTemp < Configuration .
 
-  *** Determine whether current configuration is in comfortable temperature or not (between 20 and 22 degrees)
+  *** Determine whether current configuration is in comfortable temperature or not (between 19.1 and 21.5 degrees)
   op comfortable? : Configuration -> Bool .
   ceq comfortable?(< T :Thermometer | Degrees: DG > CONF) = true
     if 19.1 <= DG and DG <= 21.5 .
   eq comfortable?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the comfort value here
-  op < _ :QaComfTemp | Consider: _, Past: _, Status: _, QaComputed: _ > : Oid Nat List{Bool} QaStatus QaComputed -> QaComfTemp [format (ntg g g g g g g g g g g g g g g g g)] .
-
-  op getQaCtMeas : Configuration -> QaStatus .
-  eq getQaCtMeas(< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: QAC > CONF) = QAS .
-  eq getQaCtMeas(CONF) = 0 [owise] .
+  op < _ :QaComfTemp | _ > : Oid QaAttributes -> QaComfTemp [format (ntg g g g g g g)] .
 
 
   ****************************************** Air purity
@@ -88,18 +88,14 @@ mod QUALITYATTRIBUTES is
   eq aqGood?(CONF) = false [owise] .
 
   *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
-  op < _ :QaAirPurity | Consider: _, Past: _, Status: _, QaComputed: _ > : Oid Nat List{Bool} QaStatus QaComputed -> QaAirPurity [format (ntg g g g g g g g g g g g g g g g g)] .
-
-  op getQaAqMeas : Configuration -> QaStatus .
-  eq getQaAqMeas(< AQ :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: QAC > CONF) = QAS .
-  eq getQaAqMeas(CONF) = 0 [owise] .
+  op < _ :QaAirPurity | _ > : Oid QaAttributes -> QaAirPurity [format (ntg g g g g g g)] .
 
 
 
   ***************************************** For scheduler
   op QAready : Configuration -> Bool .
-  eq QAready(< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no > CONF) = false .
-  eq QAready(< AQ :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no > CONF) = false .
+  eq QAready(< C :QaComfTemp | QaComputed: no, QAA > CONF) = false .
+  eq QAready(< AQ :QaAirPurity | QaComputed: no, QAA > CONF) = false .
   eq QAready(CONF) = true [owise] .
 
 
