@@ -363,11 +363,18 @@ mod METACONTROL is
 
 
   *** Dummy rules for no metacontroller
-  crl [NoMetacontroller] :
+  crl [NoMetacontrollerAnalyse] :
     {< Scheduler | Status: MCAnalyse, RuleApplied: false > CONF}
+    =>
+    {< Scheduler | Status: MCAnalyse, RuleApplied: true > CONF}
+    if noMetacontr(CONF) == true
+    [print "rule: [NoMetacontrollerAnalyse]"] .
+
+  crl [NoMetacontrollerPlan] :
+    {< Scheduler | Status: MCPlan, RuleApplied: false > CONF}
     =>
     {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
     if noMetacontr(CONF) == true
-    [print "rule: [NoMetacontroller]"] .
+    [print "rule: [NoMetacontrollerPlan]"] .
 endm
 eof
