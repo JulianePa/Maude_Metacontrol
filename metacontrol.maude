@@ -28,18 +28,25 @@ mod METACONTROL is
 
 
   ********** Objects for Function Designs
-  sorts ActuatorList FunctionDesign .
+  sorts FDAttributes FunctionDesign .
   subsort FunctionDesign < Configuration .
 
+  sort ActuatorList .
   ops heater waterheater window nil : -> ActuatorList [ctor] .
-  op _, _ : ActuatorList ActuatorList -> ActuatorList [ctor assoc comm id: nil] .
+  op __ : ActuatorList ActuatorList -> ActuatorList [ctor assoc comm id: nil] .
+
+  op ConController: _ : Oid -> FDAttributes [ctor] .
+  op ExpQaCT: _ : Rat -> FDAttributes [ctor] .
+  op ExpQaAP: _ : Rat -> FDAttributes [ctor] .
+  op RequActuators: _ : ActuatorList -> FDAttributes [ctor] .
+  op _, _ : FDAttributes FDAttributes -> FDAttributes [ctor assoc comm] .
 
   *** The FDs contain the Oid of the controller they are connected to
-  op < _ :FDComfortController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDEcoController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegAController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegBController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
-  op < _ :FDDegCController | ConController: _, ExpQaCT: _, ExpQaAP: _, RequActuators: _ > : Oid Oid Rat Rat ActuatorList -> FunctionDesign [format (ntr r r r r r r r r r r r r r r r o)] .
+  op < _ :FDComfortController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDEcoController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegAController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegBController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegCController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
 
   ******** Object that indicates whether FG and QAs are in error.
   sort InError .
@@ -48,74 +55,74 @@ mod METACONTROL is
 
   *** Get Oid of connected controller of a FD
   op getConContrOid : FunctionDesign -> Oid .
-  eq getConContrOid(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
-  eq getConContrOid(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
-  eq getConContrOid(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
-  eq getConContrOid(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
-  eq getConContrOid(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >) = COid .
+  eq getConContrOid(< FD :FDComfortController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDEcoController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegAController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegBController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegCController | ConController: COid, FDA >) = COid .
 
   *** Determine which FD has the highest QA CT value
   op highestQaCT : Configuration -> Rat .
-  ceq highestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaCT(< FD :FDComfortController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaCT(< FD :FDEcoController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaCT(< FD :FDDegAController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
   eq highestQaCT(CONF) = 0 [owise] .
 
   *** Determine which FD has the highest QA AP value
   op highestQaAP : Configuration -> Rat .
-  ceq highestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaAP(< FD :FDComfortController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaAP(< FD :FDEcoController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaAP(< FD :FDDegAController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
+  ceq highestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
   eq highestQaAP(CONF) = 0 [owise] .
 
   *** Determine FD with highest QA CT value
   op FDhighestQaCT : Configuration -> FunctionDesign .
-  ceq FDhighestQaCT(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaCT(< FD :FDComfortController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDComfortController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaCT(< FD :FDEcoController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDEcoController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaCT(< FD :FDDegAController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegAController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegBController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegCController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
 
   *** Determine FD with highest QA AP value
   op FDhighestQaAP : Configuration -> FunctionDesign .
-  ceq FDhighestQaAP(< FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDComfortController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaAP(< FD :FDComfortController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDComfortController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDEcoController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaAP(< FD :FDEcoController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDEcoController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegAController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaAP(< FD :FDDegAController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegAController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegBController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegBController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA > CONF)
-    = < FD :FDDegCController | ConController: COid, ExpQaCT: ECT, ExpQaAP: EAP, RequActuators: RA >
+  ceq FDhighestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegCController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
 
   *** Select controller whose Function Design has the highest QA CT value
@@ -166,6 +173,7 @@ mod METACONTROL is
   vars RCT RAP ECT EAP : Rat .
   vars RA AIE : ActuatorList .
   vars QAA QAA1 : QaAttributes .
+  var FDA : FDAttributes .
 
   **************************** ANALYSE
   ************ Actuators in error
