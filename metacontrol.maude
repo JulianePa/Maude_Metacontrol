@@ -182,13 +182,13 @@ mod METACONTROL is
   *** Put all controllers to 'not selected'
   *** We assume that only one actuator can be in error at a each time step
   rl [AnalyseHeaterError] :
-    {< H :Heater | Broken: yes, Status: HS, A >
+    {< H :Heater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
     < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
-    {< H :Heater | Broken: yes, Status: hOff, A >
+    {< H :Heater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: heater >
@@ -196,13 +196,13 @@ mod METACONTROL is
     [print "rule: [AnalyseHeaterError]"] .
 
   rl [AnalyseWaterheaterError] :
-    {< WH :Waterheater | Broken: yes, Status: WHS, A >
+    {< WH :Waterheater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
     < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
-    {< WH :Waterheater | Broken: yes, Status: whOff, A >
+    {< WH :Waterheater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: waterheater >
@@ -210,13 +210,13 @@ mod METACONTROL is
     [print "rule: [AnalyseWaterheaterError]"] .
 
   rl [AnalyseWindowError] :
-    {< H :Window | Broken: yes, Status: WS, A >
+    {< H :Window | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
     < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
-    {< H :Window | Broken: yes, Status: halfopen, A >
+    {< H :Window | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: window >
