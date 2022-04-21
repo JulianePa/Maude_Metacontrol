@@ -19,7 +19,7 @@ mod METACONTROL is
 
   sorts ContrSelected MetaPair MetaLog .
   subsort MetaPair < MetaLog .
-  ops Eco Comf HErr WhErr WErr : -> ContrSelected [ctor] .
+  ops Eco Comf DegA DegB DegC : -> ContrSelected [ctor] .
   op (_, _) : Timesteps ContrSelected -> MetaPair [ctor] .
   op nil : -> MetaLog [ctor] .
   op __ : MetaLog MetaLog -> MetaLog [ctor assoc id: nil] .
@@ -174,9 +174,9 @@ mod METACONTROL is
 
   *** Determine which 'ContrSelected' constant should be used in metacontrol log
   op determineContrSelected : Configuration -> ContrSelected .
-  eq determineContrSelected(< DCA :DegradedContrA | Selected: true > CONF) = HErr .
-  eq determineContrSelected(< DCB :DegradedContrB | Selected: true > CONF) = WhErr .
-  eq determineContrSelected(< DCC :DegradedContrC | Selected: true > CONF) = WErr .
+  eq determineContrSelected(< DCA :DegradedContrA | Selected: true > CONF) = DegA .
+  eq determineContrSelected(< DCB :DegradedContrB | Selected: true > CONF) = DegB .
+  eq determineContrSelected(< DCC :DegradedContrC | Selected: true > CONF) = DegC .
   eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
   eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
