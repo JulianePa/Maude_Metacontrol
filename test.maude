@@ -32,11 +32,11 @@ mod TEST is
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaComfort" :QaComfTemp | Consider: 5, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 5, Past: nil, Status: 1, QaComputed: no >
-            < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater, waterheater, window) >
-            < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: heater, waterheater, window >
-            < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: waterheater, window >
-            < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: heater, window >
-            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: heater, waterheater >
+            < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater waterheater window) >
+            < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
+            < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
+            < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater window) >
+            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater waterheater) >
             < Scheduler | Status: PhysicsChange, RuleApplied: false > .
 
   op init3 : -> Configuration .
@@ -51,20 +51,20 @@ mod TEST is
   eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 19.5 >
-            < "homeAirquality" :Airquality | Value: 1.3 >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
-            < "homeComfortController" :ComfortController | Selected: false >
-            < "homeEcoController" :EcoController | Selected: true >
+            < "homeComfortController" :ComfortController | Selected: true >
+            < "homeEcoController" :EcoController | Selected: false >
             < "homeDegradedContrA" :DegradedContrA | Selected: false >
             < "homeDegradedContrB" :DegradedContrB | Selected: false >
             < "homeDegradedContrC" :DegradedContrC | Selected: false >
             ***< "homeMetacontroller" :Metacontroller | MetaLog: nil >
-            < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater, waterheater, window) >
-            < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: heater, waterheater, window >
-            < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: waterheater, window >
-            < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: heater, window >
-            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: heater, waterheater >
+            < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater waterheater window) >
+            < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
+            < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
+            < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater window) >
+            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater waterheater) >
             < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >
@@ -85,6 +85,8 @@ mod TEST is
 
 endm
 eof
+
+search [1, 8000] init4 =>* {CONF:Configuration} such that getTimesteps(CONF) = 713 /\ getTemp(CONF) =/= 1.928000000000063e+1 /\ getTemp(CONF) =/= 1.8750000000000629e+1 .
 
 search [1, 1000] init5 =>* {CONF:Configuration} such that getTemp(CONF) < 18.0 .
 
