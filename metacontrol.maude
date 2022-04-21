@@ -125,13 +125,38 @@ mod METACONTROL is
     = < FD :FDDegCController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
 
-  *** Select controller whose Function Design has the highest QA CT value
-  op selectFDhighestQaCT : Configuration -> Configuration .
-  eq selectFDhighestQaCT(CONF) = selectContr(getConContrOid(FDhighestQaCT(CONF)), CONF) .
+  *** Does the list of required actuators contain an actuator in error?
+  *** (We suppose that only one actuator can be in error)
+  op contains : ActuatorList ActuatorList -> Bool .
+  eq contains(AIE, nil) = false .
+  eq contains(AIE, AC RA) = if AIE == AC then true else contains(AIE, RA) fi .
 
-  *** Select controller whose Function Design has the highest QA AP value
-  op selectFDhighestQaAP : Configuration -> Configuration .
-  eq selectFDhighestQaAP(CONF) = selectContr(getConContrOid(FDhighestQaAP(CONF)), CONF) .
+  *** Search for FDs which have only the available actuators as required actuators
+  op availableFDs : ActuatorList Configuration -> Configuration .
+  eq availableFDs(AIE, < FD :FDComfortController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDComfortController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDEcoController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDEcoController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegAController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegAController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegBController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegBController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegCController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegCController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, CONF) = none [owise] .
+
+  *** Select available controller whose Function Design has the highest QA CT value
+  op selectFDhighestQaCT : ActuatorList Configuration -> Configuration .
+  eq selectFDhighestQaCT(AIE, CONF) = selectContr(getConContrOid(FDhighestQaCT(availableFDs(AIE, CONF))), CONF) .
+
+  *** Select available controller whose Function Design has the highest QA AP value
+  op selectFDhighestQaAP : ActuatorList Configuration -> Configuration .
+  eq selectFDhighestQaAP(AIE, CONF) = selectContr(getConContrOid(FDhighestQaAP(availableFDs(AIE, CONF))), CONF) .
 
   *** Deselect Function Grounding
   op deselect : Configuration -> Configuration .
@@ -155,6 +180,7 @@ mod METACONTROL is
   eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
   eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
+
   vars H WH W CC EC DCA DCB DCC MC QAC QAAP C FD COid : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
@@ -171,7 +197,7 @@ mod METACONTROL is
   vars TL AL : TVPList .
   vars S S1 S2 : Selected .
   vars RCT RAP ECT EAP : Rat .
-  vars RA AIE : ActuatorList .
+  vars RA AIE AC : ActuatorList .
   vars QAA QAA1 : QaAttributes .
   var FDA : FDAttributes .
 
@@ -272,57 +298,59 @@ mod METACONTROL is
 
   ******************************* PLAN and EXECUTE
   ************ Actuators in error
-  *** If an actuator is broken and the FG is in error, then activate the actuator in error controller
-  rl [PlanHeaterError] :
-    < H :Heater | Broken: yes, Status: HS, A >
-    < DCA :DegradedContrA | Selected: S >
+  *** If an actuator is broken and the FG is in error, then activate the available controller that has the highest QA CT value (because we focus on that)
+  *** This will be the degraded controller focussed on dealing with an error of this actuator
+  crl [PlanHeaterError] :
+    {< H :Heater | Broken: yes, Status: HS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
     =>
-    < H :Heater | Broken: yes, Status: hOff, A >
-    < DCA :DegradedContrA | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
+    {< H :Heater | Broken: yes, Status: hOff, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanHeaterError]"] .
 
-  rl [PlanWaterheaterError] :
-    < WH :Waterheater | Broken: yes, Status: WHS, A >
-    < DCB :DegradedContrB | Selected: S >
+  crl [PlanWaterheaterError] :
+    {< WH :Waterheater | Broken: yes, Status: WHS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
     =>
-    < WH :Waterheater | Broken: yes, Status: whOff, A >
-    < DCB :DegradedContrB | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
+    {< WH :Waterheater | Broken: yes, Status: whOff, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanWaterheaterError]"] .
 
-  rl [PlanWindowError] :
-    < W :Window | Broken: yes, Status: WS, A >
-    < DCC :DegradedContrC | Selected: S >
+  crl [PlanWindowError] :
+    {< W :Window | Broken: yes, Status: WS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
     =>
-    < W :Window | Broken: yes, Status: halfopen, A >
-    < DCC :DegradedContrC | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
+    {< W :Window | Broken: yes, Status: halfopen, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
     < Scheduler | Status: MCPlan, RuleApplied: true >
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanWindowError]"] .
 
-
-  *** TODO Maybe make a function that returns all available FDs
 
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
   crl [PlanQaCtInError] :
@@ -337,7 +365,7 @@ mod METACONTROL is
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
-    if newCONF := selectFDhighestQaCT(CONF)
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanQaCtInError]"] .
 
   *** QA AP and not QA CT in error
@@ -353,7 +381,7 @@ mod METACONTROL is
     < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
-    if newCONF := selectFDhighestQaAP(CONF)
+    if newCONF := selectFDhighestQaAP(AIE, CONF)
     [print "rule: [PlanQaApInError]"] .
 
   *** Nothing new is planned if FG is not in error
