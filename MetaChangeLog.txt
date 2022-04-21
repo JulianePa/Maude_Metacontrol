@@ -1,6 +1,5 @@
-(53,Comf) (54,Comf) (55,Comf) (106,Eco) (107,Eco) (129,
-    Comf) (130,Comf) (131,Comf) (132,Comf) (155,Eco) (171,Comf) (172,Comf) (173,Comf) (224,Eco) (225,Eco) (269,
-    Comf) (270,Comf) (271,Comf) (321,Eco) (322,Eco) (339,Comf) (340,Comf) (341,Comf) (370,Eco) (371,Eco) (393,
-    Comf) (394,Comf) (395,Comf) (418,Eco) (419,Eco) (441,Comf) (442,Comf) (443,Comf) (444,Comf) (466,Eco) (467,
-    Eco) (509,Comf) (510,Comf) (511,Comf) (563,Eco) (566,Comf) (587,Eco) (588,Eco) (603,Comf) (604,Comf) (605,
-    Comf) (635,Eco) (651,Comf) (652,Comf) (653,Comf) (683,Eco) (699,Comf) (700,Comf) 701,Comf
+(0,Comf) (5,Eco) (6,Eco) (31,Comf) (32,Comf) (33,Comf) (34,Comf) (59,Eco) (75,Comf) (76,
+    Comf) (77,Comf) (107,Eco) (123,Comf) (124,Comf) (125,Comf) (176,Eco) (177,Eco) (221,Comf) (222,Comf) (223,Comf) (274,Eco) (275,Eco) (298,Comf) (
+    299,Comf) (322,Eco) (323,Eco) (365,Comf) (366,Comf) (367,Comf) (419,Eco) (422,Comf) (443,Eco) (444,Eco) (459,Comf) (460,Comf) (461,Comf) (491,
+    Eco) (507,Comf) (508,Comf) (509,Comf) (539,Eco) (555,Comf) (556,Comf) (557,Comf) (608,Eco) (609,Eco) (633,Comf) (634,Comf) (635,Comf) (657,Eco)
+    (658,Eco) (680,Comf) (681,Comf) (682,Comf) (683,Comf) 707,Eco
