@@ -19,296 +19,396 @@ mod METACONTROL is
 
   sorts ContrSelected MetaPair MetaLog .
   subsort MetaPair < MetaLog .
-  ops Eco Comf HErr WhErr WErr : -> ContrSelected [ctor] .
+  ops Eco Comf DegA DegB DegC : -> ContrSelected [ctor] .
   op (_, _) : Timesteps ContrSelected -> MetaPair [ctor] .
   op nil : -> MetaLog [ctor] .
   op __ : MetaLog MetaLog -> MetaLog [ctor assoc id: nil] .
 
   op < _ :Metacontroller | MetaLog: _ > : Oid MetaLog -> Metacontroller [format (ntr r r r r r r o)] .
 
-  vars H WH W CC EC HEC WHEC WEC MC QAC QAAQ C : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
-  var A : Attribute .
-  var N : Nat .
-  var QAL : List{Bool} .
-  var QAS : QaStatus .
-  var QACOM : QAComputed .
-  var CONF : Configuration .
-  var SC : ScheduleComponents .
-  vars B B1 B2 B3 : Bool .
-  var R : Rat .
-  var ML : MetaLog .
-  var TS : Timesteps .
-  var TI : Time .
-  vars TL AL : TVPList .
 
+  ********** Objects for Function Designs
+  sorts FDAttributes FunctionDesign .
+  subsort FunctionDesign < Configuration .
 
-  ********** Cost function qualtiy attributes
-  op cost : Configuration -> Rat .
-  eq cost(CONF) = 5/10 * getQaComfValue(CONF) + 4/10 * getQaAqValue(CONF) + 1/10 * getQaEcoValue(CONF) .
+  sort ActuatorList .
+  ops heater waterheater window nil : -> ActuatorList [ctor] .
+  op __ : ActuatorList ActuatorList -> ActuatorList [ctor assoc comm id: nil] .
+
+  op ConController: _ : Oid -> FDAttributes [ctor] .
+  op ExpQaCT: _ : Rat -> FDAttributes [ctor] .
+  op ExpQaAP: _ : Rat -> FDAttributes [ctor] .
+  op RequActuators: _ : ActuatorList -> FDAttributes [ctor] .
+  op _, _ : FDAttributes FDAttributes -> FDAttributes [ctor assoc comm] .
+
+  *** The FDs contain the Oid of the controller they are connected to
+  op < _ :FDComfortController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDEcoController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegAController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegBController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+  op < _ :FDDegCController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
+
+  ******** Object that indicates whether FG and QAs are in error.
+  sort InError .
+  subsort InError < Configuration .
+  op < ErrorPropagation | FGinError: _, QaCTinError: _, QaAPinError: _, ActuatorsInError: _ > : Bool Bool Bool ActuatorList -> InError [format(ntc c c c c c c c c c c c c c c c)] .
+
+  *** Get Oid of connected controller of a FD
+  op getConContrOid : FunctionDesign -> Oid .
+  eq getConContrOid(< FD :FDComfortController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDEcoController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegAController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegBController | ConController: COid, FDA >) = COid .
+  eq getConContrOid(< FD :FDDegCController | ConController: COid, FDA >) = COid .
+
+  *** Determine which FD has the highest QA CT value
+  op highestQaCT : Configuration -> Rat .
+  ceq highestQaCT(< FD :FDComfortController | ExpQaCT: ECT, FDA > CONF)
+    = ECT if highestQaCT(CONF) < ECT .
+  ceq highestQaCT(< FD :FDEcoController | ExpQaCT: ECT, FDA > CONF)
+    = ECT if highestQaCT(CONF) < ECT .
+  ceq highestQaCT(< FD :FDDegAController | ExpQaCT: ECT, FDA > CONF)
+    = ECT if highestQaCT(CONF) < ECT .
+  ceq highestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
+    = ECT if highestQaCT(CONF) < ECT .
+  ceq highestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
+    = ECT if highestQaCT(CONF) < ECT .
+  eq highestQaCT(CONF) = 0 [owise] .
+
+  *** Determine which FD has the highest QA AP value
+  op highestQaAP : Configuration -> Rat .
+  ceq highestQaAP(< FD :FDComfortController | ExpQaAP: EAP, FDA > CONF)
+    = EAP if highestQaAP(CONF) < EAP .
+  ceq highestQaAP(< FD :FDEcoController | ExpQaAP: EAP, FDA > CONF)
+    = EAP if highestQaAP(CONF) < EAP .
+  ceq highestQaAP(< FD :FDDegAController | ExpQaAP: EAP, FDA > CONF)
+    = EAP if highestQaAP(CONF) < EAP .
+  ceq highestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
+    = EAP if highestQaAP(CONF) < EAP .
+  ceq highestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
+    = EAP if highestQaAP(CONF) < EAP .
+  eq highestQaAP(CONF) = 0 [owise] .
+
+  *** Determine FD with highest QA CT value
+  op FDhighestQaCT : Configuration -> FunctionDesign .
+  ceq FDhighestQaCT(< FD :FDComfortController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDComfortController | ExpQaCT: ECT, FDA >
+    if highestQaCT(CONF) < ECT .
+  ceq FDhighestQaCT(< FD :FDEcoController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDEcoController | ExpQaCT: ECT, FDA >
+    if highestQaCT(CONF) < ECT .
+  ceq FDhighestQaCT(< FD :FDDegAController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegAController | ExpQaCT: ECT, FDA >
+    if highestQaCT(CONF) < ECT .
+  ceq FDhighestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegBController | ExpQaCT: ECT, FDA >
+    if highestQaCT(CONF) < ECT .
+  ceq FDhighestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
+    = < FD :FDDegCController | ExpQaCT: ECT, FDA >
+    if highestQaCT(CONF) < ECT .
+
+  *** Determine FD with highest QA AP value
+  op FDhighestQaAP : Configuration -> FunctionDesign .
+  ceq FDhighestQaAP(< FD :FDComfortController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDComfortController | ExpQaAP: EAP, FDA >
+    if highestQaAP(CONF) < EAP .
+  ceq FDhighestQaAP(< FD :FDEcoController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDEcoController | ExpQaAP: EAP, FDA >
+    if highestQaAP(CONF) < EAP .
+  ceq FDhighestQaAP(< FD :FDDegAController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegAController | ExpQaAP: EAP, FDA >
+    if highestQaAP(CONF) < EAP .
+  ceq FDhighestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegBController | ExpQaAP: EAP, FDA >
+    if highestQaAP(CONF) < EAP .
+  ceq FDhighestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
+    = < FD :FDDegCController | ExpQaAP: EAP, FDA >
+    if highestQaAP(CONF) < EAP .
+
+  *** Does the list of required actuators contain an actuator in error?
+  *** (We suppose that only one actuator can be in error)
+  op contains : ActuatorList ActuatorList -> Bool .
+  eq contains(AIE, nil) = false .
+  eq contains(AIE, AC RA) = if AIE == AC then true else contains(AIE, RA) fi .
+
+  *** Search for FDs which have only the available actuators as required actuators
+  op availableFDs : ActuatorList Configuration -> Configuration .
+  eq availableFDs(AIE, < FD :FDComfortController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDComfortController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDEcoController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDEcoController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegAController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegAController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegBController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegBController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, < FD :FDDegCController | RequActuators: RA, FDA > CONF) =
+    if contains(AIE, RA) == false then < FD :FDDegCController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
+    else availableFDs(AIE, CONF) fi .
+  eq availableFDs(AIE, CONF) = none [owise] .
+
+  *** Select available controller whose Function Design has the highest QA CT value
+  op selectFDhighestQaCT : ActuatorList Configuration -> Configuration .
+  eq selectFDhighestQaCT(AIE, CONF) = selectContr(getConContrOid(FDhighestQaCT(availableFDs(AIE, CONF))), CONF) .
+
+  *** Select available controller whose Function Design has the highest QA AP value
+  op selectFDhighestQaAP : ActuatorList Configuration -> Configuration .
+  eq selectFDhighestQaAP(AIE, CONF) = selectContr(getConContrOid(FDhighestQaAP(availableFDs(AIE, CONF))), CONF) .
+
+  *** Deselect Function Grounding
+  op deselect : Configuration -> Configuration .
+  eq deselect(< DCA :DegradedContrA | Selected: S > CONF) = < DCA :DegradedContrA | Selected: false > deselect(CONF) .
+  eq deselect(< DCB :DegradedContrB | Selected: S > CONF) = < DCB :DegradedContrB | Selected: false > deselect(CONF) .
+  eq deselect(< DCC :DegradedContrC | Selected: S > CONF) = < DCC :DegradedContrC | Selected: false > deselect(CONF) .
+  eq deselect(< CC :ComfortController | Selected: S > CONF) = < CC :ComfortController | Selected: false > deselect(CONF) .
+  eq deselect(< EC :EcoController | Selected: S > CONF) = < EC :EcoController | Selected: false  > deselect(CONF) .
+  eq deselect(CONF) = CONF [owise] .
 
   *** If no metacontroller is in initial configuration, we want to have a dummy rule s.t. we can test without metacontroller
   op noMetacontr : Configuration -> Bool .
   eq noMetacontr(< MC :Metacontroller | MetaLog: ML > CONF) = false .
   eq noMetacontr(CONF) = true [owise] .
 
-
-  ******** Checks from comfort to other controller
-  *** Check whether metacontroller should change from comfort to heater error controller
-  op metaComfToHErr : Configuration -> Bool .
-  eq metaComfToHErr(< H :Heater | Broken: no, A > CONF) = false .
-  eq metaComfToHErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false .
-  ceq metaComfToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToHErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to water heater error controller
-  op metaComfToWhErr : Configuration -> Bool .
-  eq metaComfToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false .
-  eq metaComfToWhErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToWhErr(< WHEC :WaterheaterErrController | Selected: true > CONF) = false .
-  ceq metaComfToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToWhErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to window error controller
-  op metaComfToWErr : Configuration -> Bool .
-  eq metaComfToWErr(< W :Window | Broken: no, A > CONF) = false .
-  eq metaComfToWErr(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToWErr(< WEC :WindowErrController | Selected: true > CONF) = false .
-  ceq metaComfToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaComfToWErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from comfort to eco controller
-  op metaComfToEco : Configuration -> Bool .
-  eq metaComfToEco(< CC :ComfortController | Selected: false > CONF) = false .
-  eq metaComfToEco(< EC :EcoController | Selected: true > CONF) = false .
-  ceq metaComfToEco(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  ceq metaComfToEco(CONF) = false
-    if cost(CONF) <= 7/10 .
-  eq metaComfToEco(CONF) = true [owise] .
+  *** Determine which 'ContrSelected' constant should be used in metacontrol log
+  op determineContrSelected : Configuration -> ContrSelected .
+  eq determineContrSelected(< DCA :DegradedContrA | Selected: true > CONF) = DegA .
+  eq determineContrSelected(< DCB :DegradedContrB | Selected: true > CONF) = DegB .
+  eq determineContrSelected(< DCC :DegradedContrC | Selected: true > CONF) = DegC .
+  eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
+  eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
 
-  ****** Check from eco to other controller
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToHErr : Configuration -> Bool .
-  eq metaEcoToHErr(< H :Heater | Broken: no, A > CONF) = false .
-  eq metaEcoToHErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToHErr(< HEC :HeaterErrController | Selected: true > CONF) = false .
-  ceq metaEcoToHErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToHErr(CONF) = true [owise] .
+  vars H WH W CC EC DCA DCB DCC MC QAC QAAP C FD COid : Oid .
+  var HS : HeaterStatus .
+  var WHS : WaterheaterStatus .
+  var WS : WindowStatus .
+  var A : Attribute .
+  vars QAS QAS1 : QaStatus .
+  vars CONF newCONF : Configuration .
+  var SC : ScheduleComponents .
+  vars B B1 newB newB1 : Bool .
+  var R : Rat .
+  var ML : MetaLog .
+  var TS : Timesteps .
+  var TI : Time .
+  vars TL AL : TVPList .
+  vars S S1 S2 : Selected .
+  vars RCT RAP ECT EAP : Rat .
+  vars RA AIE AC : ActuatorList .
+  vars QAA QAA1 : QaAttributes .
+  var FDA : FDAttributes .
 
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToWhErr : Configuration -> Bool .
-  eq metaEcoToWhErr(< WH :Waterheater | Broken: no, A > CONF) = false .
-  eq metaEcoToWhErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToWhErr(< HEC :WaterheaterErrController | Selected: true > CONF) = false .
-  ceq metaEcoToWhErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToWhErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from eco to window error controller
-  op metaEcoToWErr : Configuration -> Bool .
-  eq metaEcoToWErr(< W :Window | Broken: no, A > CONF) = false .
-  eq metaEcoToWErr(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToWErr(< HEC :WindowErrController | Selected: true > CONF) = false .
-  ceq metaEcoToWErr(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  eq metaEcoToWErr(CONF) = true [owise] .
-
-  *** Check whether metacontroller should change from eco to comfort controller
-  op metaEcoToComf : Configuration -> Bool .
-  eq metaEcoToComf(< EC :EcoController | Selected: false > CONF) = false .
-  eq metaEcoToComf(< CC :ComfortController | Selected: true > CONF) = false .
-  ceq metaEcoToComf(< Scheduler | Status: SC, TempAqChange: B, McChange: B1, ContrChange: B2 > CONF) = false
-    if SC =/= MCChange .
-  ceq metaEcoToComf(CONF) = false
-    if cost(CONF) > 7/10 .
-  eq metaEcoToComf(CONF) = true [owise] .
-
-  *** Check if at least one rule is applicable
-  op metaRuleApplicable : Configuration -> Bool .
-  eq metaRuleApplicable(CONF) = metaComfToHErr(CONF) or metaComfToWhErr(CONF) or metaComfToWErr(CONF) or metaComfToEco(CONF)
-                                or metaEcoToHErr(CONF) or metaEcoToWhErr(CONF) or metaEcoToWErr(CONF) or metaEcoToComf(CONF) .
-
-
-
-*** TODO Should the metacontroller also turn the actuators off?
-  ****************** Rules
-  ****************************************** From comfort controller to error controller
-  *** If the comfort controller is active and the heater is broken, then activate the heater error controller
-  rl [MetaContrComfortToHErr] :
-    < H :Heater | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
-    < HEC :HeaterErrController | Selected: false >
+  **************************** ANALYSE
+  ************ Actuators in error
+  *** If an actuator is broken, turn it off, set FG to be in error and QAs to be not in error
+  *** (because we don't want to use the rules that include QAs)
+  *** Put all controllers to 'not selected'
+  *** We assume that only one actuator can be in error at a each time step
+  rl [AnalyseHeaterError] :
+    {< H :Heater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < H :Heater | Broken: yes, A >
-    < CC :ComfortController | Selected: false >
-    < HEC :HeaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToHErr]"] .
-
-  *** If the comfort controller is active and the water heater is broken, then activate the water heater error controller
-  rl [MetaContrComfortToWhErr] :
-    < WH :Waterheater | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
-    < WHEC :WaterheaterErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < WH :Waterheater | Broken: yes, A >
-    < CC :ComfortController | Selected: false >
-    < WHEC :WaterheaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToWhErr]"] .
-
-  *** If the comfort controller is active and the window is broken, then activate the window error controller
-  rl [MetaContrComfortToWErr] :
-    < W :Window | Broken: yes, A >
-    < CC :ComfortController | Selected: true >
-    < WEC :WindowErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < W :Window | Broken: yes, A >
-    < CC :ComfortController | Selected: false >
-    < WEC :WindowErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrComfortToWErr]"] .
-
-
-
-  ******************************************* From eco controller to error controller
-  *** If the eco controller is active and the heater is broken, then activate the heater error controller
-  rl [MetaContrEcoToHErr] :
-    < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < HEC :HeaterErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < H :Heater | Broken: yes, A >
-    < EC :EcoController | Selected: false >
-    < HEC :HeaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, HErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToHErr]"] .
-
-  *** If the eco controller is active and the water heater is broken, then activate the water heater error controller
-  rl [MetaContrEcoToWhErr] :
-    < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < WHEC :WaterheaterErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < WH :Waterheater | Broken: yes, A >
-    < EC :EcoController | Selected: false >
-    < WHEC :WaterheaterErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WhErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToWhErr]"] .
-
-  *** If the eco controller is active and the window is broken, then activate the window error controller
-  rl [MetaContrEcoToWErr] :
-    < W :Window | Broken: yes, A >
-    < EC :EcoController | Selected: true >
-    < WEC :WindowErrController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
-    =>
-    < W :Window | Broken: yes, A >
-    < EC :EcoController | Selected: false >
-    < WEC :WindowErrController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, WErr) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    [print "rule: [MetaContrEcoToWErr]"] .
-
-
-
-
-  ************************************** Change between comfort and eco controller
-  *** If QA comfort is below 0.6 and eco controller is active, then change to comfort controller
-  crl [MetaContrEcoToComf] :
-    {< CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
-    {< CC :ComfortController | Selected: true >
-    < EC :EcoController | Selected: false >
-    < MC :Metacontroller | MetaLog: ML (TS, Comf) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
-    CONF}
-    if cost(CONF) <= 7/10
-    [print "rule: [MetaContrEcoToComf]"] .
-
-  *** If QA air quality is below 0.6 and comfort controller is active, then change to eco controller
-  crl [MetaContrComfToEco] :
-    {< CC :ComfortController | Selected: true >
-    < EC :EcoController | Selected: false >
+    {< H :Heater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: heater >
+    deselect(CONF)}
+    [print "rule: [AnalyseHeaterError]"] .
+
+  rl [AnalyseWaterheaterError] :
+    {< WH :Waterheater | Broken: yes, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
     =>
-    {< CC :ComfortController | Selected: false >
-    < EC :EcoController | Selected: true >
-    < MC :Metacontroller | MetaLog: ML (TS, Eco) >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 >
+    {< WH :Waterheater | Broken: yes, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: waterheater >
+    deselect(CONF)}
+    [print "rule: [AnalyseWaterheaterError]"] .
+
+  rl [AnalyseWindowError] :
+    {< H :Window | Broken: yes, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
     CONF}
-    if cost(CONF) > 7/10
-    [print "rule: [MetaContrComfToEco]"] .
+    =>
+    {< H :Window | Broken: yes, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: window >
+    deselect(CONF)}
+    [print "rule: [AnalyseWindowError]"] .
 
-
-
-  *************************** Dummy rules
-  *** If the metacontroller no other rule can be applied, this will be applied
-  crl [MetacontrollerDoesNothing] :
+  ************* QA in error
+  *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
+  *** Only do this if no actuator is not in error
+  crl [AnalyseQaInError] :
     {< MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
+    CONF}
     =>
     {< MC :Metacontroller | MetaLog: ML >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
-    if metaRuleApplicable(< MC :Metacontroller | MetaLog: ML > < Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF) == false /\ R := cost(CONF)
-    [print "rule: [MetacontrollerDoesNothing], Cost = " R] .
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < ErrorPropagation | FGinError: true, QaCTinError: newB, QaAPinError: newB1, ActuatorsInError: AIE >
+    deselect(CONF)}
+    if newB := (QAS < RCT) /\ newB1 := (QAS1 < RAP) /\ newB or newB1
+        /\ oneBroken(CONF) == false
+    [print "rule: [AnalyseQaInError]"] .
 
-  *** If there is no metacontroller, this rules ensures that we can run tests anyway
-  crl [noMetacontroller] :
-    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: false, ContrChange: B1 > CONF}
+  ************* QA not in error
+  *** If requiered QA values are >= measured ones and no actuator is broken, then do nothing
+  crl [AnalyseQaGood] :
+    {< MC :Metacontroller | MetaLog: ML >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
+    CONF}
     =>
-    {< Scheduler | Status: MCChange, TempAqChange: B, McChange: true, ContrChange: B1 > CONF}
+    {< MC :Metacontroller | MetaLog: ML >
+    < RequiredQAs | requQaCT: RCT, requQaAP: RAP >
+    < QAC :QaComfTemp | Status: QAS, QAA >
+    < QAAP :QaAirPurity | Status: QAS1, QAA1 >
+    < Scheduler | Status: MCAnalyse, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false , ActuatorsInError: AIE >
+    CONF}
+    if (QAS >= RCT) /\ (QAS1 >= RAP) /\ oneBroken(CONF) == false
+    [print "rule: [AnalyseQaGood]"] .
+
+
+
+
+  ******************************* PLAN and EXECUTE
+  ************ Actuators in error
+  *** If an actuator is broken and the FG is in error, then activate the available controller that has the highest QA CT value (because we focus on that)
+  *** This will be the degraded controller focussed on dealing with an error of this actuator
+  crl [PlanHeaterError] :
+    {< H :Heater | Broken: yes, Status: HS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
+    =>
+    {< H :Heater | Broken: yes, Status: hOff, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
+    [print "rule: [PlanHeaterError]"] .
+
+  crl [PlanWaterheaterError] :
+    {< WH :Waterheater | Broken: yes, Status: WHS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
+    =>
+    {< WH :Waterheater | Broken: yes, Status: whOff, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
+    [print "rule: [PlanWaterheaterError]"] .
+
+  crl [PlanWindowError] :
+    {< W :Window | Broken: yes, Status: WS, A >
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
+    =>
+    {< W :Window | Broken: yes, Status: halfopen, A >
+    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
+    [print "rule: [PlanWindowError]"] .
+
+
+  *** QA CT in error and maybe QA AP in error (prefer QA CT)
+  crl [PlanQaCtInError] :
+    {< MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: true, QaAPinError: B, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
+    =>
+    {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaCT(AIE, CONF)
+    [print "rule: [PlanQaCtInError]"] .
+
+  *** QA AP and not QA CT in error
+  crl [PlanQaApInError] :
+    {< MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: true, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    CONF}
+    =>
+    {< MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    newCONF}
+    if newCONF := selectFDhighestQaAP(AIE, CONF)
+    [print "rule: [PlanQaApInError]"] .
+
+  *** Nothing new is planned if FG is not in error
+  rl [PlanQaGood] :
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: false >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    =>
+    < MC :Metacontroller | MetaLog: ML >
+    < Scheduler | Status: MCPlan, RuleApplied: true >
+    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
+    [print "rule: [PlanQaGood]"] .
+
+
+  *** Dummy rules for no metacontroller
+  crl [NoMetacontrollerAnalyse] :
+    {< Scheduler | Status: MCAnalyse, RuleApplied: false > CONF}
+    =>
+    {< Scheduler | Status: MCAnalyse, RuleApplied: true > CONF}
     if noMetacontr(CONF) == true
-    [print "rule: [noMetacontr]"] .
+    [print "rule: [NoMetacontrollerAnalyse]"] .
 
+  crl [NoMetacontrollerPlan] :
+    {< Scheduler | Status: MCPlan, RuleApplied: false > CONF}
+    =>
+    {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
+    if noMetacontr(CONF) == true
+    [print "rule: [NoMetacontrollerPlan]"] .
 endm
 eof

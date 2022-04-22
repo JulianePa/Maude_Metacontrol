@@ -3,20 +3,31 @@ in physics.maude
 mod CONTROLLERS is
   protecting PHYSICS .
 
-  *** TODO: Do I need the Controller sort?
-  sort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController Controller .
-  subsort HeaterErrController WaterheaterErrController WindowErrController ComfortController EcoController < Controller .
+  sort DegradedContrA DegradedContrB DegradedContrC ComfortController EcoController Controller .
+  subsort DegradedContrA DegradedContrB DegradedContrC ComfortController EcoController < Controller .
   subsort Controller < Configuration .
 
   *** Indicates whether the current controller is active or passive at the moment.
   sort Selected .
   subsort Bool < Selected .
 
-  op < _ :HeaterErrController | Selected: _ > : Oid Selected -> HeaterErrController [format (nty y y y y y y o)] .
-  op < _ :WaterheaterErrController | Selected: _ > : Oid Selected -> WaterheaterErrController [format (nty y y y y y y o)] .
-  op < _ :WindowErrController | Selected: _ > : Oid Selected -> WindowErrController [format (nty y y y y y y o)] .
+  op < _ :DegradedContrA | Selected: _ > : Oid Selected -> DegradedContrA [format (nty y y y y y y o)] .
+  op < _ :DegradedContrB | Selected: _ > : Oid Selected -> DegradedContrB [format (nty y y y y y y o)] .
+  op < _ :DegradedContrC | Selected: _ > : Oid Selected -> DegradedContrC [format (nty y y y y y y o)] .
   op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
   op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
+
+  vars OID C : Oid .
+  var CONF : Configuration .
+  var S : Selected .
+
+  *** Select a controller with a specific Oid (we suppost that only a valid Oid is inserted)
+  op selectContr : Oid Configuration -> Configuration .
+  ceq selectContr(OID, < C :DegradedContrA | Selected: S > CONF) = < C :DegradedContrA | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :DegradedContrB | Selected: S > CONF) = < C :DegradedContrB | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :DegradedContrC | Selected: S > CONF) = < C :DegradedContrC | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :ComfortController | Selected: S > CONF) = < C :ComfortController | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :EcoController | Selected: S > CONF) = < C :EcoController | Selected: true > CONF if OID == C .
 
 endm
 eof

@@ -1,12 +1,5 @@
-(0,Eco) (9,Comf) (16,Eco) (27,
-    Comf) (39,Eco) (41,Comf) (43,Eco) (49,Comf) (50,Eco) (53,Comf) (63,Eco) (68,Comf) (
-    90,Eco) (96,Comf) (113,Eco) (121,Comf) (130,Eco) (133,Comf) (135,Eco) (139,Comf) (
-    141,Eco) (147,Comf) (149,Eco) (150,Comf) (159,Eco) (164,Comf) (186,Eco) (192,Comf) (
-    209,Eco) (217,Comf) (223,Eco) (224,Comf) (232,Eco) (243,Comf) (245,Eco) (246,Comf) (
-    255,Eco) (260,Comf) (262,Eco) (265,Comf) (279,Eco) (285,Comf) (306,Eco) (311,Comf) (
-    328,Eco) (336,Comf) (352,Eco) (354,Comf) (355,Eco) (361,Comf) (373,Eco) (378,Comf) (
-    379,Eco) (380,Comf) (401,Eco) (405,Comf) (406,Eco) (410,Comf) (423,Eco) (432,Comf) (
-    447,Eco) (462,Comf) (474,Eco) (478,Comf) (497,Eco) (505,Comf) (511,Eco) (512,Comf) (
-    520,Eco) (534,Comf) (543,Eco) (548,Comf) (570,Eco) (576,Comf) (593,Eco) (601,Comf) (
-    607,Eco) (608,Comf) (616,Eco) (627,Comf) (629,Eco) (630,Comf) (639,Eco) (644,Comf) (
-    646,Eco) (649,Comf) (663,Eco) (669,Comf) (690,Eco) (695,Comf) 712,Eco
+(53,Comf) (54,Comf) (55,Comf) (106,Eco) (107,Eco) (129,Comf) (130,Comf) (131,Comf) (132,
+    Comf) (155,Eco) (171,Comf) (172,Comf) (173,Comf) (224,Eco) (225,Eco) (269,Comf) (270,Comf) (271,Comf) (321,Eco) (322,Eco) (339,Comf) (340,Comf)
+    (341,Comf) (370,Eco) (371,Eco) (393,Comf) (394,Comf) (395,Comf) (418,Eco) (419,Eco) (441,Comf) (442,Comf) (443,Comf) (444,Comf) (466,Eco) (467,
+    Eco) (509,Comf) (510,Comf) (511,Comf) (563,Eco) (566,Comf) (587,Eco) (588,Eco) (603,Comf) (604,Comf) (605,Comf) (635,Eco) (651,Comf) (652,Comf)
+    (653,Comf) (683,Eco) (699,Comf) (700,Comf) 701,Comf

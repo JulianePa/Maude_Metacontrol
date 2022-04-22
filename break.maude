@@ -8,34 +8,35 @@ mod BREAK is
   var TS : Timesteps .
   var TI : Time .
   var A : Attribute .
+  vars TL AL : TVPList .
 
   *** This breaks all actuators immediately, so we have to find another way to implement it
   *** We assume that an actuator that is broken goes to status off/closed
   crl [HeaterBreaks] :
     < H :Heater | Status: HS, Broken: no, A >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < H :Heater | Status: hOff, Broken: yes, A >
-    < C :Clock | Timesteps: TS, Time: TI >
-    if TS >= 20
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    if TS >= 20000000
     [print "rule: [HeaterBreaks]"] .
 
   crl [WaterheaterBreaks] :
     < WH :Waterheater | Status: WHS, Broken: no, A >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
     < WH :Waterheater | Status: whOff, Broken: yes, A >
-    < C :Clock | Timesteps: TS, Time: TI >
-    if TS >= 20
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    if TS >= 2000000
     [print "rule: [WaterheaterBreaks]"] .
 
   crl [WindowBreaks] :
     < W :Window | Status: WS, Broken: no, A >
-    < C :Clock | Timesteps: TS, Time: TI >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     =>
-    < W :Window | Status: closed, Broken: yes, A >
-    < C :Clock | Timesteps: TS, Time: TI >
-    if TS >= 20
+    < W :Window | Status: halfopen, Broken: yes, A >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    if TS >= 200000
     [print "rule: [WindowBreaks]"] .
 
 endm

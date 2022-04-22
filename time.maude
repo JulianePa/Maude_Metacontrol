@@ -16,20 +16,18 @@ mod TIME is
   var AQ : AirqualityStatus .
 
   op advance : Configuration -> Configuration .
-  eq advance(< QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaEcology | Consider: N, Past: EL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaComfort | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
-  eq advance(< QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: yes > CONF)
-      = < QA :QaAirquality | Consider: N, Past: QAL, Status: QAS, QAComputed: no > advance(CONF) .
+  eq advance(< QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: yes > CONF)
+      = < QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
+  eq advance(< QA :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: yes > CONF)
+      = < QA :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
   crl [timeAdvances] :
     {< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < Scheduler | Status: TimeChange, TempAqChange: true, McChange: true, ContrChange: true > CONF}
+    < Scheduler | Status: TimeChange, RuleApplied: false > CONF}
     =>
     {< C :Clock | Timesteps: TS + 1, Time: getTime(TS + 1), TempLog: TL (TS, T), AqLog: AL (TS, AQ) >
-    < Scheduler | Status: TimeChange, TempAqChange: false, McChange: false, ContrChange: false > advance(CONF)}
+    < Scheduler | Status: TimeChange, RuleApplied: true > advance(CONF)}
     if T := getTemp(CONF) /\ AQ := getAirquality(CONF)
     [print "rule: [timeAdvances]"] .
 

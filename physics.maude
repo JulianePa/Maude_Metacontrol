@@ -24,20 +24,17 @@ mod PHYSICS is
   vars B B1 B2 : Bool .
   vars TL AL : TVPList .
 
-  op scale : -> Float .
-  eq scale = 1.0 .
-
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< H :Heater | Status: veryhot, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
   eq changeTempBy(< WH :Waterheater | Status: on, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: halfopen, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: open, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = (scale * -0.5) + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.5 + changeTempBy(CONF)
     if 0 <= TI and TI < 6 .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = (scale * -0.25) + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.25 + changeTempBy(CONF)
     if 6 <= TI and TI < 12 .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = (scale * -0.25) + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.25 + changeTempBy(CONF)
     if 18 <= TI .
   eq changeTempBy(CONF) = 0.0 [owise] .
 
@@ -45,7 +42,7 @@ mod PHYSICS is
   eq changeAqBy(< H :Heater | Status: fairlyhot, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< H :Heater | Status: veryhot, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
   eq changeAqBy(< WH :Waterheater | Status: on, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
-  eq changeAqBy(< W :Window | Status: closed, EffectAQ: EAQ, A > CONF) = (scale * -0.125) + changeAqBy(CONF) .
+  eq changeAqBy(< W :Window | Status: closed, EffectAQ: EAQ, A > CONF) = -0.125 + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: halfopen, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: open, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
   eq changeAqBy(CONF) = 0.0 [owise] .
@@ -55,11 +52,11 @@ mod PHYSICS is
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
-    < Scheduler | Status: PhysicsChange, TempAqChange: false, McChange: B, ContrChange: B1 > CONF}
+    < Scheduler | Status: PhysicsChange, RuleApplied: false > CONF}
     =>
     {< T :Thermometer | Degrees: newDG >
     < AQ :Airquality | Value: newAQS >
-    < Scheduler | Status: PhysicsChange, TempAqChange: true, McChange: B, ContrChange: B1 > CONF}
+    < Scheduler | Status: PhysicsChange, RuleApplied: true > CONF}
     if newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
 

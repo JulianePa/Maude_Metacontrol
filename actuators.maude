@@ -67,6 +67,21 @@ mod ACTUATORS is
       = < W :Window | Status: AS, A >
       if AS : WindowStatus .
 
+  *** Find out whether an actuator is broken
+  op heaterBroken : Configuration -> Bool .
+  eq heaterBroken(< H :Heater | Broken: yes, A > CONF) = true .
+  eq heaterBroken(CONF) = false [owise] .
+
+  op waterheaterBroken : Configuration -> Bool .
+  eq waterheaterBroken(< WH :Waterheater | Broken: yes, A > CONF) = true .
+  eq waterheaterBroken(CONF) = false [owise] .
+
+  op windowBroken : Configuration -> Bool .
+  eq windowBroken(< W :Window | Broken: yes, A > CONF) = true .
+  eq windowBroken(CONF) = false [owise] .
+
+  op oneBroken : Configuration -> Bool .
+  eq oneBroken(CONF) = heaterBroken(CONF) or waterheaterBroken(CONF) or windowBroken(CONF) .
 
   ************************* Messages
   sorts Msg .

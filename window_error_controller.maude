@@ -1,7 +1,7 @@
 mod WINDOWERRCONTROLLER is
   protecting CONTROLLERS .
 
-  vars H W WH T C WEC AQ : Oid .
+  vars H W WH T C DCC AQ : Oid .
   var DG : Temperature .
   var AQS : AirqualityStatus .
   var TI : Time .
@@ -10,36 +10,31 @@ mod WINDOWERRCONTROLLER is
   vars B B1 B2 : Bool .
   vars TL AL : TVPList .
 
-
-  *** Rules for both in the morning and not in the morning
-  *** If T ok -> H off, WH on, W half open
+  *** Rules for not in the morning
+  *** If T ok -> H veryhot, W halfopen, WH off
   crl [WinErrContrTempOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg hOff from WEC to H)
-    (msg on from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg veryhot from DCC to H)
+    (msg whOff from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if hot?(DG) == false /\ cold?(DG) == false
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == false /\ hot(DG) == false /\ cold(DG) == false
     [print "rule: [WinErrContrTempOk]"] .
 
-
-
-
-  *** Rules for not in the morning
-  *** If T low, AQ ok -> H very hot, WH off, W half open
+  *** If T low, AQ ok -> H veryhot, W halfopen, WH on
   crl [WinErrContrTempLowAqOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -47,24 +42,24 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg veryhot from WEC to H)
-    (msg whOff from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg veryhot from DCC to H)
+    (msg on from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == true
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == false /\ cold(DG) == true /\ aqok(AQS) == true
     [print "rule: [WinErrContrTempLowAqOk]"] .
 
-  *** If T low, AQ not ok -> H fairly hot, WH off, W half open
+  *** If T low, AQ not ok -> H veryhot, W halfopen, WH off
   crl [WinErrContrTempLowAqNotOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
@@ -72,94 +67,143 @@ mod WINDOWERRCONTROLLER is
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg fairlyhot from WEC to H)
-    (msg whOff from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg veryhot from DCC to H)
+    (msg whOff from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == false /\ cold?(DG) == true /\ aqok?(AQS) == false
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == false /\ cold(DG) == true /\ aqok(AQS) == false
     [print "rule: [WinErrContrTempLowAqNotOk]"] .
 
-  *** If T high -> H off, WH off, W half open
+  *** If T high -> H fairlyhot, W halfopen, WH off
   crl [WinErrContrTempHigh] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg hOff from WEC to H)
-    (msg whOff from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg fairlyhot from DCC to H)
+    (msg whOff from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == false /\ hot?(DG) == true
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == false /\ hot(DG) == true
     [print "rule: [WinErrContrTempHigh]"] .
 
 
 
-
   *** Rules for the morning
-  *** If T low -> H fairly hot, WH on, W half open
+  *** If T ok, AQ ok -> H veryhot, W halfopen, WH on
+  crl [WinErrContrTempOkAqOk1M] :
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
+    =>
+    (msg veryhot from DCC to H)
+    (msg on from DCC to WH)
+    (msg halfopen from DCC to W)
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == true /\ hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == true
+    [print "rule: [WinErrContrTempOkAqOkM]"] .
+
+  *** If T ok, AQ not ok -> H fairlyhot, W halfopen, WH on
+  crl [WinErrContrTempOkAqOk2M] :
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
+    =>
+    (msg fairlyhot from DCC to H)
+    (msg on from DCC to WH)
+    (msg halfopen from DCC to W)
+    < H :Heater | A >
+    < WH :Waterheater | A1 >
+    < W :Window | A2 >
+    < T :Thermometer | Degrees: DG >
+    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+    < AQ :Airquality | Value: AQS >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == true /\ hot(DG) == false /\ cold(DG) == false /\ aqok(AQS) == false
+    [print "rule: [WinErrContrTempOkAqOkM]"] .
+
+  *** If T low -> H veryhot, W halfopen, WH on
   crl [WinErrContrTempLowM] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg fairlyhot from WEC to H)
-    (msg on from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg veryhot from DCC to H)
+    (msg on from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == true /\ cold?(DG) == true
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == true /\ cold(DG) == true
     [print "rule: [WinErrContrTempLowM]"] .
 
-  *** If T high -> H off, WH on, W half open
+  *** If T high -> H fairlyhot, W halfopen, WH on
   crl [WinErrContrTempHighM] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: false >
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
-    (msg hOff from WEC to H)
-    (msg on from WEC to WH)
-    (msg halfopen from WEC to W)
+    (msg fairlyhot from DCC to H)
+    (msg on from DCC to WH)
+    (msg halfopen from DCC to W)
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    < WEC :WindowErrController | Selected: true >
-    < Scheduler | Status: ContrChange, TempAqChange: B, McChange: B1, ContrChange: true >
-    if morning?(TI) == true /\ hot?(DG) == true
+    < DCC :DegradedContrC | Selected: true >
+    < Scheduler | Status: ContrChange, RuleApplied: true >
+    if morning(TI) == true /\ hot(DG) == true
     [print "rule: [WinErrContrTempHighM]"] .
 
 

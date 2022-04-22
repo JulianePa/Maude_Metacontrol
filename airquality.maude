@@ -5,7 +5,7 @@ mod AIRQUALITY is
   subsort Airquality < Configuration .
 
   sort AirqualityStatus .
-  subsort Float < AirqualityStatus .        *** 0 Airquality is normal, airquality >0 is good, airquality < 0 is bad
+  subsort Float < AirqualityStatus .
 
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
@@ -20,9 +20,9 @@ mod AIRQUALITY is
   vars A A1 A2 : Attribute .
 
 
-  op aqok? : AirqualityStatus -> Bool .
-  ceq aqok?(AQS) = true if AQS > 1.0 .
-  ceq aqok?(AQS) = false if AQS <= 1.0 .
+  op aqok : AirqualityStatus -> Bool .
+  ceq aqok(AQS) = true if AQS > 1.0 .
+  ceq aqok(AQS) = false if AQS <= 1.0 .
 
   op getAirquality : Configuration -> AirqualityStatus .
   eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
