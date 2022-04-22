@@ -56,13 +56,17 @@ def calculate_violations(data, qa):
     return (violation_times_count, round(violation_amount,3))
 
 def metacontrol_plot_background(axs, switch_points, data_lenght):
+    legend_count = []
     for i in range(len(switch_points)):
         # axs.axvline(x = switch_points[i][0], color = 'k', linestyle = '--')
 
         end_block = switch_points[i+1][0] if i != len(switch_points) - 1 else data_lenght-1
         color = 'lightgoldenrodyellow' if switch_points[i][1] == "Eco" else 'lavender'
-        axs.axvspan(switch_points[i][0], end_block, facecolor=color, alpha=1)
-
+        span = axs.axvspan(switch_points[i][0], end_block, facecolor=color, alpha=1)
+        if len(legend_count)<2 and switch_points[i][1] not in legend_count:
+            span.set_label(switch_points[i][1])
+            legend_count.append(switch_points[i][1])
+    axs.legend(loc='upper right')
 
 def main():
     comfort_temp_path = 'ComfortTempLog.txt'
@@ -80,27 +84,26 @@ def main():
     comfort_aq_data = get_data_from_path(comfort_aq_path)
     comfort_temp_violation = calculate_violations(comfort_temp_data, 'temp')
     comfort_aq_violation = calculate_violations(comfort_aq_data, 'aq')
-    print('Comfort number temp violation: ',comfort_temp_violation[0], ' mumber AQ violation ',comfort_aq_violation[0], ' total number of violation: ', comfort_temp_violation[0]+comfort_aq_violation[0])
-    print('Comfort amount temp violation: ',comfort_temp_violation[1], ' amount AQ violation ',comfort_aq_violation[1], ' total amount of violation: ', comfort_temp_violation[1]+comfort_aq_violation[1])
+    print('Comfort number temp violation: ',comfort_temp_violation[0], ' number AQ violation: ',comfort_aq_violation[0], ' total number of violation: ', comfort_temp_violation[0]+comfort_aq_violation[0])
+    print('Comfort amount temp violation: ',comfort_temp_violation[1], ' amount AQ violation: ',comfort_aq_violation[1], ' total amount of violation: ', comfort_temp_violation[1]+comfort_aq_violation[1])
     print('-------------')
 
     eco_temp_data = get_data_from_path(eco_temp_path)
     eco_aq_data = get_data_from_path(eco_aq_path)
     eco_temp_violation = calculate_violations(eco_temp_data, 'temp')
     eco_aq_violation = calculate_violations(eco_aq_data, 'aq')
-    print('Eco temp number violation: ',eco_temp_violation[0], ' number AQ violation ',eco_aq_violation[0], ' total number of violation: ', eco_temp_violation[0]+eco_aq_violation[0])
-    print('Eco temp amount violation: ',eco_temp_violation[1], ' amount AQ violation ',eco_aq_violation[1], ' total amount of violation: ', eco_temp_violation[1]+eco_aq_violation[1])
+    print('Eco temp number violation: ',eco_temp_violation[0], ' number AQ violation: ',eco_aq_violation[0], ' total number of violation: ', eco_temp_violation[0]+eco_aq_violation[0])
+    print('Eco temp amount violation: ',eco_temp_violation[1], ' amount AQ violation: ',eco_aq_violation[1], ' total amount of violation: ', eco_temp_violation[1]+eco_aq_violation[1])
     print('-------------')
 
     meta_temp_data = get_data_from_path(meta_temp_path)
     meta_aq_data = get_data_from_path(meta_aq_path)
     meta_temp_violation = calculate_violations(meta_temp_data, 'temp')
     meta_aq_violation = calculate_violations(meta_aq_data, 'aq')
-    print('Metacontrol number temp violation: ',meta_temp_violation[0], ' number AQ violation ',meta_aq_violation[0], ' total number of violation: ', meta_temp_violation[0]+meta_aq_violation[0])
-    print('Metacontrol amount temp violation: ',meta_temp_violation[1], ' amount AQ violation ',meta_aq_violation[1], ' total amount of violation: ', meta_temp_violation[1]+meta_aq_violation[1])
+    print('Metacontrol number temp violation: ',meta_temp_violation[0], ' number AQ violation: ',meta_aq_violation[0], ' total number of violation: ', meta_temp_violation[0]+meta_aq_violation[0])
+    print('Metacontrol amount temp violation: ',meta_temp_violation[1], ' amount AQ violation: ',meta_aq_violation[1], ' total amount of violation: ', meta_temp_violation[1]+meta_aq_violation[1])
 
     switch_points = get_data_from_path(meta_controllers_path, retrieve_string)
-    # print(meta_controllers_switch)
 
     fig, axs = plt.subplots(3, 2)
     fig.suptitle('Smart Home World')
