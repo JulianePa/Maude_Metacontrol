@@ -37,7 +37,6 @@ mod ACTUATORS is
   op _, _ : Attribute Attribute -> Attribute [ctor comm assoc id: none] .
 
   *** Every actuator needs to have all attributes
-  *** TODO Ensure that every actuator has all attributes
   op < _ :Heater | _ > : Oid Attribute -> Heater [format(ntb b b b b b b)] .
   op < _ :Waterheater | _ > : Oid Attribute -> Waterheater [format(ntb b b b b b b)] .
   op < _ :Window | _ > : Oid Attribute -> Window [format(ntb b b b b b b)] .

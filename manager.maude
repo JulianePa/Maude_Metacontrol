@@ -27,8 +27,7 @@ mod MANAGER is
   eq {< Scheduler | Status: ContrChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: TimeChange, RuleApplied: false > CONF} .
 
-  *** If the TempAqChanged object is on 'no' again, then the time has advanced
-  eq {< Scheduler | Status: TimeChange,RuleApplied: true > CONF}
+  eq {< Scheduler | Status: TimeChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: PhysicsChange, RuleApplied: false > CONF} .
 
 endm
