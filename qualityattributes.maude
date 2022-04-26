@@ -21,13 +21,10 @@ mod QUALITYATTRIBUTES is
   var QAA : QaAttributes .
 
   *** The required QA values
-  sort RequQAs Objective .
+  sort Objective .
   subsort Objective < Configuration .
-  op requQaCT: _ : Rat -> RequQAs [ctor] .
-  op requQaAP: _ : Rat -> RequQAs [ctor] .
-  op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
 
-  op < RequiredQAs | _ > : RequQAs -> Objective [format(ntc c c c c c)].
+  op < RequiredQAs | requQaCT: _, requQaAP: _ > : Rat Rat -> Objective [format(ntc c c c c c c c c c)].
 
 
   ******************************** Relevant for quality attributes comfort and air quality
