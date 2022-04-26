@@ -96,7 +96,6 @@ mod TEST is
 
 
 endm
-eof
 frew[5000] initComfort .
 frew[5000] initEco .
 frew[5000] initMetacontr .
