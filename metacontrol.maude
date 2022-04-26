@@ -188,7 +188,7 @@ mod METACONTROL is
   *** (because we don't want to use the rules that include QAs)
   *** Put all controllers to 'not selected'
   *** We assume that only one actuator can be in error at a each time step
-  rl [AnalyseHeaterError] :
+  rl [AnalyseDegA] :
     {< H :Heater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
@@ -200,9 +200,9 @@ mod METACONTROL is
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: heater >
     deselect(CONF)}
-    [print "rule: [AnalyseHeaterError]"] .
+    [print "rule: [AnalyseDegA]"] .
 
-  rl [AnalyseWaterheaterError] :
+  rl [AnalyseDegB] :
     {< WH :Waterheater | Broken: yes, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCAnalyse, RuleApplied: false >
@@ -214,7 +214,7 @@ mod METACONTROL is
     < Scheduler | Status: MCAnalyse, RuleApplied: true >
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: waterheater >
     deselect(CONF)}
-    [print "rule: [AnalyseWaterheaterError]"] .
+    [print "rule: [AnalyseDegB]"] .
 
   ************* QA in error
   *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
@@ -267,7 +267,7 @@ mod METACONTROL is
   ************ Actuators in error
   *** If an actuator is broken and the FG is in error, then activate the available controller that has the highest QA CT value (because we focus on that)
   *** This will be the degraded controller focussed on dealing with an error of this actuator
-  crl [PlanHeaterError] :
+  crl [PlanDegA] :
     {< H :Heater | Broken: yes, Status: HS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
@@ -282,9 +282,9 @@ mod METACONTROL is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
     if newCONF := selectFDhighestQaCT(AIE, CONF)
-    [print "rule: [PlanHeaterError]"] .
+    [print "rule: [PlanDegA]"] .
 
-  crl [PlanWaterheaterError] :
+  crl [PlanDegB] :
     {< WH :Waterheater | Broken: yes, Status: WHS, A >
     < MC :Metacontroller | MetaLog: ML >
     < Scheduler | Status: MCPlan, RuleApplied: false >
@@ -299,7 +299,7 @@ mod METACONTROL is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     newCONF}
     if newCONF := selectFDhighestQaCT(AIE, CONF)
-    [print "rule: [PlanWaterheaterError]"] .
+    [print "rule: [PlanDegB]"] .
 
 
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
