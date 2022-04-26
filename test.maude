@@ -28,7 +28,6 @@ mod TEST is
             < "homeEcoController" :EcoController | Selected: true >
             < "homeDegradedContrA" :DegradedContrA | Selected: false >
             < "homeDegradedContrB" :DegradedContrB | Selected: false >
-            < "homeDegradedContrC" :DegradedContrC | Selected: false >
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeQaComfort" :QaComfTemp | Consider: 5, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 5, Past: nil, Status: 1, QaComputed: no >
@@ -36,7 +35,6 @@ mod TEST is
             < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
             < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
             < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater window) >
-            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater waterheater) >
             < Scheduler | Status: PhysicsChange, RuleApplied: false > .
 
   op initComfort : -> TimedConfiguration .
@@ -74,13 +72,11 @@ mod TEST is
             < "homeEcoController" :EcoController | Selected: true >         *** select this
             < "homeDegradedContrA" :DegradedContrA | Selected: false >
             < "homeDegradedContrB" :DegradedContrB | Selected: false >
-            < "homeDegradedContrC" :DegradedContrC | Selected: false >
             < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater waterheater window) >
             < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
             < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
             < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater window) >
-            < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater waterheater) >
             < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >
@@ -100,7 +96,7 @@ mod TEST is
 
 
 endm
-
+eof
 frew[5000] initComfort .
 frew[5000] initEco .
 frew[5000] initMetacontr .

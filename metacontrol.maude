@@ -2,7 +2,6 @@ in comfort_controller.maude
 in eco_controller.maude
 in heater_err_controller.maude
 in wh_error_controller.maude
-in window_error_controller.maude
 in qualityattributes.maude
 
 mod METACONTROL is
@@ -10,7 +9,6 @@ mod METACONTROL is
   protecting ECOCONTROLLER .
   protecting HEATERERRCONTROLLER .
   protecting WATERHEATERERRCONTROLLER .
-  protecting WINDOWERRCONTROLLER .
   protecting QUALITYATTRIBUTES .
 
 
@@ -46,7 +44,6 @@ mod METACONTROL is
   op < _ :FDEcoController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
   op < _ :FDDegAController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
   op < _ :FDDegBController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
-  op < _ :FDDegCController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
 
   ******** Object that indicates whether FG and QAs are in error.
   sort InError .
@@ -59,7 +56,6 @@ mod METACONTROL is
   eq getConContrOid(< FD :FDEcoController | ConController: COid, FDA >) = COid .
   eq getConContrOid(< FD :FDDegAController | ConController: COid, FDA >) = COid .
   eq getConContrOid(< FD :FDDegBController | ConController: COid, FDA >) = COid .
-  eq getConContrOid(< FD :FDDegCController | ConController: COid, FDA >) = COid .
 
   *** Determine which FD has the highest QA CT value
   op highestQaCT : Configuration -> Rat .
@@ -70,8 +66,6 @@ mod METACONTROL is
   ceq highestQaCT(< FD :FDDegAController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
   ceq highestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
-    = ECT if highestQaCT(CONF) < ECT .
-  ceq highestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
     = ECT if highestQaCT(CONF) < ECT .
   eq highestQaCT(CONF) = 0 [owise] .
 
@@ -84,8 +78,6 @@ mod METACONTROL is
   ceq highestQaAP(< FD :FDDegAController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
   ceq highestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
-    = EAP if highestQaAP(CONF) < EAP .
-  ceq highestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
     = EAP if highestQaAP(CONF) < EAP .
   eq highestQaAP(CONF) = 0 [owise] .
 
@@ -103,9 +95,6 @@ mod METACONTROL is
   ceq FDhighestQaCT(< FD :FDDegBController | ExpQaCT: ECT, FDA > CONF)
     = < FD :FDDegBController | ExpQaCT: ECT, FDA >
     if highestQaCT(CONF) < ECT .
-  ceq FDhighestQaCT(< FD :FDDegCController | ExpQaCT: ECT, FDA > CONF)
-    = < FD :FDDegCController | ExpQaCT: ECT, FDA >
-    if highestQaCT(CONF) < ECT .
 
   *** Determine FD with highest QA AP value
   op FDhighestQaAP : Configuration -> FunctionDesign .
@@ -120,9 +109,6 @@ mod METACONTROL is
     if highestQaAP(CONF) < EAP .
   ceq FDhighestQaAP(< FD :FDDegBController | ExpQaAP: EAP, FDA > CONF)
     = < FD :FDDegBController | ExpQaAP: EAP, FDA >
-    if highestQaAP(CONF) < EAP .
-  ceq FDhighestQaAP(< FD :FDDegCController | ExpQaAP: EAP, FDA > CONF)
-    = < FD :FDDegCController | ExpQaAP: EAP, FDA >
     if highestQaAP(CONF) < EAP .
 
   *** Does the list of required actuators contain an actuator in error?
@@ -145,9 +131,6 @@ mod METACONTROL is
   eq availableFDs(AIE, < FD :FDDegBController | RequActuators: RA, FDA > CONF) =
     if contains(AIE, RA) == false then < FD :FDDegBController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
     else availableFDs(AIE, CONF) fi .
-  eq availableFDs(AIE, < FD :FDDegCController | RequActuators: RA, FDA > CONF) =
-    if contains(AIE, RA) == false then < FD :FDDegCController | RequActuators: RA, FDA > availableFDs(AIE, CONF)
-    else availableFDs(AIE, CONF) fi .
   eq availableFDs(AIE, CONF) = none [owise] .
 
   *** Select available controller whose Function Design has the highest QA CT value
@@ -162,7 +145,6 @@ mod METACONTROL is
   op deselect : Configuration -> Configuration .
   eq deselect(< DCA :DegradedContrA | Selected: S > CONF) = < DCA :DegradedContrA | Selected: false > deselect(CONF) .
   eq deselect(< DCB :DegradedContrB | Selected: S > CONF) = < DCB :DegradedContrB | Selected: false > deselect(CONF) .
-  eq deselect(< DCC :DegradedContrC | Selected: S > CONF) = < DCC :DegradedContrC | Selected: false > deselect(CONF) .
   eq deselect(< CC :ComfortController | Selected: S > CONF) = < CC :ComfortController | Selected: false > deselect(CONF) .
   eq deselect(< EC :EcoController | Selected: S > CONF) = < EC :EcoController | Selected: false  > deselect(CONF) .
   eq deselect(CONF) = CONF [owise] .
@@ -176,7 +158,6 @@ mod METACONTROL is
   op determineContrSelected : Configuration -> ContrSelected .
   eq determineContrSelected(< DCA :DegradedContrA | Selected: true > CONF) = DegA .
   eq determineContrSelected(< DCB :DegradedContrB | Selected: true > CONF) = DegB .
-  eq determineContrSelected(< DCC :DegradedContrC | Selected: true > CONF) = DegC .
   eq determineContrSelected(< CC :ComfortController | Selected: true > CONF) = Comf .
   eq determineContrSelected(< EC :EcoController | Selected: true > CONF) = Eco .
 
@@ -234,20 +215,6 @@ mod METACONTROL is
     < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: waterheater >
     deselect(CONF)}
     [print "rule: [AnalyseWaterheaterError]"] .
-
-  rl [AnalyseWindowError] :
-    {< H :Window | Broken: yes, A >
-    < MC :Metacontroller | MetaLog: ML >
-    < Scheduler | Status: MCAnalyse, RuleApplied: false >
-    < ErrorPropagation | FGinError: false, QaCTinError: B, QaAPinError: B1, ActuatorsInError: AIE >
-    CONF}
-    =>
-    {< H :Window | Broken: yes, A >
-    < MC :Metacontroller | MetaLog: ML >
-    < Scheduler | Status: MCAnalyse, RuleApplied: true >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: window >
-    deselect(CONF)}
-    [print "rule: [AnalyseWindowError]"] .
 
   ************* QA in error
   *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
@@ -333,23 +300,6 @@ mod METACONTROL is
     newCONF}
     if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanWaterheaterError]"] .
-
-  crl [PlanWindowError] :
-    {< W :Window | Broken: yes, Status: WS, A >
-    < MC :Metacontroller | MetaLog: ML >
-    < Scheduler | Status: MCPlan, RuleApplied: false >
-    < ErrorPropagation | FGinError: true, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    CONF}
-    =>
-    {< W :Window | Broken: yes, Status: halfopen, A >
-    < MC :Metacontroller | MetaLog: ML (TS, determineContrSelected(newCONF)) >
-    < Scheduler | Status: MCPlan, RuleApplied: true >
-    < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: AIE >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    newCONF}
-    if newCONF := selectFDhighestQaCT(AIE, CONF)
-    [print "rule: [PlanWindowError]"] .
 
 
   *** QA CT in error and maybe QA AP in error (prefer QA CT)

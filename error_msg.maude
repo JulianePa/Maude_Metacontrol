@@ -80,7 +80,6 @@ mod ERRORMSG is
   eq checkControllers(< C :EcoController | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(< C :DegradedContrA | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(< C :DegradedContrB | Selected: S > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :DegradedContrC | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(CONF) = false [owise] .
 
   ********************************************************** Error messages
