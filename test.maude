@@ -1,11 +1,11 @@
 in manager.maude
-***in break.maude
+in break.maude
 in error_msg.maude
 
 mod TEST is
   protecting MANAGER .
   protecting ERRORMSG .
-  ***protecting BREAK .
+  protecting BREAK .
 
   vars T C AQ : Oid .
   var DG : Temperature .
@@ -39,27 +39,43 @@ mod TEST is
             < "homeFDDegCController" :FDDegCController | ConController: "homeDegradedContrC" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater waterheater) >
             < Scheduler | Status: PhysicsChange, RuleApplied: false > .
 
-  op init3 : -> Configuration .
-  eq init3 = < "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
-            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
-            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
-            < "homeThermometer" :Thermometer | Degrees: 15.0 >
-            < "homeAirquality" :Airquality | Value: 1.0 >
-            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil > .
-
-  op init4 : -> TimedConfiguration .
-  eq init4 = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+  op initComfort : -> TimedConfiguration .
+  eq initComfort = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
             < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
             < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
             < "homeThermometer" :Thermometer | Degrees: 20.5 >
             < "homeAirquality" :Airquality | Value: 2.0 >
             < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
             < "homeComfortController" :ComfortController | Selected: true >
-            < "homeEcoController" :EcoController | Selected: false >
+            < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+
+  op initEco : -> TimedConfiguration .
+  eq initEco = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+            < "homeEcoController" :EcoController | Selected: true >
+            < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+
+  op initMetacontr : -> TimedConfiguration .
+  eq initMetacontr = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+            < "homeComfortController" :ComfortController | Selected: false >
+            < "homeEcoController" :EcoController | Selected: true >         *** select this
             < "homeDegradedContrA" :DegradedContrA | Selected: false >
             < "homeDegradedContrB" :DegradedContrB | Selected: false >
             < "homeDegradedContrC" :DegradedContrC | Selected: false >
-            ***< "homeMetacontroller" :Metacontroller | MetaLog: nil >
+            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
             < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater waterheater window) >
             < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
             < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
@@ -84,7 +100,12 @@ mod TEST is
 
 
 endm
-eof
+
+frew[5000] initComfort .
+frew[5000] initEco .
+frew[5000] initMetacontr .
+quit
+
 
 search [1, 8000] init4 =>* {CONF:Configuration} such that getTimesteps(CONF) = 713 /\ getTemp(CONF) =/= 1.928000000000063e+1 /\ getTemp(CONF) =/= 1.8750000000000629e+1 .
 
