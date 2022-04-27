@@ -7,11 +7,10 @@ mod ECOCONTROLLER is
   var AQS : AirqualityStatus .
   var TI : Time .
   var TS : Timesteps .
-  vars B B1 B2 : Bool .
   vars A A1 A2 : Attribute .
   vars TL AL : TVPList .
 
-  *** Rules that hold both in the morning and not in the morning
+  ********************** Both morning and not morning
   *** If T ok, AQ not ok -> H off, W open, WH on
   crl [EContrTempOkAqNotOk] :
     < H :Heater | A >
@@ -86,7 +85,9 @@ mod ECOCONTROLLER is
     [print "rule: [EContrTempOkAqOk]"] .
 
 
-  *** Not in the morning
+
+
+  ********************** Not in the morning
   *** If T low, AQ not ok -> H very hot, W half open, WH off
   crl [EContrTempLowAqNotOk] :
     < H :Heater | A >
@@ -191,7 +192,7 @@ mod ECOCONTROLLER is
 
 
 
-  *** In the morning
+  ******************* In the morning
   *** If T low, AQ not ok -> H off, W half open, WH on
   crl [EContrTempLowAqNotOkM] :
     < H :Heater | A >

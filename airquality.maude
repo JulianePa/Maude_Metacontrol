@@ -1,4 +1,4 @@
-mod AIRQUALITY is
+fmod AIRQUALITY is
   protecting ACTUATORS .
 
   sort Airquality .
@@ -10,14 +10,8 @@ mod AIRQUALITY is
   op < _ :Airquality | Value: _ > : Oid AirqualityStatus -> Airquality [format (ntb b b b b b b o)] .
 
   var AQ : Oid .
-  vars AQS newAQS : AirqualityStatus .
-  var CON : Configuration .
-  vars H WH W : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
-  vars EAQ : EffectAQ .
-  vars A A1 A2 : Attribute .
+  var AQS : AirqualityStatus .
+  var CONF : Configuration .
 
 
   op aqok : AirqualityStatus -> Bool .
@@ -25,7 +19,6 @@ mod AIRQUALITY is
   ceq aqok(AQS) = false if AQS <= 1.0 .
 
   op getAirquality : Configuration -> AirqualityStatus .
-  eq getAirquality(< AQ :Airquality | Value: AQS > CON) = AQS .
+  eq getAirquality(< AQ :Airquality | Value: AQS > CONF) = AQS .
 
-endm
-eof
+endfm

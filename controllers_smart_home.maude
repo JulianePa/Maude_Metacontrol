@@ -3,10 +3,8 @@ in physics.maude
 mod CONTROLLERS is
   protecting PHYSICS .
 
-  *** TODO Do I need the sort Controllers?
-  sort DegradedContrA DegradedContrB ComfortController EcoController Controller .
-  subsort DegradedContrA DegradedContrB ComfortController EcoController < Controller .
-  subsort Controller < Configuration .
+  sorts DegradedContrA DegradedContrB ComfortController EcoController .
+  subsorts DegradedContrA DegradedContrB ComfortController EcoController < Configuration .
 
   *** Indicates whether the current controller is active or passive at the moment.
   sort Selected .
@@ -29,4 +27,3 @@ mod CONTROLLERS is
   ceq selectContr(OID, < C :DegradedContrB | Selected: S > CONF) = < C :DegradedContrB | Selected: true > CONF if OID == C .
 
 endm
-eof

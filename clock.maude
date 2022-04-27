@@ -1,4 +1,4 @@
-mod CLOCK is
+fmod CLOCK is
   protecting ACTUATORS .
 
   sort Clock TimedConfiguration .
@@ -6,18 +6,18 @@ mod CLOCK is
 
   sort Timesteps Time .
   subsort Nat < Timesteps .
-  subsort Nat < Time .                  *** TODO: Should we specify that 0 <= Time < 24?
+  subsort Nat < Time .
 
+  *** [Time, Value]-pair list used for the temperature/air quality log
   sorts TimeValuePair TVPList .
   subsort TimeValuePair < TVPList .
 
   op nil : -> TVPList [ctor] .
   op __ : TVPList TVPList -> TVPList [ctor assoc id: nil] .
 
-  *** time, temperature or time, airquality pairs
   op (_, _) : Timesteps Float -> TimeValuePair .
 
-  *** We need the timed configuration to ensure that the time advance rule is only applied to the full configuration
+  *** Timed configuration is used in some rules to ensure that they are only applied to full configurations (not to only parts of them)
   op {_} : Configuration -> TimedConfiguration .
 
   op < _ :Clock | Timesteps: _, Time: _, TempLog: _, AqLog: _ > : Oid Timesteps Time TVPList TVPList -> Clock [format (ntm m m m m m m m m m ntm m m ntm m m o)] .
@@ -33,7 +33,6 @@ mod CLOCK is
   op getTime : Timesteps -> Time .
   eq getTime(TS) = TS rem 24 .
 
-  *** For the controllers it's important to know whether it's morning or not
   *** Define morning to be between 6 and 12 o'clock.
   op morning : Time -> Bool .
   ceq morning(N) = true if 6 <= N /\ N <= 12 .
@@ -42,4 +41,4 @@ mod CLOCK is
   op getTimesteps : Configuration -> Timesteps .
   eq getTimesteps(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = TS .
 
-endm
+endfm

@@ -12,18 +12,15 @@ mod PHYSICS is
   vars H WH W T C AQ : Oid .
   vars DG newDG : Temperature .
   vars AQS newAQS : AirqualityStatus .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
-  vars ET ET1 ET2 : EffectTemp .
-  vars EAQ EAQ1 EAQ2 : EffectAQ .
-  vars A A1 A2 : Attribute .
+  var ET : EffectTemp .
+  var EAQ : EffectAQ .
+  var A : Attribute .
   var CONF : Configuration .
   var TS : Timesteps .
   var TI : Time .
-  vars B B1 B2 : Bool .
   vars TL AL : TVPList .
 
+  *** Determine how much the temperature in the room changed, depending on the status of the actuators and the time
   op changeTempBy : Configuration -> Float .
   eq changeTempBy(< H :Heater | Status: fairlyhot, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< H :Heater | Status: veryhot, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
@@ -38,6 +35,7 @@ mod PHYSICS is
     if 18 <= TI .
   eq changeTempBy(CONF) = 0.0 [owise] .
 
+  *** Determine how much the air quality in the room changed, depending on the status of the actuators
   op changeAqBy : Configuration -> Float .
   eq changeAqBy(< H :Heater | Status: fairlyhot, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< H :Heater | Status: veryhot, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
@@ -48,7 +46,7 @@ mod PHYSICS is
   eq changeAqBy(CONF) = 0.0 [owise] .
 
 
-  *** Rule for changing temperature and air quality in the room depending on the statuses of the actuators
+  *** Change temperature and air quality in the room, depending on the values of the above functions
   crl [changeTempAq] :
     {< T :Thermometer | Degrees: DG >
     < AQ :Airquality | Value: AQS >
@@ -59,7 +57,5 @@ mod PHYSICS is
     < Scheduler | Status: PhysicsChange, RuleApplied: true > CONF}
     if newDG := DG + changeTempBy(CONF) /\ newAQS := AQS + changeAqBy(CONF)
     [print "rule: [changeTempAq], Change Temp from " DG " to " newDG " and AQ from " AQS " to " newAQS] .
-
-
 
 endm

@@ -1,16 +1,11 @@
 mod WATERHEATERERRCONTROLLER is
   protecting CONTROLLERS .
 
-  vars H W WH T C DCB AQ : Oid .
+  vars H W WH T DCB AQ : Oid .
   var DG : Temperature .
   var AQS : AirqualityStatus .
-  var TI : Time .
-  var TS : Timesteps .
   vars A A1 A2 : Attribute .
-  vars B B1 B2 : Bool .
 
-
-  *** Rules
   *** If T ok, AQ ok -> H off, W closed, WH off
   crl [WhErrContrTempOkAqOk] :
     < H :Heater | A >
@@ -125,6 +120,5 @@ mod WATERHEATERERRCONTROLLER is
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot(DG) == true
     [print "rule: [WhErrContrTempHigh]"] .
-
 
   endm

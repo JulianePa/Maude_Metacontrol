@@ -10,10 +10,9 @@ mod COMFORTCONTROLLER is
   var TI : Time .
   var TS : Timesteps .
   vars A A1 A2 : Attribute .
-  vars B B1 B2 : Bool .
   vars TL AL : TVPList .
 
-  *** Not in the morning
+  *********************** Not in the morning
   *** If T ok, AQ ok -> H off, WH off, W closed
   crl [CContrTempOkAqOk] :
     < H :Heater | A >
@@ -138,7 +137,7 @@ mod COMFORTCONTROLLER is
 
 
 
-  *** In the morning
+  ************************* In the morning
   *** If T ok, AQ ok -> H off, W closed, WH on
   crl [CContrTempOkAqOkM] :
     < H :Heater | A >

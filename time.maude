@@ -7,7 +7,6 @@ mod TIME is
   var TS : Timesteps .
   var TI : Time .
   var N : Nat .
-  var EL : List{Nat} .
   var QAS : QaStatus .
   var QAL : List{Bool} .
   vars CONF : Configuration .
@@ -15,6 +14,7 @@ mod TIME is
   var T : Temperature .
   var AQ : AirqualityStatus .
 
+  *** If the time advances by one time step, enable the QA objects to apply rules again
   op advance : Configuration -> Configuration .
   eq advance(< QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: yes > CONF)
       = < QA :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
@@ -22,6 +22,7 @@ mod TIME is
       = < QA :QaAirPurity | Consider: N, Past: QAL, Status: QAS, QaComputed: no > advance(CONF) .
   eq advance(CONF) = CONF [owise] .
 
+  *** Time advances by one time step, the temperature and air quality log are updated
   crl [timeAdvances] :
     {< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < Scheduler | Status: TimeChange, RuleApplied: false > CONF}

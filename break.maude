@@ -1,17 +1,16 @@
 mod BREAK is
   protecting TIME .
 
-  vars H W WH C : Oid .
+  vars H WH C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
   var TS : Timesteps .
   var TI : Time .
   var A : Attribute .
   vars TL AL : TVPList .
 
-  *** This breaks all actuators immediately, so we have to find another way to implement it
-  *** We assume that an actuator that is broken goes to status off/closed
+  *** The time the actuator breaks can be specified in the if statements.
+  *** We assume that an actuator that is broken goes to status off.
   crl [HeaterBreaks] :
     < H :Heater | Status: HS, Broken: no, A >
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
@@ -29,14 +28,5 @@ mod BREAK is
     < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     if TS >= 2000000
     [print "rule: [WaterheaterBreaks]"] .
-
-  crl [WindowBreaks] :
-    < W :Window | Status: WS, Broken: no, A >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    =>
-    < W :Window | Status: halfopen, Broken: yes, A >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
-    if TS >= 200000
-    [print "rule: [WindowBreaks]"] .
 
 endm

@@ -3,9 +3,7 @@ in time.maude
 mod MANAGER is
   protecting TIME .
 
-
   var CONF : Configuration .
-  var B B1 B2 B3 B4 : Bool .
   *** If the current component has applied its rule, then change to the new component
   eq {< Scheduler | Status: PhysicsChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: QAChange, RuleApplied: false > CONF} .

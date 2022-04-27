@@ -11,7 +11,7 @@ mod METACONTROL is
   protecting WATERHEATERERRCONTROLLER .
   protecting QUALITYATTRIBUTES .
 
-
+  ********** Object for Metacontroller
   sort Metacontroller .
   subsort Metacontroller < Configuration .
 
@@ -39,17 +39,17 @@ mod METACONTROL is
   op RequActuators: _ : ActuatorList -> FDAttributes [ctor] .
   op _, _ : FDAttributes FDAttributes -> FDAttributes [ctor assoc comm] .
 
-  *** The FDs contain the Oid of the controller they are connected to
   op < _ :FDComfortController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
   op < _ :FDEcoController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
   op < _ :FDDegAController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
   op < _ :FDDegBController | _ > : Oid FDAttributes -> FunctionDesign [format (ntr r r r r r o)] .
 
-  ******** Object that indicates whether FG and QAs are in error.
+  ********** Object that indicates whether FG and QAs are in error.
   sort InError .
   subsort InError < Configuration .
   op < ErrorPropagation | FGinError: _, QaCTinError: _, QaAPinError: _, ActuatorsInError: _ > : Bool Bool Bool ActuatorList -> InError [format(ntc c c c c c c c c c c c c c c c)] .
 
+  ********** Auxiliary functions for Metacontroller rules
   *** Get Oid of connected controller of a FD
   op getConContrOid : FunctionDesign -> Oid .
   eq getConContrOid(< FD :FDComfortController | ConController: COid, FDA >) = COid .
@@ -165,13 +165,10 @@ mod METACONTROL is
   vars H WH W CC EC DCA DCB DCC MC QAC QAAP C FD COid : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
   var A : Attribute .
   vars QAS QAS1 : QaStatus .
   vars CONF newCONF : Configuration .
-  var SC : ScheduleComponents .
   vars B B1 newB newB1 : Bool .
-  var R : Rat .
   var ML : MetaLog .
   var TS : Timesteps .
   var TI : Time .
@@ -182,10 +179,9 @@ mod METACONTROL is
   vars QAA QAA1 : QaAttributes .
   var FDA : FDAttributes .
 
-  **************************** ANALYSE
-  ************ Actuators in error
+  ******************** ANALYSE
+  ********** Actuators in error
   *** If an actuator is broken, turn it off, set FG to be in error and QAs to be not in error
-  *** (because we don't want to use the rules that include QAs)
   *** Put all controllers to 'not selected'
   *** We assume that only one actuator can be in error at a each time step
   rl [AnalyseDegA] :
@@ -216,7 +212,7 @@ mod METACONTROL is
     deselect(CONF)}
     [print "rule: [AnalyseDegB]"] .
 
-  ************* QA in error
+  ********** QA in error
   *** If required QA value is lower than measured QA value, then mark FG and QA to be in error
   *** Only do this if no actuator is not in error
   crl [AnalyseQaInError] :
@@ -239,7 +235,7 @@ mod METACONTROL is
         /\ oneBroken(CONF) == false
     [print "rule: [AnalyseQaInError]"] .
 
-  ************* QA not in error
+  ********** QA not in error
   *** If requiered QA values are >= measured ones and no actuator is broken, then do nothing
   crl [AnalyseQaGood] :
     {< MC :Metacontroller | MetaLog: ML >
@@ -263,8 +259,8 @@ mod METACONTROL is
 
 
 
-  ******************************* PLAN and EXECUTE
-  ************ Actuators in error
+  ******************** PLAN and EXECUTE
+  ********** Actuators in error
   *** If an actuator is broken and the FG is in error, then activate the available controller that has the highest QA CT value (because we focus on that)
   *** This will be the degraded controller focussed on dealing with an error of this actuator
   crl [PlanDegA] :
@@ -301,7 +297,7 @@ mod METACONTROL is
     if newCONF := selectFDhighestQaCT(AIE, CONF)
     [print "rule: [PlanDegB]"] .
 
-
+  ********** QA in error
   *** QA CT in error and maybe QA AP in error (prefer QA CT)
   crl [PlanQaCtInError] :
     {< MC :Metacontroller | MetaLog: ML >
@@ -360,5 +356,6 @@ mod METACONTROL is
     {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
     if noMetacontr(CONF) == true
     [print "rule: [NoMetacontrollerPlan]"] .
+    
 endm
 eof

@@ -1,6 +1,6 @@
 in actuators.maude
 
-mod THERMOMETER is
+fmod THERMOMETER is
   protecting ACTUATORS .
 
   sorts Thermometer .
@@ -11,13 +11,8 @@ mod THERMOMETER is
 
   op < _ :Thermometer | Degrees: _ > : Oid Temperature -> Thermometer [format (ntb b b b b b b o)] .
 
-  vars DG newDG : Temperature .
-  vars H WH W T C : Oid .
-  var HS : HeaterStatus .
-  var WHS : WaterheaterStatus .
-  var WS : WindowStatus .
-  vars ET : EffectTemp .
-  vars A A1 A2 : Attribute .
+  var DG : Temperature .
+  var T : Oid .
   var CONF : Configuration .
 
   op getTemp : Configuration -> Temperature .
@@ -32,5 +27,4 @@ mod THERMOMETER is
   ceq hot(DG) = false if DG <= 21.0 .
 
 
-endm
-eof
+endfm
