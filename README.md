@@ -58,4 +58,5 @@ quit
 
 ## Structure of the modules
 The structure of the modules is as follows:
-![2022-03-16_Maude_structure drawio](https://user-images.githubusercontent.com/58590193/158556749-bad2d537-e227-45e8-a8a5-cc27054dbe8f.png)
+![maude_structure](https://user-images.githubusercontent.com/58590193/165742281-a26e551d-13c9-4d05-bea5-389ccb715946.png)
+
