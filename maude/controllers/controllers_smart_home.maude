@@ -1,4 +1,4 @@
-in physics.maude
+in ../smart_home_model/physics.maude
 
 mod CONTROLLERS is
   protecting PHYSICS .

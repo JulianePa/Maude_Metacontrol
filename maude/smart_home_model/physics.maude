@@ -1,7 +1,7 @@
 in thermometer.maude
 in airquality.maude
 in clock.maude
-in scheduler.maude
+in ../additional_modules/scheduler.maude
 
 mod PHYSICS is
   protecting THERMOMETER .
