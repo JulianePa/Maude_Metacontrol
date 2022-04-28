@@ -13,19 +13,20 @@ def retrieve_float(string):
 def get_data_from_string(string, retrieve_function):
     open_parenthesis = 0
     splitted = []
-    last_space_index = -1
+    last_open_parenthesis_index = 0
+    string = string.replace(' ', '')
     for i in range(len(string)):
         if string[i] == '(':
             open_parenthesis += 1
+            last_open_parenthesis_index = i
         elif string[i] == ')':
             open_parenthesis -= 1
-        elif string[i] == ' ' and open_parenthesis == 0:
-            sub_string = string[last_space_index+1:i].replace(' ','')
+            sub_string = string[last_open_parenthesis_index+1:i]
             if sub_string != '':
                 splitted.append(retrieve_function(sub_string))
-            last_space_index = i
+            last_close_parenthesis_index = i
 
-    sub_string = string[last_space_index+1:].replace(' ','')
+    sub_string = string[last_close_parenthesis_index+1:]
     if sub_string != '':
         splitted.append(retrieve_function(sub_string.rstrip(',')))
     return splitted
@@ -76,19 +77,54 @@ def metacontrol_plot_background(axs, switch_points, data_lenght, time_steps=None
             legend_count.append(switch_points[i][1])
     axs.legend(loc='upper right')
 
+def write_log_to_file(path, filename, data):
+    file = open(path+filename, 'w+')
+    file.write(data)
+
+def process_maude_log(path):
+     path = '../logs/maude_log'
+     file = open(path, 'r')
+     raw_data = file.read()
+
+     # order: comfort, eco, metacontrol
+     controllers_log = raw_data.split("==========================================")[1:]
+     controllers_name = ["ComfortController","EcoController","Metacontrol"]
+     for (controller_log, controller_name) in zip(controllers_log, controllers_name):
+         init_index = controller_log.find("homeClock")
+         temp_log_index = controller_log.find("TempLog:", init_index)
+         aq_log_index = controller_log.find("AqLog:", temp_log_index)
+         final_index = controller_log.find(">", aq_log_index)
+
+         temp_log = controller_log[temp_log_index+8:aq_log_index]
+         aq_log = controller_log[aq_log_index+6:final_index]
+
+         try:
+             metacontrol_index = controller_log.index("MetaLog")
+             final_metacontrol_index = controller_log.index(">", metacontrol_index)
+             metacontrol_log = "(0, Eco)" + controller_log[metacontrol_index+8: final_metacontrol_index]
+             write_log_to_file('../logs/', controller_name+"ChangeLog.txt", metacontrol_log.replace('\n',''))
+         except ValueError:
+             pass
+
+         write_log_to_file('../logs/', controller_name+"TempLog.txt", temp_log.replace('\n',''))
+         write_log_to_file('../logs/', controller_name+"AirQualityLog.txt", aq_log.replace('\n',''))
+
 def main():
 
     time_steps = 200
 
-    comfort_temp_path = 'ComfortTempLog.txt'
-    comfort_aq_path = 'ComfortAirqualityLog.txt'
+    maude_log_path = '../logs/maude_log'
+    process_maude_log(maude_log_path)
 
-    eco_temp_path = 'EcoTempLog.txt'
-    eco_aq_path = 'EcoAirqualityLog.txt'
+    comfort_temp_path = '../logs/ComfortControllerTempLog.txt'
+    comfort_aq_path = '../logs/ComfortControllerAirQualityLog.txt'
 
-    meta_temp_path = 'MetaTempLog.txt'
-    meta_aq_path = 'MetaAirqualityLog.txt'
-    meta_controllers_path = 'MetaChangeLog.txt'
+    eco_temp_path = '../logs/EcoControllerTempLog.txt'
+    eco_aq_path = '../logs/EcoControllerAirQualityLog.txt'
+
+    meta_temp_path = '../logs/MetacontrolTempLog.txt'
+    meta_aq_path = '../logs/MetacontrolAirQualityLog.txt'
+    meta_controllers_path = '../logs/MetacontrolChangeLog.txt'
 
 
     comfort_temp_data = get_data_from_path(comfort_temp_path, time_steps=time_steps)
@@ -153,8 +189,6 @@ def main():
     axs[2, 1].plot(meta_aq_data, 'r')
     axs[2, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[2, 1].axhline(y = 0, color = 'k', linestyle = '--')
-
-
 
     plt.show()
 
