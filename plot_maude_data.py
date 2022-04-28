@@ -30,11 +30,13 @@ def get_data_from_string(string, retrieve_function):
         splitted.append(retrieve_function(sub_string.rstrip(',')))
     return splitted
 
-def get_data_from_path(path, retrieve_function = retrieve_float):
+def get_data_from_path(path, retrieve_function = retrieve_float, time_steps=None):
     file = open(path, 'r')
     raw_data = file.read()
     raw_data = raw_data.replace('\n','')
     splitted_data = get_data_from_string(raw_data, retrieve_function)
+    if time_steps != None:
+        splitted_data = splitted_data[0:time_steps]
     return splitted_data
 
 def calculate_violations(data, qa):
@@ -55,11 +57,17 @@ def calculate_violations(data, qa):
 
     return (violation_times_count, round(violation_amount,3))
 
-def metacontrol_plot_background(axs, switch_points, data_lenght):
+def metacontrol_plot_background(axs, switch_points, data_lenght, time_steps=None):
     legend_count = []
+    if time_steps!=None:
+        data_lenght=time_steps
+        for i in range(len(switch_points)):
+            if time_steps!=None and switch_points[i][0] > time_steps:
+                switch_points = switch_points[0:i]
+                break
+
     for i in range(len(switch_points)):
         # axs.axvline(x = switch_points[i][0], color = 'k', linestyle = '--')
-
         end_block = switch_points[i+1][0] if i != len(switch_points) - 1 else data_lenght-1
         color = 'lightgoldenrodyellow' if switch_points[i][1] == "Eco" else 'lavender'
         span = axs.axvspan(switch_points[i][0], end_block, facecolor=color, alpha=1)
@@ -69,6 +77,9 @@ def metacontrol_plot_background(axs, switch_points, data_lenght):
     axs.legend(loc='upper right')
 
 def main():
+
+    time_steps = 200
+
     comfort_temp_path = 'ComfortTempLog.txt'
     comfort_aq_path = 'ComfortAirqualityLog.txt'
 
@@ -80,24 +91,24 @@ def main():
     meta_controllers_path = 'MetaChangeLog.txt'
 
 
-    comfort_temp_data = get_data_from_path(comfort_temp_path)
-    comfort_aq_data = get_data_from_path(comfort_aq_path)
+    comfort_temp_data = get_data_from_path(comfort_temp_path, time_steps=time_steps)
+    comfort_aq_data = get_data_from_path(comfort_aq_path, time_steps=time_steps)
     comfort_temp_violation = calculate_violations(comfort_temp_data, 'temp')
     comfort_aq_violation = calculate_violations(comfort_aq_data, 'aq')
     print('Comfort number temp violation: ',comfort_temp_violation[0], ' number AQ violation: ',comfort_aq_violation[0], ' total number of violation: ', comfort_temp_violation[0]+comfort_aq_violation[0])
     print('Comfort amount temp violation: ',comfort_temp_violation[1], ' amount AQ violation: ',comfort_aq_violation[1], ' total amount of violation: ', comfort_temp_violation[1]+comfort_aq_violation[1])
     print('-------------')
 
-    eco_temp_data = get_data_from_path(eco_temp_path)
-    eco_aq_data = get_data_from_path(eco_aq_path)
+    eco_temp_data = get_data_from_path(eco_temp_path, time_steps=time_steps)
+    eco_aq_data = get_data_from_path(eco_aq_path, time_steps=time_steps)
     eco_temp_violation = calculate_violations(eco_temp_data, 'temp')
     eco_aq_violation = calculate_violations(eco_aq_data, 'aq')
     print('Eco temp number violation: ',eco_temp_violation[0], ' number AQ violation: ',eco_aq_violation[0], ' total number of violation: ', eco_temp_violation[0]+eco_aq_violation[0])
     print('Eco temp amount violation: ',eco_temp_violation[1], ' amount AQ violation: ',eco_aq_violation[1], ' total amount of violation: ', eco_temp_violation[1]+eco_aq_violation[1])
     print('-------------')
 
-    meta_temp_data = get_data_from_path(meta_temp_path)
-    meta_aq_data = get_data_from_path(meta_aq_path)
+    meta_temp_data = get_data_from_path(meta_temp_path, time_steps=time_steps)
+    meta_aq_data = get_data_from_path(meta_aq_path, time_steps=time_steps)
     meta_temp_violation = calculate_violations(meta_temp_data, 'temp')
     meta_aq_violation = calculate_violations(meta_aq_data, 'aq')
     print('Metacontrol number temp violation: ',meta_temp_violation[0], ' number AQ violation: ',meta_aq_violation[0], ' total number of violation: ', meta_temp_violation[0]+meta_aq_violation[0])
@@ -106,7 +117,7 @@ def main():
     switch_points = get_data_from_path(meta_controllers_path, retrieve_string)
 
     fig, axs = plt.subplots(3, 2)
-    fig.suptitle('Smart Home World')
+    fig.suptitle('Smart Home')
 
     axs[0, 0].set_title("Comfort controller temperature")
     axs[0, 0].plot(comfort_temp_data)
@@ -130,14 +141,14 @@ def main():
     axs[1, 1].set(xlabel='Time step', ylabel='Air quality')
     axs[1, 1].axhline(y = 0, color = 'k', linestyle = '--')
 
-    metacontrol_plot_background(axs[2, 0], switch_points, len(meta_temp_data))
+    metacontrol_plot_background(axs[2, 0], switch_points, len(meta_temp_data), time_steps)
     axs[2, 0].set_title("Meta controller temperature")
     axs[2, 0].plot(meta_temp_data)
     axs[2, 0].set(xlabel='Time step', ylabel='Temperature')
     axs[2, 0].axhline(y = 18, color = 'k', linestyle = '--')
     axs[2, 0].axhline(y = 22, color = 'k', linestyle = '--')
 
-    metacontrol_plot_background(axs[2, 1], switch_points, len(meta_aq_data))
+    metacontrol_plot_background(axs[2, 1], switch_points, len(meta_aq_data), time_steps)
     axs[2, 1].set_title("Meta controller air quality")
     axs[2, 1].plot(meta_aq_data, 'r')
     axs[2, 1].set(xlabel='Time step', ylabel='Air quality')
