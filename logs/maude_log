@@ -3,10 +3,10 @@
 		     /||||||||||||||||||\
 	    Maude 3.2.1 built: Feb 21 2022 18:21:17
 	     Copyright 1997-2022 SRI International
-		   Thu Apr 28 14:12:28 2022
+		   Thu Apr 28 14:16:02 2022
 ==========================================
 frewrite [1400] in TEST : initComfort .
-rewrites: 202526 in 76ms cpu (76ms real) (2664815 rewrites/second)
+rewrites: 202526 in 76ms cpu (72ms real) (2664815 rewrites/second)
 result TimedConfiguration: {
 	< "homeHeater" :Heater | Status: fairlyhot,EffectTemp:
     6.1499999999999999e-1,EffectAQ: -4.5000000000000001e-1,Broken: no > 
@@ -235,7 +235,7 @@ result TimedConfiguration: {
     -7.749999999999988e-1) 199,-3.4999999999999881e-1 >}
 ==========================================
 frewrite [1400] in TEST : initEco .
-rewrites: 202485 in 76ms cpu (75ms real) (2664276 rewrites/second)
+rewrites: 202485 in 72ms cpu (72ms real) (2812291 rewrites/second)
 result TimedConfiguration: {
 	< "homeHeater" :Heater | Status: veryhot,EffectTemp:
     6.1499999999999999e-1,EffectAQ: -4.5000000000000001e-1,Broken: no > 
@@ -444,7 +444,7 @@ result TimedConfiguration: {
     2.7250000000000072) (198,2.7000000000000073) 199,2.6750000000000074 >}
 ==========================================
 frewrite [1400] in TEST : initMetacontr .
-rewrites: 204124 in 80ms cpu (78ms real) (2551550 rewrites/second)
+rewrites: 204124 in 80ms cpu (79ms real) (2551550 rewrites/second)
 result TimedConfiguration: {
 	< "homeHeater" :Heater | Status: fairlyhot,EffectTemp:
     6.1499999999999999e-1,EffectAQ: -4.5000000000000001e-1,Broken: no > 
