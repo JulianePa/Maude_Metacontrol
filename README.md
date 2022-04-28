@@ -31,7 +31,7 @@ This can be reverted by running
 set print attribute off .
 ```
 
-## Automatic generation of log files
+## Automatic generation of log files and plots
 If you also want to create the plots that show the temperature and air quality changes for the Comfort-, Eco-, and Metacontroller, then you have to go to the `test.maude` file and delete `eof`, which can be found at the bottom of the file. The end of the file should now look like this:
 ```
 endm
@@ -40,9 +40,9 @@ frew[1400] initEco .
 frew[1400] initMetacontr .
 quit
 ```
-If Maude is still running, run `quit` to quit it. Otherwise, go to ???. By running
+If Maude is still running, run `quit` to quit it. Otherwise, go to the main folder. By running
 ```
-?????
+./run_smart_home.sh
 ```
 the initial configurations with the Comfort-, Eco-, and Metacontroller will be executed for 200 time steps and plots of their performance will be displayed.
 
@@ -59,4 +59,3 @@ quit
 ## Structure of the modules
 The structure of the modules is as follows:
 ![maude_structure](https://user-images.githubusercontent.com/58590193/165742281-a26e551d-13c9-4d05-bea5-389ccb715946.png)
-
