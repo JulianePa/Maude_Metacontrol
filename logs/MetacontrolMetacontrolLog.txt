@@ -1,1 +1,0 @@
-(0, Eco) (53,Comf) (54,Comf) (    55,Comf) (106,Eco) (107,Eco) (129,Comf) (130,Comf) (131,Comf) (132,Comf) (    155,Eco) (171,Comf) (172,Comf) 173,Comf 
