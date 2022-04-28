@@ -82,7 +82,6 @@ def write_log_to_file(path, filename, data):
     file.write(data)
 
 def process_maude_log(path):
-     path = '../logs/maude_log'
      file = open(path, 'r')
      raw_data = file.read()
 
@@ -102,29 +101,29 @@ def process_maude_log(path):
              metacontrol_index = controller_log.index("MetaLog")
              final_metacontrol_index = controller_log.index(">", metacontrol_index)
              metacontrol_log = "(0, Eco)" + controller_log[metacontrol_index+8: final_metacontrol_index]
-             write_log_to_file('../logs/', controller_name+"ChangeLog.txt", metacontrol_log.replace('\n',''))
+             write_log_to_file('logs/', controller_name+"ChangeLog.txt", metacontrol_log.replace('\n',''))
          except ValueError:
              pass
 
-         write_log_to_file('../logs/', controller_name+"TempLog.txt", temp_log.replace('\n',''))
-         write_log_to_file('../logs/', controller_name+"AirQualityLog.txt", aq_log.replace('\n',''))
+         write_log_to_file('logs/', controller_name+"TempLog.txt", temp_log.replace('\n',''))
+         write_log_to_file('logs/', controller_name+"AirQualityLog.txt", aq_log.replace('\n',''))
 
 def main():
 
     time_steps = 200
 
-    maude_log_path = '../logs/maude_log'
+    maude_log_path = 'logs/maude_log'
     process_maude_log(maude_log_path)
 
-    comfort_temp_path = '../logs/ComfortControllerTempLog.txt'
-    comfort_aq_path = '../logs/ComfortControllerAirQualityLog.txt'
+    comfort_temp_path = 'logs/ComfortControllerTempLog.txt'
+    comfort_aq_path = 'logs/ComfortControllerAirQualityLog.txt'
 
-    eco_temp_path = '../logs/EcoControllerTempLog.txt'
-    eco_aq_path = '../logs/EcoControllerAirQualityLog.txt'
+    eco_temp_path = 'logs/EcoControllerTempLog.txt'
+    eco_aq_path = 'logs/EcoControllerAirQualityLog.txt'
 
-    meta_temp_path = '../logs/MetacontrolTempLog.txt'
-    meta_aq_path = '../logs/MetacontrolAirQualityLog.txt'
-    meta_controllers_path = '../logs/MetacontrolChangeLog.txt'
+    meta_temp_path = 'logs/MetacontrolTempLog.txt'
+    meta_aq_path = 'logs/MetacontrolAirQualityLog.txt'
+    meta_controllers_path = 'logs/MetacontrolChangeLog.txt'
 
 
     comfort_temp_data = get_data_from_path(comfort_temp_path, time_steps=time_steps)
