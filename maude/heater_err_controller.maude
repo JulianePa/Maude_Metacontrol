@@ -1,24 +1,17 @@
 mod HEATERERRCONTROLLER is
   protecting CONTROLLERS .
 
-  vars H W WH T C DCA AQ : Oid .
+  vars H W WH T DCA AQ : Oid .
   var DG : Temperature .
   var AQS : AirqualityStatus .
-  var TI : Time .
-  var TS : Timesteps .
   vars A A1 A2 : Attribute .
-  vars B B1 B2 : Bool .
-  vars TL AL : TVPList .
 
-
-  *** Rules that hold for both the morning and not the morning
   *** If T ok, AQ ok -> H off, W closed, WH on
   crl [HErrContrTempOkAqOk] :
     < H :Heater | A >
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < DCA :DegradedContrA | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
@@ -30,7 +23,6 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < AQ :Airquality | Value: AQS >
     < DCA :DegradedContrA | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
@@ -87,7 +79,6 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < DCA :DegradedContrA | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: false >
     =>
@@ -98,7 +89,6 @@ mod HEATERERRCONTROLLER is
     < WH :Waterheater | A1 >
     < W :Window | A2 >
     < T :Thermometer | Degrees: DG >
-    < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
     < DCA :DegradedContrA | Selected: true >
     < Scheduler | Status: ContrChange, RuleApplied: true >
     if hot(DG) == true

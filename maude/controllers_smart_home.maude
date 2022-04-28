@@ -1,0 +1,29 @@
+in physics.maude
+
+mod CONTROLLERS is
+  protecting PHYSICS .
+
+  sorts DegradedContrA DegradedContrB ComfortController EcoController .
+  subsorts DegradedContrA DegradedContrB ComfortController EcoController < Configuration .
+
+  *** Indicates whether the current controller is active or passive at the moment.
+  sort Selected .
+  subsort Bool < Selected .
+
+  op < _ :ComfortController | Selected: _ > : Oid Selected -> ComfortController [format (nty y y y y y y o)] .
+  op < _ :EcoController | Selected: _ > : Oid Selected -> EcoController [format (nty y y y y y y o)] .
+  op < _ :DegradedContrA | Selected: _ > : Oid Selected -> DegradedContrA [format (nty y y y y y y o)] .
+  op < _ :DegradedContrB | Selected: _ > : Oid Selected -> DegradedContrB [format (nty y y y y y y o)] .
+
+  vars OID C : Oid .
+  var CONF : Configuration .
+  var S : Selected .
+
+  *** Select a controller with a specific Oid (we suppost that only a valid Oid is inserted)
+  op selectContr : Oid Configuration -> Configuration .
+  ceq selectContr(OID, < C :ComfortController | Selected: S > CONF) = < C :ComfortController | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :EcoController | Selected: S > CONF) = < C :EcoController | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :DegradedContrA | Selected: S > CONF) = < C :DegradedContrA | Selected: true > CONF if OID == C .
+  ceq selectContr(OID, < C :DegradedContrB | Selected: S > CONF) = < C :DegradedContrB | Selected: true > CONF if OID == C .
+
+endm

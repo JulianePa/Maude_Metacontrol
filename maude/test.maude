@@ -1,0 +1,72 @@
+in manager.maude
+in break.maude
+in error_msg.maude
+
+mod TEST is
+  protecting MANAGER .
+  protecting ERRORMSG .
+  protecting BREAK .
+
+  vars T C AQ : Oid .
+  var DG : Temperature .
+  var TI : Time .
+  var HS : HeaterStatus .
+  var WS : WindowStatus .
+  var AQS : AirqualityStatus .
+  vars CONF : Configuration .
+  vars ET ET1 ET2 : EffectTemp .
+
+  *** Initial configuration to the the Comfort controller
+  op initComfort : -> TimedConfiguration .
+  eq initComfort = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+            < "homeComfortController" :ComfortController | Selected: true >
+            < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+
+  *** Initial configuration to test the Eco controller
+  op initEco : -> TimedConfiguration .
+  eq initEco = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+            < "homeEcoController" :EcoController | Selected: true >
+            < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+
+  *** Initial configuration to test the Metacontroller
+  op initMetacontr : -> TimedConfiguration .
+  eq initMetacontr = {< "homeHeater" :Heater | Status: hOff, EffectTemp: 0.615, EffectAQ: -0.45, Broken: no >
+            < "homeWaterheater" :Waterheater | Status: whOff, EffectTemp: 0.3, EffectAQ: -0.125, Broken: no >
+            < "homeWindow" :Window | Status: closed, EffectTemp: -1.0, EffectAQ: 1.0, Broken: no >
+            < "homeThermometer" :Thermometer | Degrees: 20.5 >
+            < "homeAirquality" :Airquality | Value: 2.0 >
+            < "homeClock" :Clock | Timesteps: 0, Time: 0, TempLog: nil, AqLog: nil >
+            < "homeComfortController" :ComfortController | Selected: false >
+            < "homeEcoController" :EcoController | Selected: true >         *** select this
+            < "homeDegradedContrA" :DegradedContrA | Selected: false >
+            < "homeDegradedContrB" :DegradedContrB | Selected: false >
+            < "homeMetacontroller" :Metacontroller | MetaLog: nil >
+            < "homeFDComfortController" :FDComfortController | ConController: "homeComfortController" ,ExpQaCT: 7/10, ExpQaAP: 4/10, RequActuators: (heater waterheater window) >
+            < "homeFDEcoController" :FDEcoController | ConController: "homeEcoController" ,ExpQaCT: 5/10, ExpQaAP: 7/10, RequActuators: (heater waterheater window) >
+            < "homeFDDegAController" :FDDegAController | ConController: "homeDegradedContrA" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (waterheater window) >
+            < "homeFDDegBController" :FDDegBController | ConController: "homeDegradedContrB" ,ExpQaCT: 3/10, ExpQaAP: 2/10, RequActuators: (heater window) >
+            < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >
+            < RequiredQAs | requQaCT: 3/10, requQaAP: 2/10 >
+            < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: nil >} .
+
+endm
+frew[1400] initComfort .
+frew[1400] initEco .
+frew[1400] initMetacontr .
+quit

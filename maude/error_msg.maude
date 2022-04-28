@@ -1,4 +1,4 @@
-*** Module for testing initial configurations. If there are faults in initial configuration (e.g. not all necessary attributes specified in an actuator), then an error message is thrown.
+*** Module for testing initial configurations. If there are faults in initial configuration (e.g. not all necessary attributes specified in an actuator), then an error message is sent.
 mod ERRORMSG is
   protecting METACONTROL .
 
@@ -80,25 +80,18 @@ mod ERRORMSG is
   eq checkControllers(< C :EcoController | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(< C :DegradedContrA | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(< C :DegradedContrB | Selected: S > CONF) = S xor checkControllers(CONF) .
-  eq checkControllers(< C :DegradedContrC | Selected: S > CONF) = S xor checkControllers(CONF) .
   eq checkControllers(CONF) = false [owise] .
 
   ********************************************************** Error messages
   op msg_ : String -> Msg [format(ntg g g)] .
   op _ : TimedConfiguration -> TimedConfiguration .
 
-  *** These equations are applied in the beginning (and actually always) and throw an error message if some property is violated
+  *** These equations are applied in the beginning (and actually always) and send an error message if some property is violated
   ceq {CONF} =  {(msg "Attributes not properly specified")}
       if checkActuators(CONF) == false .
 
-
-
 endm
 eof
-
-op check : Configuration -> Msg .
-ceq check(CONF) = (msg "Everything ok") if checkControllers(CONF) == true .
-ceq check(CONF) = (msg "No or more than one controller selected") if checkControllers(CONF) == false .
 
 ceq {CONF} = {(msg "No or more than one controller selected")}
     if checkControllers(CONF) == false .

@@ -1,17 +1,18 @@
-mod ACTUATORS is
+fmod ACTUATORS is
   protecting STRING .
   protecting FLOAT .
 
-  *********************** Actuator definition
+  *** Actuator definition
   sorts Oid Heater Waterheater Window Actuator Configuration .
   subsorts Heater Window Waterheater < Actuator .
   subsort Actuator < Configuration .
   subsort String < Oid .  *** Object identifier
 
+  *** Configuration is multiset
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor comm assoc id: none] .
 
-  *** The statuses of the components
+  *** The statuses of the actuators
   sorts HeaterStatus WaterheaterStatus WindowStatus ActuatorStatus .
   subsorts HeaterStatus WaterheaterStatus WindowStatus < ActuatorStatus .
 
@@ -20,14 +21,14 @@ mod ACTUATORS is
   ops whOff on : -> WaterheaterStatus .
   ops open halfopen closed : -> WindowStatus .
 
-  *** The additional attributes of the heater and window
+  *** The additional attributes of the heaters and window
   sorts EffectTemp EffectAQ Broken .
   subsort Float < EffectTemp .              *** The effect indicates how much the actuator can decrease and increase the temperature in the room.
   subsort Float < EffectAQ .                *** The effect indicates how much the actuator can decrease and increase the air quality in the room.
   ops yes no : -> Broken .                  *** Indicates whether the actuator is broken or not.
 
 
-  *** Attribute sort to reduce clutter and only consider the attributes that are important for a rule
+  *** Attribute sort to improve readability of rules (only explicitly specify what is needed for the rule)
   sort Attribute .
   op none : -> Attribute [ctor] .
   op Status: _ : ActuatorStatus -> Attribute [ctor] .
@@ -37,23 +38,18 @@ mod ACTUATORS is
   op _, _ : Attribute Attribute -> Attribute [ctor comm assoc id: none] .
 
   *** Every actuator needs to have all attributes
-  *** TODO Ensure that every actuator has all attributes
   op < _ :Heater | _ > : Oid Attribute -> Heater [format(ntb b b b b b b)] .
   op < _ :Waterheater | _ > : Oid Attribute -> Waterheater [format(ntb b b b b b b)] .
   op < _ :Window | _ > : Oid Attribute -> Window [format(ntb b b b b b b)] .
-
 
   vars H WH W C : Oid .
   var HS : HeaterStatus .
   var WHS : WaterheaterStatus .
   var WS : WindowStatus .
   var AS : ActuatorStatus .
-  var ET : EffectTemp .
-  var EAQ : EffectAQ .
   var B : Broken .
   var A : Attribute .
   var CONF : Configuration .
-
 
   *** Set status of actuator (if wrong type of actuator status is inserted, nothing happens)
   op setStatus : Actuator ActuatorStatus -> Actuator .
@@ -111,7 +107,4 @@ mod ACTUATORS is
       = < W :Window | Status: WS, Broken: B, A >
       if B == yes .
 
-
-
-endm
-eof
+endfm

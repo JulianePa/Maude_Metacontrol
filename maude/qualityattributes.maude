@@ -6,31 +6,25 @@ mod QUALITYATTRIBUTES is
 
 
   var CONF : Configuration .
-  vars H W WH E T C AQ : Oid .
+  vars T C AQ : Oid .
   var DG : Temperature .
   var AQS : AirqualityStatus .
-  var A : Actuator .
   vars QAS newQAS : QaStatus .
   vars N M : Nat .
-  var BL : Bool .
+  var B : Bool .
   var AT : Attribute .
-  vars B B1 B2 B3 : Bool .
   var QAC : QaComputed .
   vars QAL newQAL : List{Bool} .
-  vars EL newEL : List{Nat} .
   var QAA : QaAttributes .
 
-  *** The required QA values
-  sort RequQAs Objective .
+  *** Object for the required QA values
+  sort Objective .
   subsort Objective < Configuration .
-  op requQaCT: _ : Rat -> RequQAs [ctor] .
-  op requQaAP: _ : Rat -> RequQAs [ctor] .
-  op _, _ : RequQAs RequQAs -> RequQAs [ctor comm assoc] .
 
-  op < RequiredQAs | _ > : RequQAs -> Objective [format(ntc c c c c c)].
+  op < RequiredQAs | requQaCT: _, requQaAP: _ > : Rat Rat -> Objective [format(ntc c c c c c c c c c)].
 
 
-  ******************************** Relevant for quality attributes comfort and air quality
+  ******************** Relevant for both QA CT and QA AP
   sorts QaStatus QaComputed QaAttributes .
   subsort Rat < QaStatus .
   ops yes no : -> QaComputed .
@@ -41,11 +35,11 @@ mod QUALITYATTRIBUTES is
   op QaComputed: _ : QaComputed -> QaAttributes [ctor] .
   op _, _ : QaAttributes QaAttributes -> QaAttributes [ctor comm assoc] .
 
-  *** Get the n last added elements of a list (we suppose that List{Bool} has at least n elements)
+  *** Get the N last added elements of a list (we suppose that List{Bool} has at least N elements)
   op getLast : Nat List{Bool} -> List{Bool} .
   eq getLast(0, QAL) = nil .
-  eq getLast(1, BL) = BL .
-  eq getLast(s(N), QAL BL) = getLast(N, QAL) BL .
+  eq getLast(1, B) = B .
+  eq getLast(s(N), QAL B) = getLast(N, QAL) B .
 
   *** Compute the number of 'true' in a List{Bool}
   op computeTrue : List{Bool} -> Nat .
@@ -55,7 +49,7 @@ mod QUALITYATTRIBUTES is
   eq computeTrue(QAL true) = 1 + computeTrue(QAL) .
   eq computeTrue(QAL false) = computeTrue(QAL) .
 
-  *** Compute the value of the quality attribute comfortable temperature or air puritz as the percentage of time in the last n time steps that the temperature was comfortable/ air quality was good
+  *** Compute the value of the QA CT or QA AP as the percentage of time in the last N time steps that the temperature was comfortable/air quality was good
   op computeQA : Nat List{Bool} -> QaStatus .
   ceq computeQA(N, QAL) = computeTrue(getLast(N,QAL)) / N
     if N <= size(QAL) .
@@ -63,46 +57,42 @@ mod QUALITYATTRIBUTES is
     if M := size(QAL) /\ N > M .
 
 
-  ********************************* Comfortable temperature
+  ******************** Quality Attribute Comfortable Temperature
   sort QaComfTemp .
   subsort QaComfTemp < Configuration .
 
   *** Determine whether current configuration is in comfortable temperature or not (between 19.1 and 21.5 degrees)
-  op comfortable? : Configuration -> Bool .
-  ceq comfortable?(< T :Thermometer | Degrees: DG > CONF) = true
+  op comfortable : Configuration -> Bool .
+  ceq comfortable(< T :Thermometer | Degrees: DG > CONF) = true
     if 19.1 <= DG and DG <= 21.5 .
-  eq comfortable?(CONF) = false [owise] .
+  eq comfortable(CONF) = false [owise] .
 
-  *** We can specify the number of time steps that we want to consider when computing the comfort value here
+  *** We can specify the number of time steps that we want to consider when computing the QA CT value here
   op < _ :QaComfTemp | _ > : Oid QaAttributes -> QaComfTemp [format (ntg g g g g g g)] .
 
 
-  ****************************************** Air purity
+  ******************** Quality Attribute Air Purity
   sort QaAirPurity .
   subsort QaAirPurity < Configuration .
 
-  *** Determine whether current configuration is in good air quality status or not (above 2)
-  op aqGood? : Configuration -> Bool .
-  ceq aqGood?(< AQ :Airquality | Value: AQS > CONF) = true
+  *** Determine whether current configuration is in good air quality status or not (above 0.7)
+  op aqGood : Configuration -> Bool .
+  ceq aqGood(< AQ :Airquality | Value: AQS > CONF) = true
     if AQS >= 0.7  .
-  eq aqGood?(CONF) = false [owise] .
+  eq aqGood(CONF) = false [owise] .
 
-  *** We can specify the number of time steps that we want to consider when computing the air quality QA value here
+  *** We can specify the number of time steps that we want to consider when computing the QA AP value here
   op < _ :QaAirPurity | _ > : Oid QaAttributes -> QaAirPurity [format (ntg g g g g g g)] .
 
 
-
-  ***************************************** For scheduler
+  ******************** For scheduler
   op QAready : Configuration -> Bool .
   eq QAready(< C :QaComfTemp | QaComputed: no, QAA > CONF) = false .
   eq QAready(< AQ :QaAirPurity | QaComputed: no, QAA > CONF) = false .
   eq QAready(CONF) = true [owise] .
 
 
-
-
-  ****************************************** Rules
-
+  ******************** Rules
   *** The value of the QAs should be computed every time step
   crl [QaComfTemp] :
     {< C :QaComfTemp | Consider: N, Past: QAL, Status: QAS, QaComputed: no >
@@ -110,7 +100,7 @@ mod QUALITYATTRIBUTES is
     =>
     {< C :QaComfTemp | Consider: N, Past: newQAL, Status: newQAS, QaComputed: yes >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
-    if newQAL := append(QAL, comfortable?(CONF)) /\ newQAS := computeQA(N, newQAL)
+    if newQAL := append(QAL, comfortable(CONF)) /\ newQAS := computeQA(N, newQAL)
     [print "rule: [QaComfTemp], QA ComfTemp before: " QAS ", QA ComfTemp after: " newQAS] .
 
   crl [QaAirPurity] :
@@ -119,8 +109,7 @@ mod QUALITYATTRIBUTES is
     =>
     {< AQ :QaAirPurity | Consider: N, Past: newQAL, Status: newQAS, QaComputed: yes >
     < Scheduler | Status: QAChange, RuleApplied: B > CONF}
-    if newQAL := append(QAL, aqGood?(CONF)) /\ newQAS := computeQA(N, newQAL)
+    if newQAL := append(QAL, aqGood(CONF)) /\ newQAS := computeQA(N, newQAL)
     [print "rule: [QaAirPurity], QA AirPurity before: " QAS ", QA AirPurity after: " newQAS] .
 
 endm
-eof

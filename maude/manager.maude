@@ -3,9 +3,7 @@ in time.maude
 mod MANAGER is
   protecting TIME .
 
-
   var CONF : Configuration .
-  var B B1 B2 B3 B4 : Bool .
   *** If the current component has applied its rule, then change to the new component
   eq {< Scheduler | Status: PhysicsChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: QAChange, RuleApplied: false > CONF} .
@@ -27,8 +25,7 @@ mod MANAGER is
   eq {< Scheduler | Status: ContrChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: TimeChange, RuleApplied: false > CONF} .
 
-  *** If the TempAqChanged object is on 'no' again, then the time has advanced
-  eq {< Scheduler | Status: TimeChange,RuleApplied: true > CONF}
+  eq {< Scheduler | Status: TimeChange, RuleApplied: true > CONF}
     = {< Scheduler | Status: PhysicsChange, RuleApplied: false > CONF} .
 
 endm
