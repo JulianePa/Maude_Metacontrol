@@ -1,4 +1,4 @@
-in metacontrol.maude
+in ../metacontrol/metacontrol.maude
 
 mod TIME is
   protecting METACONTROL .

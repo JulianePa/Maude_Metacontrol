@@ -1,7 +1,7 @@
-in comfort_controller.maude
-in eco_controller.maude
-in heater_err_controller.maude
-in wh_error_controller.maude
+in ../controllers/comfort_controller.maude
+in ../controllers/eco_controller.maude
+in ../controllers/heater_err_controller.maude
+in ../controllers/wh_error_controller.maude
 in qualityattributes.maude
 
 mod METACONTROL is
@@ -356,6 +356,6 @@ mod METACONTROL is
     {< Scheduler | Status: MCPlan, RuleApplied: true > CONF}
     if noMetacontr(CONF) == true
     [print "rule: [NoMetacontrollerPlan]"] .
-    
+
 endm
 eof
