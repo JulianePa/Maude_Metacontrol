@@ -1,7 +1,7 @@
 in ../controllers/comfort_controller.maude
 in ../controllers/eco_controller.maude
-in ../controllers/heater_err_controller.maude
-in ../controllers/wh_error_controller.maude
+in ../controllers/degradedContrA.maude
+in ../controllers/degradedContrB.maude
 in qualityattributes.maude
 
 mod METACONTROL is
