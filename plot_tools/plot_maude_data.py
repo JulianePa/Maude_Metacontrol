@@ -70,9 +70,12 @@ def metacontrol_plot_background(axs, switch_points, data_lenght, time_steps=None
     for i in range(len(switch_points)):
         # axs.axvline(x = switch_points[i][0], color = 'k', linestyle = '--')
         end_block = switch_points[i+1][0] if i != len(switch_points) - 1 else data_lenght-1
-        color = 'lightgoldenrodyellow' if switch_points[i][1] == "Eco" else 'lavender'
-        span = axs.axvspan(switch_points[i][0], end_block, facecolor=color, alpha=1)
-        if len(legend_count)<2 and switch_points[i][1] not in legend_count:
+        color = {"Eco": 'lightgoldenrodyellow',
+                  "Comf": 'lavender',
+                  "DegA": 'wheat',
+                  "DegB": 'wheat'}
+        span = axs.axvspan(switch_points[i][0], end_block, facecolor=color[switch_points[i][1]], alpha=1)
+        if switch_points[i][1] not in legend_count:
             span.set_label(switch_points[i][1])
             legend_count.append(switch_points[i][1])
     axs.legend(loc='upper right')
