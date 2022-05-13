@@ -66,6 +66,7 @@ mod TEST is
             < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: nil >} .
 
 endm
+eof
 frew[1400] initComfort .
 frew[1400] initEco .
 frew[1400] initMetacontr .
