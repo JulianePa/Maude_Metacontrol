@@ -57,5 +57,4 @@ quit
 ```
 
 ## Structure of the modules
-The structure of the modules is as follows:
 ![maude_structure](https://user-images.githubusercontent.com/58590193/165742281-a26e551d-13c9-4d05-bea5-389ccb715946.png)
