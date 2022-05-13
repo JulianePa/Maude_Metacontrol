@@ -1,4 +1,4 @@
-in manager.maude
+in ../model_dynamics/manager.maude
 in break.maude
 in error_msg.maude
 
