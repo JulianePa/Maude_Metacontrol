@@ -8,6 +8,19 @@ mod PHYSICS is
   protecting AIRQUALITY .
   protecting CLOCK .
   protecting SCHEDULER .
+  protecting CONVERSION .
+
+  *** To enable variability in the environment, we chose three "random" ways of changing the environment
+  sort Environment .
+  subsort Environment < Configuration .
+  op < Environment | Version: Version: _ > : Nat -> Environment [format (ntc c c c c c)] .
+
+  *** Function to change variability of the environment
+  *** The first value is the identifier of the environment change and the second value is the time step
+  op variabilityEnvir : Nat Nat -> Float .
+  eq variabilityEnvir(1, TS) = 0.0 .
+  eq variabilityEnvir(2, TS) = 0.01 * (float(TS) rem 50.0) .
+  eq variabilityEnvir(3, TS) = if (TS rem 2 == 0) then 0.5 else -0.5 fi .
 
   vars H WH W T C AQ : Oid .
   vars DG newDG : Temperature .
@@ -19,6 +32,7 @@ mod PHYSICS is
   var TS : Timesteps .
   var TI : Time .
   vars TL AL : TVPList .
+  var N : Nat .
 
   *** Determine how much the temperature in the room changed, depending on the status of the actuators and the time
   op changeTempBy : Configuration -> Float .
@@ -27,11 +41,11 @@ mod PHYSICS is
   eq changeTempBy(< WH :Waterheater | Status: on, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: halfopen, EffectTemp: ET, A > CONF) = ET + changeTempBy(CONF) .
   eq changeTempBy(< W :Window | Status: open, EffectTemp: ET, A > CONF) = (2.0 * ET) + changeTempBy(CONF) .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.5 + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = -0.5 - variabilityEnvir(N, TS) + changeTempBy(CONF)
     if 0 <= TI and TI < 6 .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.25 + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = -0.25 + variabilityEnvir(N, TS) + changeTempBy(CONF)
     if 6 <= TI and TI < 12 .
-  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > CONF) = -0.25 + changeTempBy(CONF)
+  ceq changeTempBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = -0.25 - variabilityEnvir(N, TS) + changeTempBy(CONF)
     if 18 <= TI .
   eq changeTempBy(CONF) = 0.0 [owise] .
 
@@ -43,6 +57,12 @@ mod PHYSICS is
   eq changeAqBy(< W :Window | Status: closed, EffectAQ: EAQ, A > CONF) = -0.125 + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: halfopen, EffectAQ: EAQ, A > CONF) = EAQ + changeAqBy(CONF) .
   eq changeAqBy(< W :Window | Status: open, EffectAQ: EAQ, A > CONF) = (2.0 * EAQ) + changeAqBy(CONF) .
+  ceq changeAqBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = variabilityEnvir(N, TS) + changeAqBy(CONF)
+    if 0 <= TI and TI < 6 .
+  ceq changeAqBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = - variabilityEnvir(N, TS) + changeAqBy(CONF)
+    if 6 <= TI and TI < 12 .
+  ceq changeAqBy(< C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL > < Environment | Version: N > CONF) = variabilityEnvir(N, TS) + changeAqBy(CONF)
+    if 18 <= TI .
   eq changeAqBy(CONF) = 0.0 [owise] .
 
 
