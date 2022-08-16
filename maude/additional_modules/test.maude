@@ -27,7 +27,8 @@ mod TEST is
             < "homeComfortController" :ComfortController | Selected: true >
             < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
-            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >
+            < Environment | 1 >} .
 
   *** Initial configuration to test the Eco controller
   op initEco : -> TimedConfiguration .
@@ -40,7 +41,8 @@ mod TEST is
             < "homeEcoController" :EcoController | Selected: true >
             < "homeQaComfort" :QaComfTemp | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
-            < Scheduler | Status: PhysicsChange, RuleApplied: false >} .
+            < Scheduler | Status: PhysicsChange, RuleApplied: false >
+            < Environment | 1 >} .
 
   *** Initial configuration to test the Metacontroller
   op initMetacontr : -> TimedConfiguration .
@@ -63,7 +65,8 @@ mod TEST is
             < "homeQaAirquality" :QaAirPurity | Consider: 10, Past: nil, Status: 1, QaComputed: no >
             < Scheduler | Status: PhysicsChange, RuleApplied: false >
             < RequiredQAs | requQaCT: 3/10, requQaAP: 2/10 >
-            < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: nil >} .
+            < ErrorPropagation | FGinError: false, QaCTinError: false, QaAPinError: false, ActuatorsInError: nil >
+            < Environment | 1 >} .
 
 endm
 eof
