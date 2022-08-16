@@ -13,7 +13,7 @@ mod PHYSICS is
   *** To enable variability in the environment, we chose three "random" ways of changing the environment
   sort Environment .
   subsort Environment < Configuration .
-  op < Environment | Version: Version: _ > : Nat -> Environment [format (ntc c c c c c)] .
+  op < Environment | Version: _ > : Nat -> Environment [format (ntc c c c c c c)] .
 
   *** Function to change variability of the environment
   *** The first value is the identifier of the environment change and the second value is the time step
