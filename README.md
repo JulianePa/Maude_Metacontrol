@@ -58,3 +58,10 @@ quit
 
 ## Structure of the modules
 ![maude_structure](https://user-images.githubusercontent.com/58590193/165742281-a26e551d-13c9-4d05-bea5-389ccb715946.png)
+
+## Acknowledgments
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 956200.
+
+Pleave visit [our website](https://remaro.eu/) for more info on our project.
+
+![REMARO Logo](https://remaro.eu/wp-content/uploads/2020/09/remaro1-right-1024.png)
