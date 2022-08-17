@@ -1,6 +1,6 @@
 # A Formal Model of Metacontrol in Maude
 ## Overview
-This repository contains a formal model, written in Maude, of a Smart Home Case Study that uses Metacontrol.
+This repository contains a formal model, written in Maude, of a Smart Home Use Case that uses Metacontrol.
 
 ## Download and run
 To run the program, Maude needs to be installed. Guidelines for the installation can be found [here](http://maude.cs.illinois.edu/w/index.php/Maude_download_and_installation).
@@ -12,6 +12,7 @@ maude test.maude
 which will not only load the `test.maude` file, but also all other files that are necessary for the execution (the other modules are loaded within the `test.maude` file).
 
 ## Test
+### Scenario displayed in paper
 Once the files are loaded, you can simulate how the controllers work by using the `frew` command. You have to specify how many rewrite steps the system should do, otherwise it will not terminate. The 200 time steps that are displayed in the paper can be simulated by using `frew[1400]`. The `test.maude` file contains initial configurations to test the Comfort-, the Eco-, and the Metacontroller. They can be tested by running
 ```
 frew[1400] initComfort .
@@ -30,6 +31,13 @@ This can be reverted by running
 ```
 set print attribute off .
 ```
+
+### Scenarios with breaking actuators
+To simulate how the controllers work if an actuator breaks, first load the files as described before. Then, open the `break.maude` file. There, you can change the time step when the heater breaks in the `if` condition of the rule `HeaterBreaks` and the time step when the water heater breaks in the `if` condition of the rule `WaterheaterBreaks`. Note that we always assumed that only one actuator can be broken at the same time and that broken actuators do not get repaired. Thus, you should only change one of these values. The results displayed in the paper were obtained if the heater, respectively water heater, broke after 75 time steps. Therefore, to reproduce these results, change one of the values to 75 and run the same `frew` commands as above.
+
+### Variability of the environment
+To inject variability of the environment, we implemented two different ways the environment changes over time. They can be found in the file `physics.maude` in the definition of the function `variabilityEnvir`. Here, you can also define your own environment variability.
+To use another way the environment changes, go in the `test.maude` file and change the version of the environment to the desired one. Thus, if you want to run experiments with the second way of changing the environment, change `< Environment | Version: 1 >` to `< Environment | Version: 2 >` in all three initial configurations and run the same `frew` commands as above.
 
 ## Automatic generation of log files and plots
 If you also want to create the plots that show the temperature and air quality changes for the Comfort-, Eco-, and Metacontroller, then you have to go to the `test.maude` file and delete `eof`, which can be found at the bottom of the file. The end of the file should now look like this:
