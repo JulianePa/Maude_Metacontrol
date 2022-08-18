@@ -8,7 +8,7 @@ mod PHYSICS is
   protecting AIRQUALITY .
   protecting CLOCK .
   protecting SCHEDULER .
-  protecting CONVERSION .
+  protecting CONVERSION .     *** To convert a natural number to a float
 
   *** To enable variability in the environment, we chose three "random" ways of changing the environment
   sort Environment .
