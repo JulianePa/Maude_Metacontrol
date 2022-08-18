@@ -67,6 +67,9 @@ quit
 ## Structure of the modules
 ![maude_structure](https://user-images.githubusercontent.com/58590193/165742281-a26e551d-13c9-4d05-bea5-389ccb715946.png)
 
+## Additional documents
+The appendices for the paper can be found [here](https://github.com/JulianePa/Maude_Metacontrol/blob/461bde7ca4778d3b33a92848011c3374d0a0eeee/documents/appendix.pdf).
+
 ## Acknowledgments
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No. 956200.
 
