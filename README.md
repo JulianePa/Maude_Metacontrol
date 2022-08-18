@@ -5,10 +5,16 @@ This repository contains a formal model, written in Maude, of a Smart Home Use C
 ## Download and run
 To run the program, Maude needs to be installed. Guidelines for the installation can be found [here](http://maude.cs.illinois.edu/w/index.php/Maude_download_and_installation).
 
-To start Maude and load all files, go to the `additional_modules` directory and run
+To start Maude and load all files, first go to the `additional_modules` directory:
+```
+cd maude/additional_modules/
+```
+
+Then run:
 ```
 maude test.maude
 ```
+
 which will not only load the `test.maude` file, but also all other files that are necessary for the execution (the other modules are loaded within the `test.maude` file).
 
 ## Test
@@ -33,10 +39,36 @@ set print attribute off .
 ```
 
 ### Scenarios with breaking actuators
-To simulate how the controllers work if an actuator breaks, first load the files as described before. Then, open the `break.maude` file. There, you can change the time step when the heater breaks in the `if` condition of the rule `HeaterBreaks` and the time step when the water heater breaks in the `if` condition of the rule `WaterheaterBreaks`. Note that we always assumed that only one actuator can be broken at the same time and that broken actuators do not get repaired. Thus, you should only change one of these values. The results displayed in the paper were obtained if the heater, respectively water heater, broke after 75 time steps. Therefore, to reproduce these results, change one of the values to 75 and run the same `frew` commands as above.
+To simulate how the controllers work if an actuator breaks, first load the files as described before. Then, edit the `break.maude` file located at the `maude/additional_modules/` folder. There, you can change the time step when the heater breaks in the `if` condition of the rule `HeaterBreaks` and the time step when the water heater breaks in the `if` condition of the rule `WaterheaterBreaks`.
+
+For example, to change the time step when the water heater breaks to 75, you need to change the `2000000` value in the following rule to 75:
+```
+crl [WaterheaterBreaks] :
+  < WH :Waterheater | Status: WHS, Broken: no, A >
+  < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+  =>
+  < WH :Waterheater | Status: whOff, Broken: yes, A >
+  < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+  if TS >= 2000000
+  [print "rule: [WaterheaterBreaks]"] .
+```
+
+Like this:
+```
+crl [WaterheaterBreaks] :
+  < WH :Waterheater | Status: WHS, Broken: no, A >
+  < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+  =>
+  < WH :Waterheater | Status: whOff, Broken: yes, A >
+  < C :Clock | Timesteps: TS, Time: TI, TempLog: TL, AqLog: AL >
+  if TS >= 75
+  [print "rule: [WaterheaterBreaks]"] .
+```
+
+Note that we assume that only one actuator can be broken at the same time and that broken actuators do not get repaired. Thus, you should only change one of these values. The results displayed in the paper were obtained if the heater, respectively water heater, broke after 75 time steps. Therefore, to reproduce these results, change one of the values to 75 and run the same `frew` commands as above.
 
 ### Variability of the environment
-To inject variability of the environment, we implemented two different ways the environment changes over time. They can be found in the file `physics.maude` in the definition of the function `variabilityEnvir`. Here, you can also define your own environment variability.
+To inject variability of the environment, we implemented two different ways the environment changes over time. They can be found in the file `physics.maude` that is located in the folder `maude/smart_home_model/` in the definition of the function `variabilityEnvir`. Here, you can also define your own environment variability.
 To use another way the environment changes, go in the `test.maude` file and change the version of the environment to the desired one. Thus, if you want to run experiments with the second way of changing the environment, change `< Environment | Version: 1 >` to `< Environment | Version: 2 >` in all three initial configurations and run the same `frew` commands as above.
 
 ## Automatic generation of log files and plots
